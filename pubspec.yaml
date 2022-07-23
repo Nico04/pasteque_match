@@ -9,12 +9,29 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-dev_dependencies:
-  flutter_test:
+  flutter_localizations:
     sdk: flutter
 
+  # Framework Tools
+  rxdart: 0.26.0  # Stuck on this version for now : https://github.com/ReactiveX/rxdart/issues/603
+
+  # Widgets / UI
+  flash: ^2.0.3+3
+
+  # Web
+  http: ^0.13.4
+  connectivity_plus: ^2.3.6
+  firebase_core: ^1.20.0
+  firebase_crashlytics: ^2.8.6
+  cloud_firestore: ^3.4.0
+
+  # Device
+  shared_preferences: ^2.0.15
+
+dev_dependencies:
   flutter_lints: ^2.0.1
+  build_runner: ^2.2.0
+  json_serializable: ^6.3.1
 
 # The following section is specific to Flutter packages.
 flutter:
