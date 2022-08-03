@@ -8,6 +8,7 @@ import 'package:pasteque_match/firebase_options.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 
 import 'pages/register.page.dart';
+import 'resources/app_theme.dart';
 
 void main() async {
   // Init Flutter
@@ -53,6 +54,7 @@ class App extends StatelessWidget {
       title: 'Pastèque Match',
       supportedLocales: const [App.defaultLocale],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      theme: buildAppTheme(),
       home: const RegisterPage(),
     );
   }

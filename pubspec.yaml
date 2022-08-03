@@ -14,6 +14,7 @@ dependencies:
 
   # Framework Tools
   rxdart: 0.26.0  # Stuck on this version for now : https://github.com/ReactiveX/rxdart/issues/603
+  fetcher: 0.0.1-dev2
 
   # Widgets / UI
   flash: ^2.0.3+3
