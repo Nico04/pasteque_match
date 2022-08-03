@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'utils.dart';
-
 extension ExtendedString on String {
   String plural(num count) => this + (count >= 2 ? 's' : '');
 }
