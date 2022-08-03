@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -121,6 +122,20 @@ bool shouldReportException(Object? exception) =>
     exception is! UnreportedException &&
     exception is! SocketException &&
     exception is! TimeoutException;
+
+/// Throw a [ConnectivityException] if there is not internet connection
+Future<void> throwIfNoInternet() async {
+  if (!(await isConnectedToInternet())) {
+    debugPrint('API (✕) NO INTERNET');
+    throw const ConnectivityException(ConnectivityExceptionType.noInternet);
+  }
+}
+
+/// Return whether device has access to internet
+Future<bool> isConnectedToInternet() async {
+  final connectivityResult = await (Connectivity().checkConnectivity());
+  return connectivityResult != ConnectivityResult.none;
+}
 
 /// Return true if string is null or empty
 bool isStringNullOrEmpty(String? s) => s == null || s.isEmpty;

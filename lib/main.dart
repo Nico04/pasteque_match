@@ -1,3 +1,4 @@
+import 'package:fetcher/fetcher.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -50,12 +51,18 @@ class App extends StatelessWidget {
     SystemChrome.setPreferredOrientations(const [DeviceOrientation.portraitUp]);
 
     // Build app
-    return MaterialApp(
-      title: 'Pastèque Match',
-      supportedLocales: const [App.defaultLocale],
-      localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      theme: buildAppTheme(),
-      home: const RegisterPage(),
+    return DefaultFetcherConfig(
+      config: const FetcherConfig(
+        showError: showError,
+        reportError: reportError,
+      ),
+      child: MaterialApp(
+        title: 'Pastèque Match',
+        supportedLocales: const [App.defaultLocale],
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        theme: buildAppTheme(),
+        home: const RegisterPage(),
+      ),
     );
   }
 }

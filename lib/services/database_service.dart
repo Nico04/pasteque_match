@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/models/user.dart';
+import 'package:pasteque_match/utils/_utils.dart';
 
 class DatabaseService {
   static final _db = FirebaseFirestore.instance;
@@ -17,6 +18,7 @@ class DatabaseService {
   /// Add a new user.
   /// Return user id.
   static Future<String> addUser(String username) async {
+    await throwIfNoInternet();    // Firebase 'add' command need internet, and never stops if there is no connection.
     final userRef = await _users.add(User(name: username));
     return userRef.id;
   }
