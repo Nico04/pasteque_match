@@ -23,7 +23,7 @@ dependencies:
   connectivity_plus: ^2.3.6
   firebase_core: ^1.20.0
   firebase_crashlytics: ^2.8.6
-  cloud_firestore: ^3.4.0
+  cloud_firestore: ^3.4.3
 
   # Device
   shared_preferences: ^2.0.15
