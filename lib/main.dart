@@ -8,8 +8,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pasteque_match/firebase_options.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 
+import 'pages/main.page.dart';
 import 'pages/register.page.dart';
 import 'resources/app_theme.dart';
+import 'services/storage_service.dart';
 
 void main() async {
   // Init Flutter
@@ -34,6 +36,9 @@ void main() async {
       FirebaseCrashlytics.instance.recordFlutterError(flutterErrorDetails);
     }
   };
+
+  // Init shared pref
+  await StorageService.init();
 
   // Start App
   runApp(const App());
@@ -61,7 +66,7 @@ class App extends StatelessWidget {
         supportedLocales: const [App.defaultLocale],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         theme: buildAppTheme(),
-        home: const RegisterPage(),
+        home: StorageService.readUserId() == null ? const RegisterPage() : const MainPage(),
       ),
     );
   }
