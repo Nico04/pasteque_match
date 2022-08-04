@@ -49,7 +49,7 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
       void postSwipe(SwipeValue value) async {
         // Send request
         debugPrint('[Swipe] ${value.name} "${name.name}"');
-        DatabaseService.addUserVote(Vote(name.id, value));
+        DatabaseService.addUserVote(name.id, value);
       }
 
       return SwipeItem(

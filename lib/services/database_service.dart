@@ -54,9 +54,9 @@ class DatabaseService {
   }
 
   /// Add a new user's vote
-  static Future<void> addUserVote(Vote vote) async {
+  static Future<void> addUserVote(String nameId, SwipeValue value) async {
     await _userRef.update({
-      'votes': FieldValue.arrayUnion([vote.toJson()]),
+      'votes.$nameId': value.name,
     });
   }
 }
