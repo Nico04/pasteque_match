@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -94,6 +96,11 @@ Future<void> showError(BuildContext context, Object error) async {
     // Ignore error : handled by AppService.logout
   }
 
+  // Unauthorized
+  else if (error is FirebaseException) {
+    showMessage(context, 'Erreur de communication avec la base de donnée', isError: true, details: error.message);
+  }
+
   // Displayable exception
   else if (error is DisplayableException) {
     showMessage(context, error.toString(), isError: true);
@@ -149,3 +156,13 @@ bool typesEqual<T1, T2>() => T1 == T2;
 
 /// Returns true if T is not set, Null, void or dynamic.
 bool isTypeUndefined<T>() => typesEqual<T, Object?>() || typesEqual<T, Null>() || typesEqual<T, void>() || typesEqual<T, dynamic>();
+
+class NullableDateTimeConverter implements JsonConverter<DateTime?, String?> {
+  const NullableDateTimeConverter();
+
+  @override
+  DateTime? fromJson(String? value) => DateTime.tryParse(value ?? '')?.toLocal();
+
+  @override
+  String? toJson(DateTime? value) => value?.toUtc().toIso8601String();
+}
