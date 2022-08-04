@@ -90,7 +90,7 @@ class _NameCard extends StatelessWidget {
 class MainPageBloc with Disposable {
   Future<List<Name>> getRemainingNames() async {
     final allNames = await DatabaseService.getNames();
-    //final votedNames = ;    //TODO
-    return allNames;
+    final votedNamesId = (await DatabaseService.getUser()).votes.keys;
+    return allNames.where((name) => !votedNamesId.contains(name.id)).toList(growable: false);   // TODO sort random ?
   }
 }

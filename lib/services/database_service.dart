@@ -4,6 +4,7 @@ import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/services/storage_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
+import 'package:rxdart/rxdart.dart';
 
 class DatabaseService {
   static final _db = FirebaseFirestore.instance;
@@ -18,6 +19,16 @@ class DatabaseService {
   );
 
   static final _userRef = _users.doc(StorageService.readUserId());
+  static ValueStream<User>? _userStream;
+  static Future<User> getUser() async {
+    // Return latest cached value
+    if (_userStream != null) return _userStream!.value!;
+
+    // If no cached value is available, get value from database, then create a stream to stay up-to-date
+    final user = (await _userRef.get()).data()!;
+    _userStream = _userRef.snapshots().map((snapshot) => snapshot.data()!).shareValueSeeded(user);
+    return user;
+  }
 
   /// Add a new user.
   /// Return user id.
