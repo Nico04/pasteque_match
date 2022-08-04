@@ -6,7 +6,7 @@ part of 'name.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Name _$NameFromJson(Map<String, dynamic> json) => Name(
+NameData _$NameDataFromJson(Map<String, dynamic> json) => NameData(
       name: json['name'] as String,
       gender: $enumDecode(_$NameGenderEnumMap, json['gender']),
       otherNames: (json['otherNames'] as List<dynamic>?)
@@ -15,7 +15,7 @@ Name _$NameFromJson(Map<String, dynamic> json) => Name(
           const [],
     );
 
-Map<String, dynamic> _$NameToJson(Name instance) => <String, dynamic>{
+Map<String, dynamic> _$NameDataToJson(NameData instance) => <String, dynamic>{
       'name': instance.name,
       'gender': _$NameGenderEnumMap[instance.gender]!,
       'otherNames': instance.otherNames,

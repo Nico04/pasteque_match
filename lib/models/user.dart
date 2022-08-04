@@ -4,9 +4,12 @@ part 'user.g.dart';
 
 @JsonSerializable()
 class User {
-  const User({required this.name, this.votes = const[]});
+  const User({required this.name, this.partnerId, this.votes = const[]});
 
   final String name;
+
+  final String? partnerId;
+
   final List<Vote> votes;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

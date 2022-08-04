@@ -43,7 +43,7 @@ void main(List<String> rawArgs) async {
   final csvRows = const CsvToListConverter(fieldDelimiter: ';').convert(csvRaw);
 
   // Convert to dart class
-  final names = <Name>[];
+  final names = <NameData>[];
   for (final row in csvRows) {
     // Name
     final rawNames = (row[0] as String).split('/');
@@ -55,7 +55,7 @@ void main(List<String> rawArgs) async {
     if (name.isEmpty || gender == null) continue;
 
     // Build object
-    names.add(Name(
+    names.add(NameData(
       name: name,
       gender: gender,
       otherNames: otherNames,

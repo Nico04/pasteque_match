@@ -8,14 +8,16 @@ import 'package:pasteque_match/utils/_utils.dart';
 class DatabaseService {
   static final _db = FirebaseFirestore.instance;
 
-  static final _names = _db.collection('names').withConverter<Name>(
-    fromFirestore: (snapshot, _) => Name.fromJson(snapshot.data()!),
+  static final _names = _db.collection('names').withConverter<NameData>(
+    fromFirestore: (snapshot, _) => NameData.fromJson(snapshot.data()!),
     toFirestore: (model, _) => model.toJson(),
   );
   static final _users = _db.collection('users').withConverter<User>(
     fromFirestore: (snapshot, _) => User.fromJson(snapshot.data()!),
     toFirestore: (model, _) => model.toJson(),
   );
+
+  static final _userRef = _users.doc(StorageService.readUserId());
 
   /// Add a new user.
   /// Return user id.
@@ -45,6 +47,16 @@ class DatabaseService {
     }
 
     // Return data
-    return snapshot.docs.map((ref) => ref.data()).toList();
+    return snapshot.docs.map((ref) => Name.fromBase(
+      id: ref.id,
+      nameBase: ref.data(),
+    )).toList();
+  }
+
+  /// Add a new user's vote
+  static Future<void> addUserVote(Vote vote) async {
+    await _userRef.update({
+      'votes': FieldValue.arrayUnion([vote.toJson()]),
+    });
   }
 }

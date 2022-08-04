@@ -49,8 +49,7 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
       void postSwipe(SwipeValue value) async {
         // Send request
         debugPrint('[Swipe] ${value.name} "${name.name}"');
-
-        // TODO send update
+        DatabaseService.addUserVote(Vote(name.id, value));
       }
 
       return SwipeItem(
@@ -67,7 +66,7 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
 class _NameCard extends StatelessWidget {
   const _NameCard(this.name, {Key? key}) : super(key: key);
 
-  final Name name;
+  final NameData name;
 
   @override
   Widget build(BuildContext context) {
