@@ -18,6 +18,8 @@ dependencies:
 
   # Widgets / UI
   flash: ^2.0.3+3
+  swipe_cards:
+    path: ./plugins/swipe_cards/   # Local fork to extends capabilities
 
   # Web
   http: ^0.13.4
