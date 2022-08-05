@@ -2,6 +2,7 @@ import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/models/user.dart';
+import 'package:pasteque_match/pages/profile.page.dart';
 import 'package:pasteque_match/pages/register.page.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/database_service.dart';
@@ -24,34 +25,59 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FetchBuilder.basic<List<Name>>(
-        task: bloc.getRemainingNames,
-        config: FetcherConfig(
-          reportError: (e, s, {reason}) {
-            if (e is NotFoundException) {
-              showMessage(context, 'Utilisateur introuvable', isError: true);
-              navigateTo(context, (_) => const RegisterPage(), clearHistory: true);
-            } else {
-              DefaultFetcherConfig.of(context).reportError?.call(e, s, reason: reason);
-            }
-          }
-        ),
-        builder: (context, names) {
-          return ValueBuilder<MatchEngine>(
-          key: ObjectKey(names),
-            valueGetter: () => _buildSwipeEngine(names),
-            builder: (context, matchEngine) {
-              return Padding(
-                padding: AppResources.paddingPage,
-                child: SwipeCards(
-                  matchEngine: matchEngine,
-                  onStackFinished: () => print('onStackFinished'),    // TODO
-                  itemBuilder: (context, index, distance, slideRegion) => _NameCard(names[index]),
+      body: SafeArea(
+        child: Column(
+          children: [
+
+            // Header
+            Padding(
+              padding: AppResources.paddingPageHorizontal,
+              child: SizedBox(
+                height: kToolbarHeight,
+                child: AlignedRow(
+                  center: const Text('🍉 Pastèque Match 🍉'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.person),
+                    onPressed: () => navigateTo(context, (_) => const ProfilePage()),
+                  ),
                 ),
-              );
-            },
-          );
-        },
+              ),
+            ),
+
+            // Swipe cards
+            Expanded(
+              child: FetchBuilder.basic<List<Name>>(
+                task: bloc.getRemainingNames,
+                config: FetcherConfig(
+                  reportError: (e, s, {reason}) {
+                    if (e is NotFoundException) {
+                      showMessage(context, 'Utilisateur introuvable', isError: true);
+                      navigateTo(context, (_) => const RegisterPage(), clearHistory: true);
+                    } else {
+                      DefaultFetcherConfig.of(context).reportError?.call(e, s, reason: reason);
+                    }
+                  }
+                ),
+                builder: (context, names) {
+                  return ValueBuilder<MatchEngine>(
+                  key: ObjectKey(names),
+                    valueGetter: () => _buildSwipeEngine(names),
+                    builder: (context, matchEngine) {
+                      return Padding(
+                        padding: AppResources.paddingPage,
+                        child: SwipeCards(
+                          matchEngine: matchEngine,
+                          onStackFinished: () => print('onStackFinished'),    // TODO
+                          itemBuilder: (context, index, distance, slideRegion) => _NameCard(names[index]),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
