@@ -20,7 +20,7 @@ class Name extends NameData {
   Name.fromBase({required this.id, required NameData nameBase})
       : super(name: nameBase.name, gender: nameBase.gender, otherNames: nameBase.otherNames);
 
-  final String id;
+  final String id;    // TODO remove this class, use a getter to normalize name to get id instead
 }
 
 enum NameGender {

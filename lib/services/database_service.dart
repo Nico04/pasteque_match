@@ -14,7 +14,7 @@ class DatabaseService {
     toFirestore: (model, _) => model.toJson(),
   );
   static final _users = _db.collection('users').withConverter<User>(
-    fromFirestore: (snapshot, _) => User.fromJson(snapshot.data()!),
+    fromFirestore: (snapshot, _) => User.fromJson(snapshot.id, snapshot.data()!),
     toFirestore: (model, _) => model.toJson(),
   );
 
@@ -34,7 +34,7 @@ class DatabaseService {
   /// Return user id.
   static Future<String> addUser(String username) async {
     await throwIfNoInternet();    // Firebase 'add' command need internet, and never stops if there is no connection.
-    final userRef = await _users.add(User(name: username));
+    final userRef = await _users.add(User(id: '', name: username));   // User.id is ignored at serialisation
     debugPrint('[DatabaseService] user $username added');
     return userRef.id;
   }

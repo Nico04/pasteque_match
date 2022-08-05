@@ -6,7 +6,7 @@ part of 'user.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-User _$UserFromJson(Map<String, dynamic> json) => User(
+UserData _$UserDataFromJson(Map<String, dynamic> json) => UserData(
       name: json['name'] as String,
       partnerId: json['partnerId'] as String?,
       votes: (json['votes'] as Map<String, dynamic>?)?.map(
@@ -15,12 +15,22 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
           const {},
     );
 
-Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
-      'name': instance.name,
-      'partnerId': instance.partnerId,
-      'votes':
-          instance.votes.map((k, e) => MapEntry(k, _$SwipeValueEnumMap[e]!)),
-    };
+Map<String, dynamic> _$UserDataToJson(UserData instance) {
+  final val = <String, dynamic>{
+    'name': instance.name,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('partnerId', instance.partnerId);
+  val['votes'] =
+      instance.votes.map((k, e) => MapEntry(k, _$SwipeValueEnumMap[e]!));
+  return val;
+}
 
 const _$SwipeValueEnumMap = {
   SwipeValue.dislike: 'dislike',
