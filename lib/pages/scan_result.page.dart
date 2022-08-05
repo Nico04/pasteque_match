@@ -1,5 +1,6 @@
 import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
+import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 
@@ -22,34 +23,36 @@ class _ScanResultPageState extends State<ScanResultPage> with BlocProvider<ScanR
       appBar: AppBar(
         title: const Text('Résultat du scan'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-
-            // Is NOT valid
-            if (!bloc.isValid)...[
-              const Icon(
-                Icons.error_outline,
-                size: 60,
-              ),
-              AppResources.spacerMedium,
-              const Text('Le QrCode n\'est pas un partenaire valide'),
-              AppResources.spacerMedium,
-              ElevatedButton(
-                onPressed: () => context.popToRoot(),
-                child: const Text('Retour'),
-              ),
-            ]
-
-            // Is valid
-            else...[
-              Text('TODO'),
-            ],
-
-          ],
-        ),
-      ),
+      body: () {
+        // Is NOT valid
+        if (!bloc.isValid) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  size: 60,
+                ),
+                AppResources.spacerMedium,
+                const Text('Le QrCode n\'est pas un partenaire valide'),
+                AppResources.spacerMedium,
+                ElevatedButton(
+                  onPressed: () => context.popToRoot(),
+                  child: const Text('Retour'),
+                ),
+              ],
+            ),
+          );
+        } else {
+          return FetchBuilder.basic<User?>(
+            task: bloc.getPartner,
+            builder: (context, partner) {
+              return Text(partner?.name ?? 'None');   // TODO
+            }
+          );
+        }
+      } (),
     );
   }
 }
@@ -61,4 +64,8 @@ class ScanResultPageBloc with Disposable {
   final String scanResult;
 
   late final bool isValid = scanResult.startsWith(AppResources.qrCodeHeader);
+
+  Future<User?> getPartner() async {
+    // TODO
+  }
 }
