@@ -32,6 +32,7 @@ dependencies:
   shared_preferences: ^2.0.15
 
   # Platform tools
+  permission_handler: ^10.0.0
   ai_barcode: ^3.2.1
 
 dev_dependencies:

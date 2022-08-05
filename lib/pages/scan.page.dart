@@ -1,9 +1,22 @@
 import 'package:ai_barcode/ai_barcode.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/utils/_utils.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import 'scan_permission.page.dart';
 
 class ScanPage extends StatelessWidget {
-  const ScanPage({super.key});
+  static Future<void> goToScanOrPermissionPage(BuildContext context) async {
+    if (await Permission.camera.isGranted) {
+      navigateTo(context, (_) => const ScanPage._());
+    } else {
+      navigateTo(context, (_) => ScanPermissionPage(
+        onGranted: () => navigateTo(context, (_) => const ScanPage._(), removePreviousRoutesAmount: 1),
+      ));
+    }
+  }
+
+  const ScanPage._({super.key});
 
   @override
   Widget build(BuildContext context) {
