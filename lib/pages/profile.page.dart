@@ -4,6 +4,8 @@ import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/themed/pm_qr_code_widget.dart';
 
+import 'scan.page.dart';
+
 class ProfilePage extends StatelessWidget {
   const ProfilePage(this.user, {super.key});
 
@@ -66,7 +68,7 @@ class _PartnerCard extends StatelessWidget {
               PmQrCodeWidget('PM##$userId'),
               AppResources.spacerMedium,
               ElevatedButton(
-                onPressed: () {},     // TODO
+                onPressed: () => navigateTo(context, (_) => const ScanPage()),
                 child: const Text('Scanner le code de votre partenaire'),
               )
             ]
