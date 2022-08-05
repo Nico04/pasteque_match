@@ -21,15 +21,18 @@ dependencies:
   swipe_cards:
     path: ./plugins/swipe_cards/   # Local fork to extends capabilities
 
-  # Web
+  # Network
   http: ^0.13.4
   connectivity_plus: ^2.3.6
   firebase_core: ^1.20.0
   firebase_crashlytics: ^2.8.6
-  cloud_firestore: ^3.4.3
 
-  # Device
+  # Data management
+  cloud_firestore: ^3.4.3
   shared_preferences: ^2.0.15
+
+  # Platform tools
+  ai_barcode: ^3.2.1
 
 dev_dependencies:
   # Code style

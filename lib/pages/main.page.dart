@@ -38,7 +38,11 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
                   center: const Text('🍉 Pastèque Match 🍉'),
                   trailing: IconButton(
                     icon: const Icon(Icons.person),
-                    onPressed: () => navigateTo(context, (_) => const ProfilePage()),
+                    onPressed: () {
+                      if (bloc.user != null) {
+                        navigateTo(context, (_) => ProfilePage(bloc.user!));
+                      }
+                    },
                   ),
                 ),
               ),
@@ -126,16 +130,18 @@ class _NameCard extends StatelessWidget {
 
 
 class MainPageBloc with Disposable {
+  User? user;
+
   Future<List<Name>> getRemainingNames() async {
     // Get all names
     final allNames = await DatabaseService.getNames();
 
     // Get current user data
-    final user = await DatabaseService.getUser();
+    user = await DatabaseService.getUser();
     if (user == null) throw const NotFoundException('User not found');
 
     // Compute remaining votes
-    final votedNamesId = user.votes.keys;
+    final votedNamesId = user!.votes.keys;
     return allNames.where((name) => !votedNamesId.contains(name.id)).toList(growable: false);   // TODO sort random ?
   }
 }
