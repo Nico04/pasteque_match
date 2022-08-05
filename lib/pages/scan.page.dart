@@ -4,6 +4,7 @@ import 'package:pasteque_match/utils/_utils.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'scan_permission.page.dart';
+import 'scan_result.page.dart';
 
 class ScanPage extends StatelessWidget {
   static Future<void> goToScanOrPermissionPage(BuildContext context) async {
@@ -30,7 +31,7 @@ class ScanPage extends StatelessWidget {
             child: _BarcodeScanner(
               onResult: (result) => navigateTo(
                 context,
-                (_) => Text('TODO'),    // TODO
+                (_) => ScanResultPage(result),
                 removePreviousRoutesAmount: 1,    // Easy way to properly stop scanner while on new page
               ),
             ),
