@@ -2,9 +2,11 @@ import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/models/user.dart';
+import 'package:pasteque_match/pages/register.page.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/database_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
+import 'package:pasteque_match/utils/exceptions/not_found_exception.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 
@@ -24,6 +26,16 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
     return Scaffold(
       body: FetchBuilder.basic<List<Name>>(
         task: bloc.getRemainingNames,
+        config: FetcherConfig(
+          reportError: (e, s, {reason}) {
+            if (e is NotFoundException) {
+              showMessage(context, 'Utilisateur introuvable', isError: true);
+              navigateTo(context, (_) => const RegisterPage(), clearHistory: true);
+            } else {
+              DefaultFetcherConfig.of(context).reportError?.call(e, s, reason: reason);
+            }
+          }
+        ),
         builder: (context, names) {
           return ValueBuilder<MatchEngine>(
           key: ObjectKey(names),
@@ -89,8 +101,15 @@ class _NameCard extends StatelessWidget {
 
 class MainPageBloc with Disposable {
   Future<List<Name>> getRemainingNames() async {
+    // Get all names
     final allNames = await DatabaseService.getNames();
-    final votedNamesId = (await DatabaseService.getUser()).votes.keys;
+
+    // Get current user data
+    final user = await DatabaseService.getUser();
+    if (user == null) throw const NotFoundException('User not found');
+
+    // Compute remaining votes
+    final votedNamesId = user.votes.keys;
     return allNames.where((name) => !votedNamesId.contains(name.id)).toList(growable: false);   // TODO sort random ?
   }
 }

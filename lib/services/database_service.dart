@@ -18,14 +18,18 @@ class DatabaseService {
     toFirestore: (model, _) => model.toJson(),
   );
 
-  static final _userRef = _users.doc(StorageService.readUserId());
+  static DocumentReference<User> get _userRef => _users.doc(StorageService.readUserId());
   static ValueStream<User>? _userStream;
-  static Future<User> getUser() async {
+  static Future<User?> getUser() async {
     // Return latest cached value
     if (_userStream != null) return _userStream!.value!;
 
-    // If no cached value is available, get value from database, then create a stream to stay up-to-date
-    final user = (await _userRef.get()).data()!;
+    // If no cached value is available, get value from database
+    debugPrint('[DatabaseService] get user');
+    final user = (await _userRef.get()).data();
+    if (user == null) return null;
+
+    // Create a stream to stay up-to-date
     _userStream = _userRef.snapshots().map((snapshot) => snapshot.data()!).shareValueSeeded(user);
     return user;
   }
