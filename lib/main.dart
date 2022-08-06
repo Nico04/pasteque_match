@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pasteque_match/firebase_options.dart';
+import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 
 import 'pages/main.page.dart';
@@ -40,6 +41,9 @@ void main() async {
   // Init shared pref
   await StorageService.init();
 
+  // Init App Service
+  AppService.instance.init();
+
   // Start App
   runApp(const App());
 }
@@ -50,6 +54,13 @@ class App extends StatelessWidget {
   // Default locale
   static const defaultLocale = Locale('fr');
 
+  /// Global key for the App's main navigator
+  static final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
+  /// The [BuildContext] of the main navigator.
+  /// We may use this on showMessage, showError, openDialog, etc.
+  static BuildContext get navigatorContext => _navigatorKey.currentContext!;
+
   @override
   Widget build(BuildContext context) {
     // Set orientations.
@@ -57,16 +68,17 @@ class App extends StatelessWidget {
 
     // Build app
     return DefaultFetcherConfig(
-      config: const FetcherConfig(
+      config: FetcherConfig(
         showError: showError,
-        reportError: reportError,
+        reportError: AppService.instance.handleError,
       ),
       child: MaterialApp(
         title: 'Pastèque Match',
         supportedLocales: const [App.defaultLocale],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         theme: buildAppTheme(),
-        home: StorageService.readUserId() == null ? const RegisterPage() : const MainPage(),
+        navigatorKey: _navigatorKey,
+        home: AppService.instance.hasLocalUser ? const MainPage() : const RegisterPage(),
       ),
     );
   }

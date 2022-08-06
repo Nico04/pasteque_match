@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/resources/_resources.dart';
-import 'package:pasteque_match/services/database_service.dart';
-import 'package:pasteque_match/services/storage_service.dart';
+import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 
@@ -65,8 +64,5 @@ class _RegisterPageState extends State<RegisterPage> with BlocProvider<RegisterP
 class RegisterPageBloc with Disposable {
   String? username;
 
-  Future<void> registerUser() async {
-    final userId = await DatabaseService.addUser(username!);
-    await StorageService.saveUserId(userId);
-  }
+  Future<void> registerUser() => AppService.instance.registerUser(username!);
 }
