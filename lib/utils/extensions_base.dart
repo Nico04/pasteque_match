@@ -5,6 +5,27 @@ import 'package:diacritic/diacritic.dart';
 extension ExtendedString on String {
   /// Normalize a string by removing diacritics and transform to lower case
   String get normalized => removeDiacritics(toLowerCase());
+
+  /// Returns the substring of this string that extends from [startIndex], inclusive, with a length of [length].
+  /// If [length] if negative, length will be relative to the total length
+  String substringSafe({int? startIndex, int? length}) {
+    if (startIndex == null && length == null) return '';
+
+    startIndex ??= 0;
+
+    if (length == null) {
+      length = this.length;
+    } else {
+      length = length.clamp(0, this.length);
+    }
+
+    if (startIndex < 0) startIndex = 0;
+    if (length < 0) length = this.length + length;
+
+    if (startIndex >= length) return '';
+
+    return substring(startIndex, length);
+  }
 }
 
 // Cannot import 'package:pasteque_match/utils/extensions.dart', otherwise program throws

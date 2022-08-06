@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pasteque_match/models/scan_result.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/utils/_utils.dart';
@@ -65,7 +66,7 @@ class _PartnerCard extends StatelessWidget {
               AppResources.spacerMedium,
               const Text('Votre code unique :'),
               AppResources.spacerMedium,
-              PmQrCodeWidget(AppResources.qrCodeHeader + userId),
+              PmQrCodeWidget(ScanResult.buildCode(userId)),
               AppResources.spacerMedium,
               ElevatedButton(
                 onPressed: () => ScanPage.goToScanOrPermissionPage(context),

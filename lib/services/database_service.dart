@@ -33,6 +33,11 @@ class DatabaseService {
     return userRef.id;
   }
 
+  Future<User?> getPartner(String id) async {
+    debugPrint('[DatabaseService] get partner $id');
+    return (await _users.doc(id).get()).data();
+  }
+
   /// Return all the names.
   /// Use a 1 day cache, to avoid too many queries.
   Future<List<Name>> getNames() async {

@@ -23,7 +23,4 @@ class AppResources {
 
   // String
   static const textFormMandatory = 'Obligatoire';
-
-  // Other
-  static const qrCodeHeader = 'PM##';
 }

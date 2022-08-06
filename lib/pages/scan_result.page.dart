@@ -1,13 +1,15 @@
 import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
+import 'package:pasteque_match/models/scan_result.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
+import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 
 class ScanResultPage extends StatefulWidget {
-  const ScanResultPage(this.scanResult, {Key? key}) : super(key: key);
+  ScanResultPage(String scanResult, {super.key}) : scanResult = ScanResult(scanResult);
 
-  final String scanResult;
+  final ScanResult scanResult;
 
   @override
   State<ScanResultPage> createState() => _ScanResultPageState();
@@ -25,7 +27,7 @@ class _ScanResultPageState extends State<ScanResultPage> with BlocProvider<ScanR
       ),
       body: () {
         // Is NOT valid
-        if (!bloc.isValid) {
+        if (!widget.scanResult.isValid) {
           return Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -61,11 +63,7 @@ class _ScanResultPageState extends State<ScanResultPage> with BlocProvider<ScanR
 class ScanResultPageBloc with Disposable {
   ScanResultPageBloc(this.scanResult);
 
-  final String scanResult;
+  final ScanResult scanResult;
 
-  late final bool isValid = scanResult.startsWith(AppResources.qrCodeHeader);
-
-  Future<User?> getPartner() async {
-    // TODO
-  }
+  Future<User?> getPartner() => AppService.database.getPartner(scanResult.userId!);
 }
