@@ -108,7 +108,7 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
 class _NameCard extends StatelessWidget {
   const _NameCard(this.name, {Key? key}) : super(key: key);
 
-  final NameData name;
+  final Name name;
 
   @override
   Widget build(BuildContext context) {

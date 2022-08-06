@@ -1,8 +1,5 @@
+import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
-
-extension ExtendedString on String {
-  String plural(num count) => this + (count >= 2 ? 's' : '');
-}
 
 extension ExtendedBuildContext on BuildContext {
   TextTheme get textTheme => Theme.of(this).textTheme;

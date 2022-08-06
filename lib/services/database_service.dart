@@ -9,8 +9,8 @@ import 'package:rxdart/rxdart.dart';
 class DatabaseService {
   static final _db = FirebaseFirestore.instance;
 
-  static final _names = _db.collection('names').withConverter<NameData>(
-    fromFirestore: (snapshot, _) => NameData.fromJson(snapshot.data()!),
+  static final _names = _db.collection('names').withConverter<Name>(
+    fromFirestore: (snapshot, _) => Name.fromJson(snapshot.data()!),
     toFirestore: (model, _) => model.toJson(),
   );
   static final _users = _db.collection('users').withConverter<User>(
@@ -62,10 +62,7 @@ class DatabaseService {
     }
 
     // Return data
-    return snapshot.docs.map((ref) => Name.fromBase(
-      id: ref.id,
-      nameBase: ref.data(),
-    )).toList();
+    return snapshot.docs.map((ref) => ref.data()).toList();
   }
 
   /// Add a new user's vote

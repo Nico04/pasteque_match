@@ -35,6 +35,9 @@ dependencies:
   permission_handler: ^10.0.0
   ai_barcode: ^3.2.1
 
+  # Internationalization
+  diacritic: ^0.1.1
+
 dev_dependencies:
   # Code style
   flutter_lints: ^2.0.1
