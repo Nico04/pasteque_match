@@ -43,6 +43,13 @@ class _ScanResultPageState extends State<ScanResultPage> with BlocProvider<ScanR
                 );
               }
 
+              if (partner.hasPartner) {
+                return const _ErrorMessage(
+                  icon: Icons.sentiment_dissatisfied,
+                  message: 'Votre partenaire est déjà pris',
+                );
+              }
+
               return AsyncTaskBuilder<void>(
                 task: bloc.choosePartner,
                 onSuccess: (_) async {

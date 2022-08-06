@@ -4,6 +4,7 @@ import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/services/storage_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
+import 'package:pasteque_match/utils/exceptions/invalid_operation_exception.dart';
 import 'package:pasteque_match/utils/exceptions/unauthorized_exception.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -46,10 +47,19 @@ class DatabaseService {
       'partnerId': partnerId,
     };
 
-    final batch = _db.batch();
-    batch.update(_users.doc(userId), buildData(partnerId));
-    batch.update(_users.doc(partnerId), buildData(userId));
-    await batch.commit();
+    // Use a transaction to make sure the partner is free
+    await _db.runTransaction((transaction) async {
+      final partnerRef = _users.doc(partnerId);
+
+      // Check partner is free
+      final partner = (await transaction.get(partnerRef)).data();
+      if (partner == null) throw const InvalidOperationException('Partenaire introuvable');
+      if (partner.hasPartner) throw const InvalidOperationException('Partenaire occupé');
+
+      // Set partner
+      transaction.update(_users.doc(userId), buildData(partnerId));
+      transaction.update(_users.doc(partnerId), buildData(userId));
+    });
   }
 
   /// Return all the names.
