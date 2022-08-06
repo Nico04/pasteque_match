@@ -40,11 +40,8 @@ class AppService {
   }
 
   Future<void> choosePartner(String partnerId) async {
-    // Set current user partner
+    // Update database
     await database.setPartner(user!.id, partnerId);
-
-    // Set partner's partner
-    await database.setPartner(partnerId, user!.id);
 
     // Init partner store
     database.partner.id = partnerId;    // TODO init this at app startup

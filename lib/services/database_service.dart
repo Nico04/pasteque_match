@@ -38,11 +38,18 @@ class DatabaseService {
     return (await _users.doc(id).get()).data();
   }
 
+  /// Set user partner
+  /// Update [userId]'s partner AND [partnerId]'s partner
   Future<void> setPartner(String userId, String partnerId) async {
     debugPrint('[DatabaseService] set user\'s partner');
-    await _users.doc(userId).update({
+    Map<String, dynamic> buildData(String partnerId) => {
       'partnerId': partnerId,
-    });
+    };
+
+    final batch = _db.batch();
+    batch.update(_users.doc(userId), buildData(partnerId));
+    batch.update(_users.doc(partnerId), buildData(userId));
+    await batch.commit();
   }
 
   /// Return all the names.
