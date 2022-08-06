@@ -28,33 +28,55 @@ class _ScanResultPageState extends State<ScanResultPage> with BlocProvider<ScanR
       body: () {
         // Is NOT valid
         if (!widget.scanResult.isValid) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.error_outline,
-                  size: 60,
-                ),
-                AppResources.spacerMedium,
-                const Text('Le QrCode n\'est pas un partenaire valide'),
-                AppResources.spacerMedium,
-                ElevatedButton(
-                  onPressed: () => context.popToRoot(),
-                  child: const Text('Retour'),
-                ),
-              ],
-            ),
+          return const _ErrorMessage(
+            icon: Icons.error_outline,
+            message: 'Le QrCode n\'est pas un partenaire valide',
           );
         } else {
           return FetchBuilder.basic<User?>(
             task: bloc.getPartner,
             builder: (context, partner) {
-              return Text(partner?.name ?? 'None');   // TODO
+              if (partner == null) {
+                return const _ErrorMessage(
+                  icon: Icons.sentiment_dissatisfied,
+                  message: 'Aucun partenaire trouvé',
+                );
+              }
+
+              return Text(partner.name);   // TODO
             }
           );
         }
       } (),
+    );
+  }
+}
+
+class _ErrorMessage extends StatelessWidget {
+  const _ErrorMessage({required this.icon, required this.message, super.key});
+
+  final IconData icon;
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 60,
+          ),
+          AppResources.spacerMedium,
+          Text(message),
+          AppResources.spacerMedium,
+          ElevatedButton(
+            onPressed: () => context.popToRoot(),
+            child: const Text('Retour'),
+          ),
+        ],
+      ),
     );
   }
 }
