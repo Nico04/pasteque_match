@@ -43,7 +43,40 @@ class _ScanResultPageState extends State<ScanResultPage> with BlocProvider<ScanR
                 );
               }
 
-              return Text(partner.name);   // TODO
+              return AsyncTaskBuilder<void>(
+                task: bloc.choosePartner,
+                onSuccess: (_) async {
+                  showMessage(context, 'Partenaire choisi !');
+                  context.popToRoot();
+                },
+                builder: (context, runTask) {
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.sentiment_satisfied_alt,
+                          size: 60,
+                        ),
+                        AppResources.spacerMedium,
+                        const Text('Partenaire trouvé !'),
+                        AppResources.spacerMedium,
+                        Text(
+                          partner.name,
+                          style: context.textTheme.headlineMedium,
+                        ),
+                        AppResources.spacerHuge,
+                        const Text('Une fois validé, vous serez lié l\'un à l\'autre.'),
+                        AppResources.spacerMedium,
+                        ElevatedButton(
+                          onPressed: runTask,
+                          child: const Text('Choisir comme partenaire'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
             }
           );
         }
@@ -88,4 +121,6 @@ class ScanResultPageBloc with Disposable {
   final ScanResult scanResult;
 
   Future<User?> getPartner() => AppService.database.getPartner(scanResult.userId!);
+
+  Future<void> choosePartner() => AppService.instance.choosePartner(scanResult.userId!);
 }

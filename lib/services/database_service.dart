@@ -38,6 +38,13 @@ class DatabaseService {
     return (await _users.doc(id).get()).data();
   }
 
+  Future<void> setPartner(String userId, String partnerId) async {
+    debugPrint('[DatabaseService] set user\'s partner');
+    await _users.doc(userId).update({
+      'partnerId': partnerId,
+    });
+  }
+
   /// Return all the names.
   /// Use a 1 day cache, to avoid too many queries.
   Future<List<Name>> getNames() async {

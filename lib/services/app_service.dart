@@ -10,6 +10,7 @@ import 'package:pasteque_match/utils/exceptions/unauthorized_exception.dart';
 import 'storage_service.dart';
 
 class AppService {
+  //#region Global
   /// App Service instance singleton
   static final instance = AppService();
 
@@ -19,10 +20,14 @@ class AppService {
   User? get user => database.user.cached;
   bool get hasLocalUser => database.user.isInitiated;
 
+  User? get partner => database.partner.cached;
+
   void init() {
     database.user.id = StorageService.readUserId();
   }
+  //#endregion
 
+  //#region Operations
   Future<void> registerUser(String username) async {
     // Register user to database
     final userId = await database.addUser(username);
@@ -30,10 +35,23 @@ class AppService {
     // Save id to local storage
     await StorageService.saveUserId(userId);
 
-    // Init user ?
+    // Init user store
     database.user.id = userId;
   }
 
+  Future<void> choosePartner(String partnerId) async {
+    // Set current user partner
+    await database.setPartner(user!.id, partnerId);
+
+    // Set partner's partner
+    await database.setPartner(partnerId, user!.id);
+
+    // Init partner store
+    database.partner.id = partnerId;    // TODO init this at app startup
+  }
+  //#endregion
+
+  //#region Other
   void handleError(Object exception, StackTrace stack, {dynamic reason}) {
     // Report error
     unawaited(reportError(exception, stack, reason: reason));
@@ -54,4 +72,5 @@ class AppService {
     // Go back to connexion page
     navigateTo(App.navigatorContext, (_) => const RegisterPage(), clearHistory: true);
   }
+  //#endregion
 }
