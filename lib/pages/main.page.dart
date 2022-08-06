@@ -5,6 +5,7 @@ import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/pages/profile.page.dart';
 import 'package:pasteque_match/resources/_resources.dart';
+import 'package:pasteque_match/resources/data.dart';
 import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
@@ -105,11 +106,27 @@ class _NameCard extends StatelessWidget {
       elevation: 3,
       child: Padding(
         padding: AppResources.paddingContent,
-        child: Center(
-          child: Text(
-            name.name,
-            style: context.textTheme.headlineLarge,
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              name.gender.icon,
+              size: 50,
+              color: name.gender.color,
+            ),
+            AppResources.spacerMedium,
+            Text(
+              name.name,
+              style: context.textTheme.headlineLarge,
+            ),
+            if (name.otherNames.isNotEmpty)...[
+              AppResources.spacerMedium,
+              Text(
+                name.otherNames.toLines(),
+                style: context.textTheme.titleMedium,
+              ),
+            ],
+          ],
         ),
       ),
     );
