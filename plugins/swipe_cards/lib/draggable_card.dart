@@ -110,7 +110,7 @@ class _DraggableCardState extends State<DraggableCard>
     }
 
     if (oldWidget.slideTo == null && widget.slideTo != null) {
-      switch (widget.slideTo) {
+      switch (widget.slideTo!) {
         case SlideDirection.left:
           _slideLeft();
           break;

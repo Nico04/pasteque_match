@@ -28,7 +28,7 @@ class DatabaseService {
   /// Return user id.
   Future<String> addUser(String username) async {
     await throwIfNoInternet();    // Firebase 'add' command need internet, and never stops if there is no connection.
-    final userRef = await _users.add(User(id: '', name: username));   // User.id is ignored at serialisation    // OPTI add this user to the cache store to avoid getting first value from db
+    final userRef = await _users.add(User(id: '', name: username));   // User.id is ignored at serialisation
     debugPrint('[DatabaseService] user $username added');
     return userRef.id;
   }
@@ -105,7 +105,7 @@ class UserStore {
     if (user == null) throw const UnauthorizedException();    // User does not exists
 
     // Create a stream to stay up-to-date
-    _stream = _dbRef!.snapshots().map((snapshot) => snapshot.data()!).shareValueSeeded(user);    // OPTI remove seeded because documentation of snapshots() says : 'An initial event is immediately sent' ?
+    _stream = _dbRef!.snapshots().map((snapshot) => snapshot.data()!).shareValue();    // No need to use shareValueSeeded because snapshots() command already do it
     return user;
   }
 }
