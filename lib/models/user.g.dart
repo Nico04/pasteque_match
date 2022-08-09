@@ -13,6 +13,8 @@ UserData _$UserDataFromJson(Map<String, dynamic> json) => UserData(
             (k, e) => MapEntry(k, $enumDecode(_$SwipeValueEnumMap, e)),
           ) ??
           const {},
+      lastVotedAt: const NullableTimestampConverter()
+          .fromJson(json['lastVotedAt'] as Timestamp?),
     );
 
 Map<String, dynamic> _$UserDataToJson(UserData instance) {
@@ -29,6 +31,8 @@ Map<String, dynamic> _$UserDataToJson(UserData instance) {
   writeNotNull('partnerId', instance.partnerId);
   val['votes'] =
       instance.votes.map((k, e) => MapEntry(k, _$SwipeValueEnumMap[e]!));
+  writeNotNull('lastVotedAt',
+      const NullableTimestampConverter().toJson(instance.lastVotedAt));
   return val;
 }
 

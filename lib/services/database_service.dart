@@ -5,7 +5,6 @@ import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/services/storage_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/utils/exceptions/invalid_operation_exception.dart';
-import 'package:pasteque_match/utils/exceptions/unauthorized_exception.dart';
 import 'package:rxdart/rxdart.dart';
 
 class DatabaseService {
@@ -19,7 +18,7 @@ class DatabaseService {
   );
   late final _users = _db.collection('users').withConverter<User>(
     fromFirestore: (snapshot, _) => User.fromJson(snapshot.id, snapshot.data()!),
-    toFirestore: (model, _) => model.toJson(),
+    toFirestore: (model, _) => model.toJson(),    // Only used for the set command, which is never used.
   );
 
   /// Add a new user.
@@ -100,6 +99,7 @@ class DatabaseService {
   Future<void> setUserVote(String userId, String nameId, SwipeValue value) async {
     await _users.doc(userId).update({
       'votes.$nameId': value.name,
+      'lastVotedAt': DateTime.now(),  // Using 'FieldValue.serverTimestamp()' is more accurate, but it doubles the db exchanges (automatically fetch the value set by server after the update), and this value is not used in the app.
     });
   }
 }
@@ -127,7 +127,12 @@ class UserStore {
     if (user == null) return null;    // User does not exists
 
     // Create a stream to stay up-to-date
-    _stream = _dbRef.snapshots().map((snapshot) => snapshot.data()!).shareValue()..listen((user) => debugPrint('[DatabaseService] user ${user.name} value stream'));   // No need to use shareValueSeeded because snapshots() command already do it    // TODO remove listen part
+    _stream = _dbRef.snapshots().map((snapshot) => snapshot.data()!).shareValue();  // No need to use shareValueSeeded because snapshots() command already do it
+    if (!kReleaseMode) {
+      _stream!.listen((user) {
+        debugPrint('[DatabaseService] user ${user.name} value stream (lastVotedAt: ${user.lastVotedAt})');
+      });
+    }
     return user;
   }
 }

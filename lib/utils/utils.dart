@@ -157,6 +157,8 @@ bool typesEqual<T1, T2>() => T1 == T2;
 /// Returns true if T is not set, Null, void or dynamic.
 bool isTypeUndefined<T>() => typesEqual<T, Object?>() || typesEqual<T, Null>() || typesEqual<T, void>() || typesEqual<T, dynamic>();
 
+T dumbFromJson<T>(dynamic json) => json as T;
+
 class NullableDateTimeConverter implements JsonConverter<DateTime?, String?> {
   const NullableDateTimeConverter();
 
@@ -165,4 +167,14 @@ class NullableDateTimeConverter implements JsonConverter<DateTime?, String?> {
 
   @override
   String? toJson(DateTime? value) => value?.toUtc().toIso8601String();
+}
+
+class NullableTimestampConverter implements JsonConverter<DateTime?, Timestamp?> {
+  const NullableTimestampConverter();
+
+  @override
+  DateTime? fromJson(Timestamp? timestamp) => timestamp?.toDate();
+
+  @override
+  Timestamp? toJson(DateTime? date) => date != null ? Timestamp.fromDate(date) : null;
 }
