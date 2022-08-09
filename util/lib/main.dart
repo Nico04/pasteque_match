@@ -3,7 +3,7 @@
 import 'dart:io';
 
 import 'package:csv/csv.dart';
-import 'package:firedart/firestore/firestore.dart';
+import 'package:firedart/firedart.dart';
 import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/utils/extensions_base.dart';
 
@@ -13,14 +13,30 @@ void main(List<String> rawArgs) async {
   print('############ Pastèque-Match Database Builder ############');
 
   // Check args
-  if (rawArgs.length != 1) {
-    print('Input file argument missing');
+  if (rawArgs.length != 3) {
+    print('Arguments must be "[email] [password] [input file]"');
+    exit(0);
+  }
+  final authEmail = rawArgs[0];
+  final authPassword = rawArgs[1];
+  final filePath = rawArgs[2];
+
+  // Ask user to check database status
+  print('If you have removed names since last update, you should first completely deleted the "names" collection in the database as the script won\'t remove them.\nDo you want to continue anyway ?');
+  var response = stdin.readLineSync();
+  if (response != 'y' && response != 'yes') {
     exit(0);
   }
 
+  // Admin authentication
+  print('Authentication');
+  final firebaseAuth = FirebaseAuth('AIzaSyAsPG2NCnMxGCSTPE9R-2kuHwZYITy9QN4', VolatileStore());
+  await firebaseAuth.signIn(authEmail, authPassword);
+  final user = await firebaseAuth.getUser();
+  print('Logged-in as ${user.email}');
+
   // Read file
   print('Load file');
-  final filePath = rawArgs.first;
   final file = File(filePath);
   if(!await file.exists()) {
     print('File does not exists');
@@ -56,7 +72,7 @@ void main(List<String> rawArgs) async {
 
   // Ask confirmation
   print('Are you sure you want to overwrite ${names.length} names to the database ?');
-  final response = stdin.readLineSync();
+  response = stdin.readLineSync();
   if (response != 'y' && response != 'yes') exit(0);
 
   // Send data to database
@@ -68,5 +84,10 @@ void main(List<String> rawArgs) async {
     await collectionRef.document(name.id).set(name.toJson());
   }
   print('Data sent');
+
+  // Sign out
+  firebaseAuth.signOut();
+
+  // Exit program
   exit(0);
 }
