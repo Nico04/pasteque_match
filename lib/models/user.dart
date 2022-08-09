@@ -17,6 +17,8 @@ class UserData {
   /// Using a map assure vote uniqueness
   final Map<String, SwipeValue> votes;
 
+  bool get hasPartner => partnerId != null;
+
   factory UserData.fromJson(Map<String, dynamic> json) => _$UserDataFromJson(json);
   Map<String, dynamic> toJson() => _$UserDataToJson(this);
 }

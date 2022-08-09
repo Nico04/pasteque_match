@@ -22,9 +22,6 @@ class DatabaseService {
     toFirestore: (model, _) => model.toJson(),
   );
 
-  final user = UserStore();
-  final partner = UserStore();
-
   /// Add a new user.
   /// Return user id.
   Future<String> addUser(String username) async {
@@ -62,6 +59,21 @@ class DatabaseService {
     });
   }
 
+  /// Remove user partner
+  /// Update [userId]'s partner AND [partnerId]'s partner
+  Future<void> removePartner(String userId, String partnerId) async {
+    debugPrint('[DatabaseService] remove user\'s partner');
+    final data = {
+      'partnerId': FieldValue.delete(),
+    };
+
+    // Batch update
+    final batch = _db.batch();
+    batch.update(_users.doc(userId), data);
+    batch.update(_users.doc(partnerId), data);
+    await batch.commit();
+  }
+
   /// Return all the names.
   /// Use a 1 day cache, to avoid too many queries.
   Future<List<Name>> getNames() async {
@@ -85,56 +97,37 @@ class DatabaseService {
   }
 
   /// Add a new user's vote
-  Future<void> setUserVote(String nameId, SwipeValue value) async {
-    if (!user.isInitiated) throw const UnauthorizedException();
-    await user._dbRef!.update({
+  Future<void> setUserVote(String userId, String nameId, SwipeValue value) async {
+    await _users.doc(userId).update({
       'votes.$nameId': value.name,
     });
   }
 }
 
 class UserStore {
-  UserStore([String? id]) {
-    if (id != null) this.id = id;
-  }
+  UserStore(this.id);
 
-  bool get isInitiated => _id != null;
+  final String id;
 
-  String? _id;
-  String? get id => _id;
-  set id(String? value) {
-    if (value == id) return;
-    if (value == null) {
-      _id = null;
-      _dbRef = null;
-      _stream = null;
-    } else {
-      _id = value;
-      _dbRef = DatabaseService.instance._users.doc(id);
-      debugPrint('[DatabaseService] UserStore initiated with id $id');
-    }
-  }
+  late final _dbRef = DatabaseService.instance._users.doc(id);
 
-  DocumentReference<User>? _dbRef;
   ValueStream<User>? _stream;
 
   /// Return last cached user data.
   User? get cached => _stream?.value;
 
   /// Return last cached user data, and fetch last up-to-date version from database if not available.
-  Future<User> fetch() async {
-    assert(isInitiated);
-
+  Future<User?> fetch() async {
     // Return latest cached value
     if (cached != null) return cached!;
 
     // If no cached value is available, get value from database
     debugPrint('[DatabaseService] get user $id');
-    final user = (await _dbRef!.get()).data();
-    if (user == null) throw const UnauthorizedException();    // User does not exists
+    final user = (await _dbRef.get()).data();
+    if (user == null) return null;    // User does not exists
 
     // Create a stream to stay up-to-date
-    _stream = _dbRef!.snapshots().map((snapshot) => snapshot.data()!).shareValue();    // No need to use shareValueSeeded because snapshots() command already do it
+    _stream = _dbRef.snapshots().map((snapshot) => snapshot.data()!).shareValue()..listen((user) => debugPrint('[DatabaseService] user ${user.name} value stream'));   // No need to use shareValueSeeded because snapshots() command already do it    // TODO remove listen part
     return user;
   }
 }

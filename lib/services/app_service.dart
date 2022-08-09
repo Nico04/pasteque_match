@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:pasteque_match/main.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/pages/register.page.dart';
 import 'package:pasteque_match/services/database_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
+import 'package:pasteque_match/utils/exceptions/invalid_operation_exception.dart';
 import 'package:pasteque_match/utils/exceptions/unauthorized_exception.dart';
 
 import 'storage_service.dart';
@@ -17,18 +19,45 @@ class AppService {
   /// Database access
   static final database = DatabaseService.instance;
 
-  User? get user => database.user.cached;
-  bool get hasLocalUser => database.user.isInitiated;
+  UserStore? _userStore;
+  User? get user => _userStore?.cached;
+  bool get hasLocalUser => _userStore != null;
 
-  User? get partner => database.partner.cached;
+  UserStore? _partnerStore;
+  User? get partner => _partnerStore?.cached;
+  bool get hasPartner => _partnerStore != null;
 
   void init() {
-    database.user.id = StorageService.readUserId();
+    final userId = StorageService.readUserId();
+    if (userId != null) _userStore = UserStore(userId);
+  }
+
+  Future<User> initData() async {
+    // Fetch user
+    final user = await _userStore?.fetch();
+    if (user == null) throw const UnauthorizedException();
+
+    // Fetch his partner
+    if (user.hasPartner) {
+      _partnerStore = UserStore(user.partnerId!);
+      final partner = await _partnerStore?.fetch();
+      if (partner == null) {
+        debugPrint('[AppService] Partner ${user.partnerId} not found');
+        await database.removePartner(user.id, user.partnerId!);
+        showMessage(App.navigatorContext, 'Votre partenaire est introuvable', isError: true);
+      }
+    }
+
+    // Return user
+    return user;
   }
   //#endregion
 
   //#region Operations
   Future<void> registerUser(String username) async {
+    // Check
+    if (hasLocalUser) throw const InvalidOperationException('Already registered');
+
     // Register user to database
     final userId = await database.addUser(username);
 
@@ -36,16 +65,21 @@ class AppService {
     await StorageService.saveUserId(userId);
 
     // Init user store
-    database.user.id = userId;
+    _userStore = UserStore(userId);
   }
 
   Future<void> choosePartner(String partnerId) async {
+    // Check
+    if (hasPartner) throw const InvalidOperationException('Remove your current partner first');
+
     // Update database
     await database.setPartner(user!.id, partnerId);
 
     // Init partner store
-    database.partner.id = partnerId;    // TODO init this at app startup
+    _partnerStore = UserStore(partnerId);
   }
+
+  Future<void> setUserVote(String nameId, SwipeValue value) => database.setUserVote(user!.id, nameId, value);
   //#endregion
 
   //#region Other
@@ -60,6 +94,10 @@ class AppService {
   }
 
   void logOut({bool warnUser = false}) {
+    // Clear user & partner cache
+    _userStore = null;
+    _partnerStore = null;
+
     // Delete local data
     unawaited(StorageService.deleteAll());
 

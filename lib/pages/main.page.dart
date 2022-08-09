@@ -135,23 +135,24 @@ class _NameCard extends StatelessWidget {
 
 
 class MainPageBloc with Disposable {
-  User? user;
+  User? get user => AppService.instance.user;
+  User? get partner => AppService.instance.partner;
 
   Future<List<Name>> getRemainingNames() async {
+    // Init data
+    final user = await AppService.instance.initData();
+
     // Get all names
     final allNames = await AppService.database.getNames();
 
-    // Get current user data
-    user = await AppService.database.user.fetch();
-
     // Compute remaining votes
-    final votedNamesId = user!.votes.keys;
+    final votedNamesId = user.votes.keys;
     return allNames.where((name) => !votedNamesId.contains(name.id)).toList(growable: false);   // TODO sort random ?
   }
 
   Future<void> postSwipe(String nameId, SwipeValue value) async {
     try {
-      await AppService.database.setUserVote(nameId, value);
+      await AppService.instance.setUserVote(nameId, value);
     } catch(e, s) {
       // Report error first
       reportError(e, s);

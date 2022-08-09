@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pasteque_match/models/scan_result.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
+import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/themed/pm_qr_code_widget.dart';
 
@@ -76,7 +77,7 @@ class _PartnerCard extends StatelessWidget {
 
             // With partner
             else ...[
-              const Text('TODO'),
+              Text(AppService.instance.partner?.name ?? 'error'),   // TODO
             ],
           ],
         ),
