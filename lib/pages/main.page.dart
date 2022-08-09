@@ -79,8 +79,14 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
   MatchEngine _buildSwipeEngine(List<Name> names) {
     return MatchEngine(swipeItems: names.map((name) {
       void postSwipe(SwipeValue value) async {
+        // Apply vote
         debugPrint('[Swipe] ${value.name} "${name.name}"');
-        await bloc.postSwipe(name.id, value);
+        final itIsAMatch = await bloc.applyVote(name.id, value);
+
+        // It's a match !
+        if (mounted && itIsAMatch) {
+          showMessage(context, 'It\'s a match !');    // TODO Proper pop-up ?
+        }
       }
 
       return SwipeItem(
@@ -150,9 +156,20 @@ class MainPageBloc with Disposable {
     return allNames.where((name) => !votedNamesId.contains(name.id)).toList(growable: false);   // TODO sort random ?
   }
 
-  Future<void> postSwipe(String nameId, SwipeValue value) async {
+  /// Apply user's vote.
+  /// Return true if it's a match.
+  Future<bool> applyVote(String nameId, SwipeValue value) async {
     try {
+      // Apply vote
       await AppService.instance.setUserVote(nameId, value);
+
+      // Is it a match ?
+      if (value == SwipeValue.like && partner != null) {
+        final partnerVote = partner!.votes[nameId];
+        if (partnerVote == SwipeValue.like) {
+          return true;
+        }
+      }
     } catch(e, s) {
       // Report error first
       reportError(e, s);
@@ -160,5 +177,6 @@ class MainPageBloc with Disposable {
       // Update UI
       showError(App.navigatorContext, e);
     }
+    return false;
   }
 }
