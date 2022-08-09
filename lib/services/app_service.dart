@@ -68,7 +68,7 @@ class AppService {
     _userStore = UserStore(userId);
   }
 
-  Future<void> choosePartner(String partnerId) async {
+  Future<User> choosePartner(String partnerId) async {
     // Check
     if (hasPartner) throw const InvalidOperationException('Remove your current partner first');
 
@@ -77,6 +77,12 @@ class AppService {
 
     // Init partner store
     _partnerStore = UserStore(partnerId);
+    return (await _partnerStore!.fetch())!;
+  }
+
+  Future<void> removePartner() async {
+    await database.removePartner(user!.id, partner!.id);
+    _partnerStore = null;
   }
 
   Future<void> setUserVote(String nameId, SwipeValue value) => database.setUserVote(user!.id, nameId, value);

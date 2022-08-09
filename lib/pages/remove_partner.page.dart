@@ -1,0 +1,54 @@
+import 'package:fetcher/fetcher.dart';
+import 'package:flutter/material.dart';
+import 'package:pasteque_match/resources/_resources.dart';
+import 'package:pasteque_match/services/app_service.dart';
+import 'package:pasteque_match/utils/_utils.dart';
+
+class RemovePartnerPage extends StatelessWidget {
+  const RemovePartnerPage(this.partnerName, {super.key});
+
+  final String partnerName;   // Use field instead of direct AppService access so widget doesn't throw when rebuilt after deletion
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Suppression du partenaire'),
+      ),
+      body: AsyncTaskBuilder<void>(
+        task: AppService.instance.removePartner,
+        onSuccess: (_) async {
+          showMessage(context, 'Partenaire supprimé');
+          context.popToRoot();
+        },
+        builder: (context, runTask) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.sentiment_dissatisfied,
+                  size: 60,
+                ),
+                AppResources.spacerMedium,
+                const Text('Êtes-vous sûr de vouloir supprimer votre partenaire ?'),
+                AppResources.spacerMedium,
+                Text(
+                  partnerName,
+                  style: context.textTheme.headlineMedium,
+                ),
+                AppResources.spacerHuge,
+                const Text('Une fois supprimé, votre lien sera perdu.\nMais vous pourrez toujours re-faire le lien plus tard :)'),
+                AppResources.spacerMedium,
+                ElevatedButton(
+                  onPressed: runTask,
+                  child: const Text('Supprimer votre partenaire'),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
