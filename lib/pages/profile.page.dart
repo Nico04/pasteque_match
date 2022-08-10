@@ -39,6 +39,7 @@ class _ProfilePageState extends State<ProfilePage> with BlocProvider<ProfilePage
             child: Padding(
               padding: AppResources.paddingPage,
               child: ValueBuilder<_Votes>(
+                key: ObjectKey(user),
                 valueGetter: bloc.getVotes,
                 builder: (context, votes) {
                   return Column(
@@ -54,26 +55,24 @@ class _ProfilePageState extends State<ProfilePage> with BlocProvider<ProfilePage
                       // Matches
                       if (user.hasPartner)...[
                         AppResources.spacerMedium,
-                        _VotesCard(
-                          title: 'Vos matches',
-                          names: votes.matchedNames,
+                        _MatchesCard(
+                          matches: votes.matchedNames,
                         ),
                       ],
 
                       // Votes
                       AppResources.spacerMedium,
                       _VotesCard(
-                        title: 'Vos votes',
-                        names: votes.allVotes,
+                        votes: votes.allVotes,
                       ),
 
                     ],
                   );
-                }
+                },
               ),
             ),
           );
-        }
+        },
       ),
     );
   }
@@ -135,11 +134,10 @@ class _PartnerCard extends StatelessWidget {
   }
 }
 
-class _VotesCard extends StatelessWidget {
-  const _VotesCard({super.key, required this.title, required this.names});
+class _MatchesCard extends StatelessWidget {
+  const _MatchesCard({super.key, required this.matches});
 
-  final String title;
-  final List<Name> names;
+  final List<Name> matches;
 
   @override
   Widget build(BuildContext context) {
@@ -151,21 +149,63 @@ class _VotesCard extends StatelessWidget {
 
             // Title
             Text(
-              title,
+              'Vos matches',
               style: context.textTheme.titleLarge,
             ),
 
             // Empty list
             AppResources.spacerLarge,
-            if (names.isEmpty)
+            if (matches.isEmpty)
               const Text('<Vide>')    // TODO
 
             // List
             else
-              ...names.map((matchedName) {
+              ...matches.map((match) {
                 return Text(
-                  matchedName.name,
+                  match.name,
                   style: context.textTheme.bodyMedium,
+                );
+              }),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _VotesCard extends StatelessWidget {
+  const _VotesCard({super.key, required this.votes});
+
+  final Map<Name, SwipeValue> votes;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: AppResources.paddingContent,
+        child: Column(
+          children: [
+
+            // Title
+            Text(
+              'Vos votes',
+              style: context.textTheme.titleLarge,
+            ),
+
+            // Empty list
+            AppResources.spacerLarge,
+            if (votes.isEmpty)
+              const Text('<Vide>')    // TODO
+
+            // List
+            else
+              ...votes.entries.map((voteEntry) {
+                return Row(
+                  children: [
+                    Text(voteEntry.key.name),
+                    const Spacer(),
+                    Text(voteEntry.value.name),
+                  ],
                 );
               }),
           ],
@@ -198,21 +238,21 @@ class ProfilePageBloc with Disposable {
     // Return result
     return _Votes(
       matchedNames: matchedNames,
-      allVotes: _buildNamesFromIds(user.votes.keys),
+      allVotes: { for (var entry in user.votes.entries) _buildNameFromId(entry.key) : entry.value },
     );
   }
 
-  List<Name> _buildNamesFromIds(Iterable<String> namesId) {
-    return namesId.map((id) => Name(    // TODO use database
-      name: id,
-      gender: NameGender.unisex,
-    )).toList(growable: false);
-  }
+  Name _buildNameFromId(String nameId) => Name(    // TODO use database
+    name: nameId,
+    gender: NameGender.unisex,
+  );
+
+  List<Name> _buildNamesFromIds(Iterable<String> namesId) => namesId.map(_buildNameFromId).toList(growable: false);
 }
 
 class _Votes {
-  const _Votes({this.matchedNames = const[], this.allVotes = const[]});
+  const _Votes({this.matchedNames = const[], this.allVotes = const{}});
 
   final List<Name> matchedNames;
-  final List<Name> allVotes;
+  final Map<Name, SwipeValue> allVotes;
 }
