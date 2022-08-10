@@ -102,6 +102,13 @@ class DatabaseService {
       'lastVotedAt': DateTime.now(),  // Using 'FieldValue.serverTimestamp()' is more accurate, but it doubles the db exchanges (automatically fetch the value set by server after the update), and this value is not used in the app.
     });
   }
+
+  /// Add a new user's vote
+  Future<void> clearUserVote(String userId, String nameId) async {
+    await _users.doc(userId).update({
+      'votes.$nameId': FieldValue.delete(),
+    });
+  }
 }
 
 class UserStore {
@@ -111,10 +118,10 @@ class UserStore {
 
   late final _dbRef = DatabaseService.instance._users.doc(id);
 
-  ValueStream<User>? _stream;
+  ValueStream<User>? stream;
 
   /// Return last cached user data.
-  User? get cached => _stream?.value;
+  User? get cached => stream?.value;
 
   /// Return last cached user data, and fetch last up-to-date version from database if not available.
   Future<User?> fetch() async {
@@ -127,8 +134,8 @@ class UserStore {
     if (user == null) return null;    // User does not exists
 
     // Create a stream to stay up-to-date
-    _stream = _dbRef.snapshots().map((snapshot) => snapshot.data()!).shareValue();  // No need to use shareValueSeeded because snapshots() command already do it
-    _stream!.listen((user) {      // 'shareValue' needs a listener to emit data
+    stream = _dbRef.snapshots().map((snapshot) => snapshot.data()!).shareValue();  // No need to use shareValueSeeded because snapshots() command already do it
+    stream!.listen((user) {      // 'shareValue' needs a listener to emit data
       debugPrint('[DatabaseService] user ${user.name} value stream (lastVotedAt: ${user.lastVotedAt})');
     });
     return user;

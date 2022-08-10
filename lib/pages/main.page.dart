@@ -40,7 +40,7 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
                     icon: const Icon(Icons.person),
                     onPressed: () {
                       if (bloc.user != null) {
-                        navigateTo(context, (_) => ProfilePage(bloc.user!));
+                        navigateTo(context, (_) => const ProfilePage());
                       }
                     },
                   ),

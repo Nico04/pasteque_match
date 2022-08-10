@@ -22,6 +22,10 @@ class UserData {
   /// Using a map assure vote uniqueness
   final Map<String, SwipeValue> votes;
 
+  /// Return all likes
+  /// (votes with SwipeValue.like value)
+  Map<String, SwipeValue> get likes => Map.fromEntries(votes.entries.where((entry) => entry.value == SwipeValue.like));
+
   /// Date of the last vote
   /// Used to clean the database
   @NullableTimestampConverter()

@@ -1,20 +1,29 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/models/scan_result.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
+import 'package:pasteque_match/widgets/_widgets.dart';
 import 'package:pasteque_match/widgets/themed/pm_qr_code_widget.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'remove_partner.page.dart';
 import 'scan.page.dart';
 import 'scan_result.page.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage(this.user, {super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
-  final User user;
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> with BlocProvider<ProfilePage, ProfilePageBloc> {
+  @override
+  initBloc() => ProfilePageBloc();
 
   @override
   Widget build(BuildContext context) {
@@ -22,22 +31,49 @@ class ProfilePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Profil'),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: AppResources.paddingPage,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+      body: ValueStreamBuilder<User>(
+        stream: bloc.userStream,
+        builder: (context, snapshot) {
+          final user = snapshot.data!;
+          return SafeArea(
+            child: Padding(
+              padding: AppResources.paddingPage,
+              child: ValueBuilder<_Votes>(
+                valueGetter: bloc.getVotes,
+                builder: (context, votes) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
 
-              // Partner section
-              _PartnerCard(
-                userId: user.id,
-                partnerId: user.partnerId,
+                      // Partner section
+                      _PartnerCard(
+                        userId: user.id,
+                        partnerId: user.partnerId,
+                      ),
+
+                      // Matches
+                      if (user.hasPartner)...[
+                        AppResources.spacerMedium,
+                        _VotesCard(
+                          title: 'Vos matches',
+                          names: votes.matchedNames,
+                        ),
+                      ],
+
+                      // Votes
+                      AppResources.spacerMedium,
+                      _VotesCard(
+                        title: 'Vos votes',
+                        names: votes.allVotes,
+                      ),
+
+                    ],
+                  );
+                }
               ),
-
-            ],
-          ),
-        ),
+            ),
+          );
+        }
       ),
     );
   }
@@ -74,7 +110,7 @@ class _PartnerCard extends StatelessWidget {
               AppResources.spacerMedium,
               ElevatedButton(
                 onPressed: () => ScanPage.goToScanOrPermissionPage(context),
-                onLongPress: kReleaseMode ? null : () => navigateTo(context, (_) => ScanResultPage('PM##cQp01G4xvrDGiHDJ9wT0')),
+                onLongPress: kReleaseMode ? null : () => navigateTo(context, (_) => ScanResultPage('PM##zvWD1Mb7fyYDBLtTKnav')),
                 child: const Text('Scanner le code de votre partenaire'),
               ),
             ]
@@ -97,4 +133,86 @@ class _PartnerCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _VotesCard extends StatelessWidget {
+  const _VotesCard({super.key, required this.title, required this.names});
+
+  final String title;
+  final List<Name> names;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: AppResources.paddingContent,
+        child: Column(
+          children: [
+
+            // Title
+            Text(
+              title,
+              style: context.textTheme.titleLarge,
+            ),
+
+            // Empty list
+            AppResources.spacerLarge,
+            if (names.isEmpty)
+              const Text('<Vide>')    // TODO
+
+            // List
+            else
+              ...names.map((matchedName) {
+                return Text(
+                  matchedName.name,
+                  style: context.textTheme.bodyMedium,
+                );
+              }),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class ProfilePageBloc with Disposable {
+  ValueStream<User> get userStream => AppService.instance.userStream!;
+
+  _Votes getVotes() {
+    final user = userStream.value!;
+
+    // Matches
+    final matchedNames = () {
+      if (user.hasPartner) {
+        final userLikes = user.likes;
+        final partner = AppService.instance.partner!;
+        final partnerLikes = partner.likes;
+
+        final matchedNameIdEntries = userLikes.keys.where(partnerLikes.containsKey);
+        return _buildNamesFromIds(matchedNameIdEntries);
+      }
+      return const <Name>[];
+    } ();
+
+    // Return result
+    return _Votes(
+      matchedNames: matchedNames,
+      allVotes: _buildNamesFromIds(user.votes.keys),
+    );
+  }
+
+  List<Name> _buildNamesFromIds(Iterable<String> namesId) {
+    return namesId.map((id) => Name(    // TODO use database
+      name: id,
+      gender: NameGender.unisex,
+    )).toList(growable: false);
+  }
+}
+
+class _Votes {
+  const _Votes({this.matchedNames = const[], this.allVotes = const[]});
+
+  final List<Name> matchedNames;
+  final List<Name> allVotes;
 }

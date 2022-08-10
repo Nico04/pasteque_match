@@ -8,6 +8,7 @@ import 'package:pasteque_match/services/database_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/utils/exceptions/invalid_operation_exception.dart';
 import 'package:pasteque_match/utils/exceptions/unauthorized_exception.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'storage_service.dart';
 
@@ -21,6 +22,7 @@ class AppService {
 
   UserStore? _userStore;
   User? get user => _userStore?.cached;
+  ValueStream<User>? get userStream => _userStore?.stream;
   bool get hasLocalUser => _userStore != null;
 
   UserStore? _partnerStore;
@@ -86,6 +88,7 @@ class AppService {
   }
 
   Future<void> setUserVote(String nameId, SwipeValue value) => database.setUserVote(user!.id, nameId, value);
+  Future<void> clearUserVote(String nameId) => database.clearUserVote(user!.id, nameId);
   //#endregion
 
   //#region Other
