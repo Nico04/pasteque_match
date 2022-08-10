@@ -128,11 +128,9 @@ class UserStore {
 
     // Create a stream to stay up-to-date
     _stream = _dbRef.snapshots().map((snapshot) => snapshot.data()!).shareValue();  // No need to use shareValueSeeded because snapshots() command already do it
-    if (!kReleaseMode) {
-      _stream!.listen((user) {
-        debugPrint('[DatabaseService] user ${user.name} value stream (lastVotedAt: ${user.lastVotedAt})');
-      });
-    }
+    _stream!.listen((user) {      // 'shareValue' needs a listener to emit data
+      debugPrint('[DatabaseService] user ${user.name} value stream (lastVotedAt: ${user.lastVotedAt})');
+    });
     return user;
   }
 }

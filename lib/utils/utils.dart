@@ -108,7 +108,7 @@ Future<void> showError(BuildContext context, Object error) async {
 
   // Other
   else {
-    showMessage(context, 'Une erreur est survenue', isError: true);
+    showMessage(context, 'Une erreur est survenue', isError: true, details: !kReleaseMode ? error.toString() : null);
   }
 }
 
