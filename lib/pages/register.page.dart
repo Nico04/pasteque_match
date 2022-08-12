@@ -1,8 +1,8 @@
+import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
-import 'package:pasteque_match/widgets/_widgets.dart';
 
 import 'main.page.dart';
 
