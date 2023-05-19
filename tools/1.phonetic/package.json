@@ -1,0 +1,14 @@
+{
+  "name": "script",
+  "version": "0.0.1",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "dev": "nodemon main.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "talisman": "^1.1.4"
+  }
+}
