@@ -39,4 +39,37 @@ extension ExtendedIterable<T> on Iterable<T> {
     }
     return null;
   }
+
+  /// Returns the first element, or null if empty.
+  T? get firstOrNull {
+    if (isEmpty) return null;
+    return first;
+  }
+
+  /// Get element at [index], and return null if not in range.
+  T? elementAtOrNull(int? index) {
+    if (index == null || index < 0 || index >= length) return null;
+    return elementAt(index);
+  }
+
+  /// Returns a new lazy [Iterable] with all elements that are NOT null
+  Iterable<T> whereNotNull() => where((element) => element != null);
+
+  /// Sum each element of the iterable.
+  /// Use [toNum] to convert element to a numeric value.
+  /// From https://github.com/mythz/dart-linq-examples
+  int sum([int Function(T)? toNum]) {
+    assert(toNum != null || T == int);
+    return fold<int>(0, (value, element) => value + (toNum?.call(element) ?? element as int));
+  }
+
+  /// The current elements of this iterable modified by [toElement].
+  /// Like [map] but pass the current index in [toElement].
+  Iterable<E> mapIndexed<E>(E Function(int index, T item) toElement) sync* {
+    var index = 0;
+    for (final item in this) {
+      yield toElement(index, item);
+      index++;
+    }
+  }
 }

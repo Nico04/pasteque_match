@@ -66,6 +66,7 @@ void main(List<String> rawArgs) async {
       name: name,
       gender: gender,
       otherNames: otherNames,
+      stats: NameQuantityStatistics(),    // TODO
     ));
   }
   print('${names.length} elements converted');
