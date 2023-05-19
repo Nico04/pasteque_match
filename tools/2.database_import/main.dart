@@ -7,8 +7,8 @@ import 'package:firedart/firedart.dart';
 import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/utils/extensions_base.dart';
 
-/// Pastèque-Match Database Builder
-/// Utility program to import a CSV file to the Firestore database
+/// Pastèque-Match Database Importer
+/// A Dart script to import a CSV file to the Firestore database
 void main(List<String> rawArgs) async {
   print('############ Pastèque-Match Database Builder ############');
 
