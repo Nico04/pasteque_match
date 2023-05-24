@@ -3,8 +3,11 @@ import 'package:diacritic/diacritic.dart';
 /// Separated from [extensions.dart] to allow import from Dart Command program [utils/lib/main.dart]
 
 extension ExtendedString on String {
-  /// Normalize a string by removing diacritics and transform to lower case
+  /// Normalize string by removing diacritics and transform to lower case
   String get normalized => removeDiacritics(toLowerCase());
+
+  /// Capitalize string (first letter to upper case, all others to lower)
+  String get capitalized => this[0].toUpperCase() + substring(1).toLowerCase();
 
   /// Returns the substring of this string that extends from [startIndex], inclusive, with a length of [length].
   /// If [length] if negative, length will be relative to the total length
@@ -70,6 +73,27 @@ extension ExtendedIterable<T> on Iterable<T> {
     for (final item in this) {
       yield toElement(index, item);
       index++;
+    }
+  }
+}
+
+extension ExtendedList<T> on List<T> {
+  /// Insert [widget] between each member of this list
+  void insertBetween(T item, {bool includeEnds = false}) {
+    if (includeEnds) {
+      if (isNotEmpty) {
+        for (var i = length; i >= 0; i--) insert(i, item);
+      }
+    } else {
+      if (length > 1) {
+        for (var i = length - 1; i > 0; i--) insert(i, item);
+      }
+    }
+  }
+
+  void removeAll(Iterable<T> elements) {
+    for (var element in elements) {
+      remove(element);
     }
   }
 }

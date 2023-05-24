@@ -4,54 +4,66 @@ import 'package:pasteque_match/utils/extensions_base.dart';
 part 'name.g.dart';
 
 @JsonSerializable()
+class NameGroup {
+  const NameGroup(this.id, this.names);
+
+  final String id;    // TODO random id, indexed ID OR ID from name of first Name ?
+  final List<Name> names;
+
+  String get name => names.first.name;
+  NameGroupGender get gender {
+    final hasMale = names.any((n) => n.gender == NameGender.male);
+    final hasFemale = names.any((n) => n.gender == NameGender.female);
+    if (hasMale && hasFemale) return NameGroupGender.unisex;
+    if (hasMale) return NameGroupGender.male;
+    if (hasFemale) return NameGroupGender.female;
+    throw UnsupportedError('Unsupported case');
+  }
+
+  factory NameGroup.fromJson(Map<String, dynamic> json) => _$NameGroupFromJson(json);
+  Map<String, dynamic> toJson() => _$NameGroupToJson(this);
+}
+
+@JsonSerializable(converters: [_NameQuantityStatisticsConverter()])
 class Name {
-  const Name({required this.name, required this.gender, this.otherNames = const[], required this.stats});
+  const Name({required this.name, required this.gender, required this.stats});
 
   String get id => name.normalized;
 
   final String name;
   final NameGender gender;
-  final List<String> otherNames;
   final NameQuantityStatistics stats;
 
-  NameRarity get rarity => NameRarity.common;   // TODO
   String get firstLetter => name.substringSafe(length: 1);
   int get length => name.length;
   bool get isHyphenated => name.contains('-') || name.contains("'");
+  NameRarity get rarity => NameRarity.common;   // TODO
   NameAge get age => NameAge.ancient;   // TODO
 
   factory Name.fromJson(Map<String, dynamic> json) => _$NameFromJson(json);
   Map<String, dynamic> toJson() => _$NameToJson(this);
 }
 
-@JsonSerializable(converters: [_NameGenderQuantityStatisticsConverter()])
+typedef NameQuantityStatisticsValue = Map<String, int>;
+
 class NameQuantityStatistics {
-  const NameQuantityStatistics({this.male, this.female});
-
-  @JsonKey(name: 'm')
-  final NameGenderQuantityStatistics? male;
-  @JsonKey(name: 'f')
-  final NameGenderQuantityStatistics? female;
-
-  int get total => (male?.total ?? 0) + (female?.total ?? 0);
-
-  factory NameQuantityStatistics.fromJson(Map<String, dynamic> json) => _$NameQuantityStatisticsFromJson(json);
-  Map<String, dynamic> toJson() => _$NameQuantityStatisticsToJson(this);
-}
-
-typedef NameGenderQuantityStatisticsValue = Map<int, int>;
-
-class NameGenderQuantityStatistics {
-  const NameGenderQuantityStatistics(this.values);
+  const NameQuantityStatistics(this.values);
 
   /// Map<Year, Quantity>.
   /// Years with values under 3 are not included. All theses years are summed into a special Year == 0.
-  final NameGenderQuantityStatisticsValue values;
+  final Map<String, int> values;    // TODO use Map<int, int> (need conversion)
 
   int get total => values.values.sum();
+
+  NameQuantityStatisticsValue toJson() => const _NameQuantityStatisticsConverter().toJson(this);
 }
 
 enum NameGender {
+  male,
+  female,
+}
+
+enum NameGroupGender {
   male,
   female,
   unisex,
@@ -70,12 +82,12 @@ enum NameAge {
   recent,
 }
 
-class _NameGenderQuantityStatisticsConverter implements JsonConverter<NameGenderQuantityStatistics, NameGenderQuantityStatisticsValue> {
-  const _NameGenderQuantityStatisticsConverter();
+class _NameQuantityStatisticsConverter implements JsonConverter<NameQuantityStatistics, NameQuantityStatisticsValue> {
+  const _NameQuantityStatisticsConverter();
 
   @override
-  NameGenderQuantityStatistics fromJson(NameGenderQuantityStatisticsValue json) => NameGenderQuantityStatistics(json);
+  NameQuantityStatistics fromJson(NameQuantityStatisticsValue json) => NameQuantityStatistics(json);
 
   @override
-  NameGenderQuantityStatisticsValue toJson(NameGenderQuantityStatistics object) => object.values;
+  NameQuantityStatisticsValue toJson(NameQuantityStatistics object) => object.values;
 }
