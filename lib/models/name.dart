@@ -7,7 +7,7 @@ part 'name.g.dart';
 class NameGroup {
   const NameGroup(this.id, this.names);
 
-  final String id;    // TODO random id, indexed ID OR ID from name of first Name ?
+  final String id;    // TODO ID from name
   final List<Name> names;
 
   String get name => names.first.name;
@@ -28,7 +28,7 @@ class NameGroup {
 class Name {
   const Name({required this.name, required this.gender, required this.stats});
 
-  String get id => name.normalized;
+  String get id => name.normalized;     // TODO remove
 
   final String name;
   final NameGender gender;

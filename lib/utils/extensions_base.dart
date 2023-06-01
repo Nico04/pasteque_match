@@ -6,8 +6,34 @@ extension ExtendedString on String {
   /// Normalize string by removing diacritics and transform to lower case
   String get normalized => removeDiacritics(toLowerCase());
 
-  /// Capitalize string (first letter to upper case, all others to lower)
+  /// Capitalize string
+  /// First letter to upper case, all others to lower
   String get capitalized => this[0].toUpperCase() + substring(1).toLowerCase();
+
+  /// Capitalize string - Full version
+  /// First letter of string, AND all first letters after a space or a '-' to upper case, all others to lower
+  String get capitalizedFull {
+    // Separators
+    const separators = [' ', '-'];
+
+    // For each separator
+    var s = this;
+    for (final separator in separators) {
+      // Split string
+      final parts = s.split(separator);
+
+      // Capitalize each part
+      for (int i = 0; i < parts.length; i++) {
+        parts[i] = parts[i].capitalized;
+      }
+
+      // Re-join
+      s = parts.join(separator);
+    }
+
+    // Return value
+    return s;
+  }
 
   /// Returns the substring of this string that extends from [startIndex], inclusive, with a length of [length].
   /// If [length] if negative, length will be relative to the total length

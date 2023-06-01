@@ -154,9 +154,9 @@ void main(List<String> rawArgs) async {
     ['Group ID', 'Prénom', 'Genre', 'Effectif / Quantité'],
   ];
   for (final groupEntry in rawGroups.entries) {
-    rows.add([groupEntry.key.normalized]);
+    rows.add([groupEntry.key.capitalizedFull]);
     for (final name in groupEntry.value) {
-      rows.add(['', name.name.capitalized, name.gender.name, json.encode(name.stats.toJson())]);
+      rows.add(['', name.name.capitalizedFull, name.gender.name, json.encode(name.stats.toJson())]);
     }
   }
 
