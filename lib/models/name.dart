@@ -10,7 +10,7 @@ class NameGroup {
   final String id;    // TODO ID from name
   final List<Name> names;
 
-  String get name => names.first.name;
+  String get name => id;
   NameGroupGender get gender {
     final hasMale = names.any((n) => n.gender == NameGender.male);
     final hasFemale = names.any((n) => n.gender == NameGender.female);
@@ -51,7 +51,7 @@ class NameQuantityStatistics {
 
   /// Map<Year, Quantity>.
   /// Years with values under 3 are not included. All theses years are summed into a special Year == 0.
-  final Map<String, int> values;    // TODO use Map<int, int> (need conversion)
+  final NameQuantityStatisticsValue values;    // TODO use Map<int, int> (need conversion)
 
   int get total => values.values.sum();
 
