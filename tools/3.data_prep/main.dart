@@ -33,7 +33,10 @@ void main(List<String> rawArgs) async {
   const sheetName = 'BDD';
 
   // Compute total count
-  _computeTotalCount(spreadsheet, sheetName);
+  //_computeTotalCount(spreadsheet, sheetName);
+
+  // Compute hyphenation
+  _computeHyphenation(spreadsheet, sheetName);
 
   // Save file
   print('Save file');
@@ -56,7 +59,49 @@ bool _askConfirmation(String prompt) {
 
 void _computeTotalCount(SpreadsheetDecoder spreadsheet, String sheetName) {
   print('Compute total count');
+  _computeEachName(
+      spreadsheet,
+      sheetName,
+      (sheet, rowIndex) {
+        // Get data
+        final row = sheet.rows[rowIndex];
+        final dataRaw = row[3];
+        if (dataRaw == null) return;
 
+        // Deserialize
+        final data = (jsonDecode(dataRaw) as Map<String, dynamic>).cast<String, int>();
+
+        // Compute total count
+        final totalCount = data.values.reduce((value, element) => value + element);
+
+        // Update sheet
+        spreadsheet.updateCell(sheetName, 4, rowIndex, totalCount);
+      }
+  );
+}
+
+void _computeHyphenation(SpreadsheetDecoder spreadsheet, String sheetName) {
+  print('Compute hyphenation');
+  const hyphenationChars = ['-', "'"];
+  _computeEachName(
+    spreadsheet,
+    sheetName,
+    (sheet, rowIndex) {
+      // Get data
+      final row = sheet.rows[rowIndex];
+      final name = row[1] as String?;
+      if (name == null) return;
+
+      // Compute
+      final bool hyphenated = hyphenationChars.any(name.contains);
+
+      // Update sheet
+      spreadsheet.updateCell(sheetName, 5, rowIndex, hyphenated ? true : false);
+    }
+  );
+}
+
+void _computeEachName(SpreadsheetDecoder spreadsheet, String sheetName, void Function(SpreadsheetTable sheet, int rowIndex) task) {
   // Get sheet
   final sheet = spreadsheet.tables[sheetName]!;
 
@@ -66,18 +111,7 @@ void _computeTotalCount(SpreadsheetDecoder spreadsheet, String sheetName) {
     final progress = (r / sheet.rows.length * 100).toInt();
     if (lastPrintedProgress != progress) print('Progress: ${lastPrintedProgress = progress}%');
 
-    // Get data
-    final row = sheet.rows[r];
-    final dataRaw = row[3];
-    if (dataRaw == null) continue;
-
-    // Deserialize
-    final data = (jsonDecode(dataRaw) as Map<String, dynamic>).cast<String, int>();
-
-    // Compute total count
-    final totalCount = data.values.reduce((value, element) => value + element);
-
-    // Update sheet
-    spreadsheet.updateCell(sheetName, 4, r, totalCount);
+    // Compute
+    task(sheet, r);
   }
 }
