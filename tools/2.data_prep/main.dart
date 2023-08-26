@@ -9,7 +9,7 @@ import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/utils/extensions_base.dart';
 
 /// Pastèque-Match Data preparator
-/// A Dart script that takes raw names from CSV, and export into a new formated CSV
+/// A Dart script that takes raw names as CSV, phonetic grouping as CSV, and export into a new formatted CSV, where each name is grouped by phonetic.
 void main(List<String> rawArgs) async {
   print('############ Pastèque-Match Data Preparator ############');
 
