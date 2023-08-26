@@ -46,9 +46,9 @@ dev_dependencies:
   build_runner: ^2.4.4
   json_serializable: ^6.7.0
 
-  # Database import
+  # Scripting
   csv : ^5.0.1
-  firedart: ^0.9.2
+  spreadsheet_decoder: ^2.2.0
 
 # The following section is specific to Flutter packages.
 flutter:

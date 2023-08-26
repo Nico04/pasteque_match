@@ -8,10 +8,10 @@ import 'package:csv/csv.dart';
 import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/utils/extensions_base.dart';
 
-/// Pastèque-Match Data preparator
+/// Pastèque-Match phonetic grouping script
 /// A Dart script that takes raw names as CSV, phonetic grouping as CSV, and export into a new formatted CSV, where each name is grouped by phonetic.
 void main(List<String> rawArgs) async {
-  print('############ Pastèque-Match Data Preparator ############');
+  print('############ Pastèque-Match Phonetic Grouping ############');
 
   // Check args
   if (rawArgs.length != 3) {
