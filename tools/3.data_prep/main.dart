@@ -44,7 +44,10 @@ void main(List<String> rawArgs) async {
   //computeEpiceneGroups(spreadsheet);
 
   // Compute database stats
-  computeDatabaseStats(spreadsheet);
+  //computeDatabaseStats(spreadsheet);
+
+  // Compute relative total
+  computeRelativeTotal(spreadsheet);
 
   // Save file
   print('Save file');
@@ -64,12 +67,14 @@ const nameColumnIndex = 1;
 const genderColumnIndex = 2;
 const countColumnIndex = 3;
 const totalCountColumnIndex = 4;
-const hyphenationColumnIndex = 5;
-const epiceneColumnIndex = 6;
+const relativeTotalColumnIndex = 5;
+const hyphenationColumnIndex = 6;
+const epiceneColumnIndex = 7;
 
-const databaseStatsSheetName = 'BDD Stats';
+const databaseStatsSheetName = 'Stats';
 const yearColumnIndex = 0;
 const totalColumnIndex = 1;
+const statsTotalRowName = 'Total';
 
 bool _askConfirmation(String prompt) {
   print(prompt);
@@ -203,6 +208,31 @@ void computeDatabaseStats(SpreadsheetDecoder spreadsheet) {
   }
 }
 
+void computeRelativeTotal(SpreadsheetDecoder spreadsheet) {
+  print('Compute relative total');
+  // Read stats
+  final stats = _getStats(spreadsheet);
+  final totalCount = stats[statsTotalRowName]!;
+
+  // Compute
+  _computeEachName(
+    spreadsheet,
+    (sheet, rowIndex) {
+      // Get data
+      final row = sheet.rows[rowIndex];
+
+      // Get total
+      final total = row[totalCountColumnIndex] as int;
+
+      // Compute relative total
+      final relativeTotal = total / totalCount;
+
+      // Update sheet
+      spreadsheet.updateCell(databaseSheetName, relativeTotalColumnIndex, rowIndex, relativeTotal);
+    },
+  );
+}
+
 void _computeEachName(SpreadsheetDecoder spreadsheet, void Function(SpreadsheetTable sheet, int rowIndex) task) {
   // Get sheet
   final sheet = spreadsheet.tables[databaseSheetName]!;
@@ -251,6 +281,24 @@ void _computeEachGroup(SpreadsheetDecoder spreadsheet, void Function(int groupHe
     final progress = (r / sheet.rows.length * 100).toInt();
     if (lastPrintedProgress != progress) print('Progress: ${lastPrintedProgress = progress}%');
   }
+}
+
+Map<String, int> _getStats(SpreadsheetDecoder spreadsheet) {
+  // Get sheet
+  final sheet = spreadsheet.tables[databaseStatsSheetName]!;
+
+  // Build stats
+  final stats = <String, int>{};
+  for (int r = 1; r < sheet.rows.length; r++) {   // Ignore header
+    // Get data
+    final row = sheet.rows[r];
+    final year = row[yearColumnIndex].toString();
+    final total = row[totalColumnIndex] as int;
+
+    // Add to stats
+    stats[year] = total;
+  }
+  return stats;
 }
 
 bool _isStringNullOrEmpty(String? s) => s == null || s.isEmpty;
