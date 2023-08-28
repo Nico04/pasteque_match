@@ -38,7 +38,10 @@ void main(List<String> rawArgs) async {
   //_computeHyphenation(spreadsheet, sheetName);
 
   // Sort names in each group by total count + rename group to highest count
-  sortAndRenameGroups(spreadsheet, sheetName);
+  //sortAndRenameGroups(spreadsheet, sheetName);
+
+  // Compute whether groups are epicene
+  computeEpiceneGroups(spreadsheet, sheetName);
 
   // Save file
   print('Save file');
@@ -125,6 +128,37 @@ void sortAndRenameGroups(SpreadsheetDecoder spreadsheet, String sheetName) {
         for (int c = 0; c < row.length; c++) {
           final value = row[c];
           spreadsheet.updateCell(sheetName, c, groupHeaderRowIndex + 1 + r, value ?? '');
+        }
+      }
+    },
+  );
+}
+
+void computeEpiceneGroups(SpreadsheetDecoder spreadsheet, String sheetName) {
+  print('Compute epicene groups');
+  _computeEachGroup(
+    spreadsheet,
+    sheetName,
+    (groupHeaderRowIndex, namesRows) {
+      // Skip groups with only one name
+      if (namesRows.length <= 1) return;
+
+      // Sort names by total count
+      namesRows.sort((a, b) => (b[4] as num).compareTo(a[4] as num));
+
+      // Compute epicene
+      for (int r1 = 0; r1 < namesRows.length; r1++) {
+        final row1 = namesRows[r1];
+        final name1 = row1[1] as String;
+        final gender1 = row1[2] as String;
+        for (int r2 = 0; r2 < namesRows.length; r2++) {
+          if (r1 == r2) continue;
+          final row2 = namesRows[r2];
+          final name2 = row2[1] as String;
+          final gender2 = row2[2] as String;
+          final epicene = name1 == name2;
+          if (epicene && gender1 == gender2) print('/!\\ Warning /!\\ Same name & same gender for: $name1');
+          spreadsheet.updateCell(sheetName, 6, groupHeaderRowIndex, epicene);
         }
       }
     },
