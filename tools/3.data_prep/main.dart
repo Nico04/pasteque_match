@@ -35,7 +35,10 @@ void main(List<String> rawArgs) async {
   //_computeTotalCount(spreadsheet, sheetName);
 
   // Compute hyphenation
-  _computeHyphenation(spreadsheet, sheetName);
+  //_computeHyphenation(spreadsheet, sheetName);
+
+  // Sort names in each group by total count + rename group to highest count
+  sortAndRenameGroups(spreadsheet, sheetName);
 
   // Save file
   print('Save file');
@@ -56,7 +59,7 @@ bool _askConfirmation(String prompt) {
   return true;
 }
 
-void _computeTotalCount(SpreadsheetDecoder spreadsheet, String sheetName) {
+void computeTotalCount(SpreadsheetDecoder spreadsheet, String sheetName) {
   print('Compute total count');
   _computeEachName(
       spreadsheet,
@@ -75,11 +78,11 @@ void _computeTotalCount(SpreadsheetDecoder spreadsheet, String sheetName) {
 
         // Update sheet
         spreadsheet.updateCell(sheetName, 4, rowIndex, totalCount);
-      }
+      },
   );
 }
 
-void _computeHyphenation(SpreadsheetDecoder spreadsheet, String sheetName) {
+void computeHyphenation(SpreadsheetDecoder spreadsheet, String sheetName) {
   print('Compute hyphenation');
   const hyphenationChars = ['-', "'"];
   _computeEachName(
@@ -89,14 +92,42 @@ void _computeHyphenation(SpreadsheetDecoder spreadsheet, String sheetName) {
       // Get data
       final row = sheet.rows[rowIndex];
       final name = row[1] as String?;
-      if (name == null) return;
+      if (name == null || name.isEmpty) return;
 
       // Compute
       final bool hyphenated = hyphenationChars.any(name.contains);
 
       // Update sheet
       spreadsheet.updateCell(sheetName, 5, rowIndex, hyphenated ? true : false);
-    }
+    },
+  );
+}
+
+void sortAndRenameGroups(SpreadsheetDecoder spreadsheet, String sheetName) {
+  print('Sort and rename groups');
+  _computeEachGroup(
+    spreadsheet,
+    sheetName,
+    (groupHeaderRowIndex, namesRows) {
+      // Skip groups with only one name
+      if (namesRows.length <= 1) return;
+
+      // Sort names by total count
+      namesRows.sort((a, b) => (b[4] as num).compareTo(a[4] as num));
+      //print('Group ${namesRows.first[1]}');
+
+      // Rename group to highest count
+      spreadsheet.updateCell(sheetName, 0, groupHeaderRowIndex, namesRows.first[1]);
+
+      // Save new row order
+      for (int r = 0; r < namesRows.length; r++) {
+        final row = namesRows[r];
+        for (int c = 0; c < row.length; c++) {
+          final value = row[c];
+          spreadsheet.updateCell(sheetName, c, groupHeaderRowIndex + 1 + r, value ?? '');
+        }
+      }
+    },
   );
 }
 
@@ -107,10 +138,47 @@ void _computeEachName(SpreadsheetDecoder spreadsheet, String sheetName, void Fun
   // Compute total count for each name
   int lastPrintedProgress = 0;
   for (int r = 1; r < sheet.rows.length; r++) {   // Ignore header
-    final progress = (r / sheet.rows.length * 100).toInt();
-    if (lastPrintedProgress != progress) print('Progress: ${lastPrintedProgress = progress}%');
+    // Ignore group headers
+    if (isStringNullOrEmpty(sheet.rows[r][1])) continue;
 
     // Compute
     task(sheet, r);
+
+    // Progress
+    final progress = (r / sheet.rows.length * 100).toInt();
+    if (lastPrintedProgress != progress) print('Progress: ${lastPrintedProgress = progress}%');
   }
 }
+
+void _computeEachGroup(SpreadsheetDecoder spreadsheet, String sheetName, void Function(int groupHeaderRowIndex, List<List> namesRows) task) {
+  // Get sheet
+  final sheet = spreadsheet.tables[sheetName]!;
+
+  // Compute total count for each name
+  int lastPrintedProgress = 0;
+  int groupHeaderRowIndex = 0;
+  final groupRows = <List>[];
+  for (int r = 1; r < sheet.rows.length + 1; r++) {   // Ignore header
+    // Detect group headers
+    final row = sheet.rows[r];
+    if (r == sheet.rows.length || !isStringNullOrEmpty(row[0])) {
+      // Compute, but ignore empty groups
+      if (groupRows.isNotEmpty) {
+        task(groupHeaderRowIndex, groupRows);
+      }
+
+      // Set new group values
+      groupHeaderRowIndex = r;
+      groupRows.clear();
+    } else {
+      // Add name to group
+      groupRows.add(List.from(row));    // New list object to allow proper modification
+    }
+
+    // Progress
+    final progress = (r / sheet.rows.length * 100).toInt();
+    if (lastPrintedProgress != progress) print('Progress: ${lastPrintedProgress = progress}%');
+  }
+}
+
+bool isStringNullOrEmpty(String? s) => s == null || s.isEmpty;
