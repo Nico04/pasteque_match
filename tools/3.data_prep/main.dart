@@ -55,6 +55,14 @@ void main(List<String> rawArgs) async {
   exit(0);
 }
 
+const groupIdColumnIndex = 0;
+const nameColumnIndex = 1;
+const genderColumnIndex = 2;
+const dataColumnIndex = 3;
+const totalCountColumnIndex = 4;
+const hyphenationColumnIndex = 5;
+const epiceneColumnIndex = 6;
+
 bool _askConfirmation(String prompt) {
   print(prompt);
   final response = stdin.readLineSync();
@@ -70,7 +78,7 @@ void computeTotalCount(SpreadsheetDecoder spreadsheet, String sheetName) {
       (sheet, rowIndex) {
         // Get data
         final row = sheet.rows[rowIndex];
-        final dataRaw = row[3];
+        final dataRaw = row[dataColumnIndex];
         if (dataRaw == null) return;
 
         // Deserialize
@@ -80,7 +88,7 @@ void computeTotalCount(SpreadsheetDecoder spreadsheet, String sheetName) {
         final totalCount = data.values.reduce((value, element) => value + element);
 
         // Update sheet
-        spreadsheet.updateCell(sheetName, 4, rowIndex, totalCount);
+        spreadsheet.updateCell(sheetName, totalCountColumnIndex, rowIndex, totalCount);
       },
   );
 }
@@ -94,14 +102,14 @@ void computeHyphenation(SpreadsheetDecoder spreadsheet, String sheetName) {
     (sheet, rowIndex) {
       // Get data
       final row = sheet.rows[rowIndex];
-      final name = row[1] as String?;
+      final name = row[nameColumnIndex] as String?;
       if (name == null || name.isEmpty) return;
 
       // Compute
       final bool hyphenated = hyphenationChars.any(name.contains);
 
       // Update sheet
-      spreadsheet.updateCell(sheetName, 5, rowIndex, hyphenated ? true : false);
+      spreadsheet.updateCell(sheetName, hyphenationColumnIndex, rowIndex, hyphenated ? true : false);
     },
   );
 }
@@ -116,11 +124,11 @@ void sortAndRenameGroups(SpreadsheetDecoder spreadsheet, String sheetName) {
       if (namesRows.length <= 1) return;
 
       // Sort names by total count
-      namesRows.sort((a, b) => (b[4] as num).compareTo(a[4] as num));
-      //print('Group ${namesRows.first[1]}');
+      namesRows.sort((a, b) => (b[totalCountColumnIndex] as num).compareTo(a[totalCountColumnIndex] as num));
+      //print('Group ${namesRows.first[nameColumnIndex]}');
 
       // Rename group to highest count
-      spreadsheet.updateCell(sheetName, 0, groupHeaderRowIndex, namesRows.first[1]);
+      spreadsheet.updateCell(sheetName, groupIdColumnIndex, groupHeaderRowIndex, namesRows.first[nameColumnIndex]);
 
       // Save new row order
       for (int r = 0; r < namesRows.length; r++) {
@@ -144,21 +152,21 @@ void computeEpiceneGroups(SpreadsheetDecoder spreadsheet, String sheetName) {
       if (namesRows.length <= 1) return;
 
       // Sort names by total count
-      namesRows.sort((a, b) => (b[4] as num).compareTo(a[4] as num));
+      namesRows.sort((a, b) => (b[totalCountColumnIndex] as num).compareTo(a[totalCountColumnIndex] as num));
 
       // Compute epicene
       for (int r1 = 0; r1 < namesRows.length; r1++) {
         final row1 = namesRows[r1];
-        final name1 = row1[1] as String;
-        final gender1 = row1[2] as String;
+        final name1 = row1[nameColumnIndex] as String;
+        final gender1 = row1[genderColumnIndex] as String;
         for (int r2 = 0; r2 < namesRows.length; r2++) {
           if (r1 == r2) continue;
           final row2 = namesRows[r2];
-          final name2 = row2[1] as String;
-          final gender2 = row2[2] as String;
+          final name2 = row2[nameColumnIndex] as String;
+          final gender2 = row2[genderColumnIndex] as String;
           final epicene = name1 == name2;
           if (epicene && gender1 == gender2) print('/!\\ Warning /!\\ Same name & same gender for: $name1');
-          spreadsheet.updateCell(sheetName, 6, groupHeaderRowIndex, epicene);
+          spreadsheet.updateCell(sheetName, epiceneColumnIndex, groupHeaderRowIndex, epicene);
         }
       }
     },
@@ -173,7 +181,7 @@ void _computeEachName(SpreadsheetDecoder spreadsheet, String sheetName, void Fun
   int lastPrintedProgress = 0;
   for (int r = 1; r < sheet.rows.length; r++) {   // Ignore header
     // Ignore group headers
-    if (isStringNullOrEmpty(sheet.rows[r][1])) continue;
+    if (isStringNullOrEmpty(sheet.rows[r][nameColumnIndex])) continue;
 
     // Compute
     task(sheet, r);
