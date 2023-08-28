@@ -32,16 +32,16 @@ void main(List<String> rawArgs) async {
   const sheetName = 'BDD';
 
   // Compute total count
-  //_computeTotalCount(spreadsheet, sheetName);
+  //_computeTotalCount(spreadsheet);
 
   // Compute hyphenation
-  //_computeHyphenation(spreadsheet, sheetName);
+  //_computeHyphenation(spreadsheet);
 
   // Sort names in each group by total count + rename group to highest count
-  //sortAndRenameGroups(spreadsheet, sheetName);
+  //sortAndRenameGroups(spreadsheet);
 
   // Compute whether groups are epicene
-  computeEpiceneGroups(spreadsheet, sheetName);
+  computeEpiceneGroups(spreadsheet);
 
   // Save file
   print('Save file');
@@ -55,6 +55,7 @@ void main(List<String> rawArgs) async {
   exit(0);
 }
 
+const databaseSheetName = 'BDD';
 const groupIdColumnIndex = 0;
 const nameColumnIndex = 1;
 const genderColumnIndex = 2;
@@ -70,35 +71,33 @@ bool _askConfirmation(String prompt) {
   return true;
 }
 
-void computeTotalCount(SpreadsheetDecoder spreadsheet, String sheetName) {
+void computeTotalCount(SpreadsheetDecoder spreadsheet) {
   print('Compute total count');
   _computeEachName(
-      spreadsheet,
-      sheetName,
-      (sheet, rowIndex) {
-        // Get data
-        final row = sheet.rows[rowIndex];
-        final dataRaw = row[dataColumnIndex];
-        if (dataRaw == null) return;
+    spreadsheet,
+    (sheet, rowIndex) {
+      // Get data
+      final row = sheet.rows[rowIndex];
+      final dataRaw = row[dataColumnIndex];
+      if (dataRaw == null) return;
 
-        // Deserialize
-        final data = (jsonDecode(dataRaw) as Map<String, dynamic>).cast<String, int>();
+      // Deserialize
+      final data = (jsonDecode(dataRaw) as Map<String, dynamic>).cast<String, int>();
 
-        // Compute total count
-        final totalCount = data.values.reduce((value, element) => value + element);
+      // Compute total count
+      final totalCount = data.values.reduce((value, element) => value + element);
 
-        // Update sheet
-        spreadsheet.updateCell(sheetName, totalCountColumnIndex, rowIndex, totalCount);
-      },
+      // Update sheet
+      spreadsheet.updateCell(databaseSheetName, totalCountColumnIndex, rowIndex, totalCount);
+    },
   );
 }
 
-void computeHyphenation(SpreadsheetDecoder spreadsheet, String sheetName) {
+void computeHyphenation(SpreadsheetDecoder spreadsheet) {
   print('Compute hyphenation');
   const hyphenationChars = ['-', "'"];
   _computeEachName(
     spreadsheet,
-    sheetName,
     (sheet, rowIndex) {
       // Get data
       final row = sheet.rows[rowIndex];
@@ -109,16 +108,15 @@ void computeHyphenation(SpreadsheetDecoder spreadsheet, String sheetName) {
       final bool hyphenated = hyphenationChars.any(name.contains);
 
       // Update sheet
-      spreadsheet.updateCell(sheetName, hyphenationColumnIndex, rowIndex, hyphenated ? true : false);
+      spreadsheet.updateCell(databaseSheetName, hyphenationColumnIndex, rowIndex, hyphenated ? true : false);
     },
   );
 }
 
-void sortAndRenameGroups(SpreadsheetDecoder spreadsheet, String sheetName) {
+void sortAndRenameGroups(SpreadsheetDecoder spreadsheet) {
   print('Sort and rename groups');
   _computeEachGroup(
     spreadsheet,
-    sheetName,
     (groupHeaderRowIndex, namesRows) {
       // Skip groups with only one name
       if (namesRows.length <= 1) return;
@@ -128,25 +126,24 @@ void sortAndRenameGroups(SpreadsheetDecoder spreadsheet, String sheetName) {
       //print('Group ${namesRows.first[nameColumnIndex]}');
 
       // Rename group to highest count
-      spreadsheet.updateCell(sheetName, groupIdColumnIndex, groupHeaderRowIndex, namesRows.first[nameColumnIndex]);
+      spreadsheet.updateCell(databaseSheetName, groupIdColumnIndex, groupHeaderRowIndex, namesRows.first[nameColumnIndex]);
 
       // Save new row order
       for (int r = 0; r < namesRows.length; r++) {
         final row = namesRows[r];
         for (int c = 0; c < row.length; c++) {
           final value = row[c];
-          spreadsheet.updateCell(sheetName, c, groupHeaderRowIndex + 1 + r, value ?? '');
+          spreadsheet.updateCell(databaseSheetName, c, groupHeaderRowIndex + 1 + r, value ?? '');
         }
       }
     },
   );
 }
 
-void computeEpiceneGroups(SpreadsheetDecoder spreadsheet, String sheetName) {
+void computeEpiceneGroups(SpreadsheetDecoder spreadsheet) {
   print('Compute epicene groups');
   _computeEachGroup(
     spreadsheet,
-    sheetName,
     (groupHeaderRowIndex, namesRows) {
       // Skip groups with only one name
       if (namesRows.length <= 1) return;
@@ -166,16 +163,16 @@ void computeEpiceneGroups(SpreadsheetDecoder spreadsheet, String sheetName) {
           final gender2 = row2[genderColumnIndex] as String;
           final epicene = name1 == name2;
           if (epicene && gender1 == gender2) print('/!\\ Warning /!\\ Same name & same gender for: $name1');
-          spreadsheet.updateCell(sheetName, epiceneColumnIndex, groupHeaderRowIndex, epicene);
+          spreadsheet.updateCell(databaseSheetName, epiceneColumnIndex, groupHeaderRowIndex, epicene);
         }
       }
     },
   );
 }
 
-void _computeEachName(SpreadsheetDecoder spreadsheet, String sheetName, void Function(SpreadsheetTable sheet, int rowIndex) task) {
+void _computeEachName(SpreadsheetDecoder spreadsheet, void Function(SpreadsheetTable sheet, int rowIndex) task) {
   // Get sheet
-  final sheet = spreadsheet.tables[sheetName]!;
+  final sheet = spreadsheet.tables[databaseSheetName]!;
 
   // Compute total count for each name
   int lastPrintedProgress = 0;
@@ -192,9 +189,9 @@ void _computeEachName(SpreadsheetDecoder spreadsheet, String sheetName, void Fun
   }
 }
 
-void _computeEachGroup(SpreadsheetDecoder spreadsheet, String sheetName, void Function(int groupHeaderRowIndex, List<List> namesRows) task) {
+void _computeEachGroup(SpreadsheetDecoder spreadsheet, void Function(int groupHeaderRowIndex, List<List> namesRows) task) {
   // Get sheet
-  final sheet = spreadsheet.tables[sheetName]!;
+  final sheet = spreadsheet.tables[databaseSheetName]!;
 
   // Compute total count for each name
   int lastPrintedProgress = 0;
