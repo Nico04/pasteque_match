@@ -156,14 +156,14 @@ void computeEpiceneGroups(SpreadsheetDecoder spreadsheet) {
         final row1 = namesRows[r1];
         final name1 = row1[nameColumnIndex] as String;
         final gender1 = row1[genderColumnIndex] as String;
-        for (int r2 = 0; r2 < namesRows.length; r2++) {
-          if (r1 == r2) continue;
+        for (int r2 = r1 + 1; r2 < namesRows.length; r2++) {
           final row2 = namesRows[r2];
           final name2 = row2[nameColumnIndex] as String;
           final gender2 = row2[genderColumnIndex] as String;
           final epicene = name1 == name2;
           if (epicene && gender1 == gender2) print('/!\\ Warning /!\\ Same name & same gender for: $name1');
           spreadsheet.updateCell(databaseSheetName, epiceneColumnIndex, groupHeaderRowIndex, epicene);
+          if (epicene) return;
         }
       }
     },
