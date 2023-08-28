@@ -160,8 +160,8 @@ void _computeEachGroup(SpreadsheetDecoder spreadsheet, String sheetName, void Fu
   final groupRows = <List>[];
   for (int r = 1; r < sheet.rows.length + 1; r++) {   // Ignore header
     // Detect group headers
-    final row = sheet.rows[r];
-    if (r == sheet.rows.length || !isStringNullOrEmpty(row[0])) {
+    final row = sheet.rows.elementAtOrNull(r);
+    if (row == null || !isStringNullOrEmpty(row[0])) {
       // Compute, but ignore empty groups
       if (groupRows.isNotEmpty) {
         task(groupHeaderRowIndex, groupRows);
