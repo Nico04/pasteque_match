@@ -47,7 +47,10 @@ void main(List<String> rawArgs) async {
   //computeDatabaseStats(spreadsheet);
 
   // Compute relative total
-  computeRelativeTotal(spreadsheet);
+  //computeRelativeTotal(spreadsheet);    // TODO remove ?
+
+  // Compute relative count
+  computeRelativeCount(spreadsheet);
 
   // Save file
   print('Save file');
@@ -67,7 +70,7 @@ const nameColumnIndex = 1;
 const genderColumnIndex = 2;
 const countColumnIndex = 3;
 const totalCountColumnIndex = 4;
-const relativeTotalColumnIndex = 5;
+const relativeCountColumnIndex = 5;
 const hyphenationColumnIndex = 6;
 const epiceneColumnIndex = 7;
 
@@ -208,6 +211,7 @@ void computeDatabaseStats(SpreadsheetDecoder spreadsheet) {
   }
 }
 
+/* TODO remove ?
 void computeRelativeTotal(SpreadsheetDecoder spreadsheet) {
   print('Compute relative total');
   // Read stats
@@ -229,6 +233,35 @@ void computeRelativeTotal(SpreadsheetDecoder spreadsheet) {
 
       // Update sheet
       spreadsheet.updateCell(databaseSheetName, relativeTotalColumnIndex, rowIndex, relativeTotal);
+    },
+  );
+}*/
+
+void computeRelativeCount(SpreadsheetDecoder spreadsheet) {
+  print('Compute relative count');
+  // Read stats
+  final stats = _getStats(spreadsheet);
+
+  // Compute
+  _computeEachName(
+    spreadsheet,
+    (sheet, rowIndex) {
+      // Get data
+      final row = sheet.rows[rowIndex];
+
+      // Deserialize
+      final data = _deserializeData(row[countColumnIndex]);
+
+      // Compute relative count for each year
+      final relativeCounts = <String, double>{};
+      data.forEach((year, count) {
+        final total = stats[year]!;
+        final relativeCount = count / total;
+        relativeCounts[year] = relativeCount;
+      });
+
+      // Update sheet
+      spreadsheet.updateCell(databaseSheetName, relativeCountColumnIndex, rowIndex, jsonEncode(relativeCounts));
     },
   );
 }
