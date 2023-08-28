@@ -1,15 +1,14 @@
 // ignore_for_file: avoid_print
 
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:pasteque_match/models/name.dart';
-import 'package:pasteque_match/utils/extensions_base.dart';
 import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
 
 /// Pastèque-Match data preparation script
 /// A Dart script that takes a ODS file as input, and make some calculation to prepare data.
+///
+/// Performance note: using ODS file is very slow and may lead to heap overflow. It's way quicker & stabler (no memory leak) using XLSX files.
 void main(List<String> rawArgs) async {
   print('############ Pastèque-Match Data Preparator ############');
 
