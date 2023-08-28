@@ -41,7 +41,10 @@ void main(List<String> rawArgs) async {
   //sortAndRenameGroups(spreadsheet);
 
   // Compute whether groups are epicene
-  computeEpiceneGroups(spreadsheet);
+  //computeEpiceneGroups(spreadsheet);
+
+  // Compute database stats
+  computeDatabaseStats(spreadsheet);
 
   // Save file
   print('Save file');
@@ -59,10 +62,14 @@ const databaseSheetName = 'BDD';
 const groupIdColumnIndex = 0;
 const nameColumnIndex = 1;
 const genderColumnIndex = 2;
-const dataColumnIndex = 3;
+const countColumnIndex = 3;
 const totalCountColumnIndex = 4;
 const hyphenationColumnIndex = 5;
 const epiceneColumnIndex = 6;
+
+const databaseStatsSheetName = 'BDD Stats';
+const yearColumnIndex = 0;
+const totalColumnIndex = 1;
 
 bool _askConfirmation(String prompt) {
   print(prompt);
@@ -78,11 +85,9 @@ void computeTotalCount(SpreadsheetDecoder spreadsheet) {
     (sheet, rowIndex) {
       // Get data
       final row = sheet.rows[rowIndex];
-      final dataRaw = row[dataColumnIndex];
-      if (dataRaw == null) return;
 
       // Deserialize
-      final data = (jsonDecode(dataRaw) as Map<String, dynamic>).cast<String, int>();
+      final data = _deserializeData(row[countColumnIndex]);
 
       // Compute total count
       final totalCount = data.values.reduce((value, element) => value + element);
@@ -170,6 +175,34 @@ void computeEpiceneGroups(SpreadsheetDecoder spreadsheet) {
   );
 }
 
+void computeDatabaseStats(SpreadsheetDecoder spreadsheet) {
+  print('Compute database stats');
+  final stats = <String, int>{};
+  _computeEachName(
+    spreadsheet,
+    (sheet, rowIndex) {
+      // Get data
+      final row = sheet.rows[rowIndex];
+
+      // Deserialize
+      final data = _deserializeData(row[countColumnIndex]);
+
+      // Add to stats
+      data.forEach((year, count) {
+        stats[year] = (stats[year] ?? 0) + count;
+      });
+    },
+  );
+
+  // Save stats
+  final entries = stats.entries.toList(growable: false);
+  for (int i = 0; i < entries.length; i++) {
+    final entry = entries[i];
+    spreadsheet.updateCell(databaseStatsSheetName, yearColumnIndex, i + 1, entry.key);
+    spreadsheet.updateCell(databaseStatsSheetName, totalColumnIndex, i + 1, entry.value);
+  }
+}
+
 void _computeEachName(SpreadsheetDecoder spreadsheet, void Function(SpreadsheetTable sheet, int rowIndex) task) {
   // Get sheet
   final sheet = spreadsheet.tables[databaseSheetName]!;
@@ -178,7 +211,7 @@ void _computeEachName(SpreadsheetDecoder spreadsheet, void Function(SpreadsheetT
   int lastPrintedProgress = 0;
   for (int r = 1; r < sheet.rows.length; r++) {   // Ignore header
     // Ignore group headers
-    if (isStringNullOrEmpty(sheet.rows[r][nameColumnIndex])) continue;
+    if (_isStringNullOrEmpty(sheet.rows[r][nameColumnIndex])) continue;
 
     // Compute
     task(sheet, r);
@@ -200,7 +233,7 @@ void _computeEachGroup(SpreadsheetDecoder spreadsheet, void Function(int groupHe
   for (int r = 1; r < sheet.rows.length + 1; r++) {   // Ignore header
     // Detect group headers
     final row = sheet.rows.elementAtOrNull(r);
-    if (row == null || !isStringNullOrEmpty(row[0])) {
+    if (row == null || !_isStringNullOrEmpty(row[0])) {
       // Compute, but ignore empty groups
       if (groupRows.isNotEmpty) {
         task(groupHeaderRowIndex, groupRows);
@@ -220,4 +253,6 @@ void _computeEachGroup(SpreadsheetDecoder spreadsheet, void Function(int groupHe
   }
 }
 
-bool isStringNullOrEmpty(String? s) => s == null || s.isEmpty;
+bool _isStringNullOrEmpty(String? s) => s == null || s.isEmpty;
+
+Map<String, int> _deserializeData(String dataRaw) => (jsonDecode(dataRaw) as Map<String, dynamic>).cast<String, int>();
