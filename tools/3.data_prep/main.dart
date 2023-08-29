@@ -26,10 +26,6 @@ void main(List<String> rawArgs) async {
   final file = File(inputFilePath);
   final bytes = await file.readAsBytes();
   final spreadsheet = SpreadsheetDecoder.decodeBytes(bytes, update: true);
-  final tables = spreadsheet.tables;
-
-  // Open BDD table
-  const sheetName = 'BDD';
 
   // Compute total count
   //_computeTotalCount(spreadsheet);
@@ -158,8 +154,11 @@ void computeEpiceneGroups(SpreadsheetDecoder spreadsheet) {
   _computeEachGroup(
     spreadsheet,
     (groupHeaderRowIndex, namesRows) {
-      // Skip groups with only one name
-      if (namesRows.length <= 1) return;
+      // Quick handle for groups with only one name
+      if (namesRows.length <= 1) {
+        spreadsheet.updateCell(databaseSheetName, epiceneColumnIndex, groupHeaderRowIndex, false);
+        return;
+      }
 
       // Sort names by total count
       namesRows.sort((a, b) => (b[totalCountColumnIndex] as num).compareTo(a[totalCountColumnIndex] as num));
