@@ -101,9 +101,9 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
 }
 
 class _NameCard extends StatelessWidget {
-  const _NameCard(this.name, {Key? key}) : super(key: key);
+  const _NameCard(this.group, {super.key});
 
-  final NameGroup name;
+  final NameGroup group;
 
   @override
   Widget build(BuildContext context) {
@@ -115,23 +115,21 @@ class _NameCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            /*Icon(
-              name.gender.icon,
+            Icon(
+              group.gender.icon,
               size: 50,
-              color: name.gender.color,
-            ),*/
+              color: group.gender.color,
+            ),
             AppResources.spacerMedium,
             Text(
-              name.name,
+              group.name,
               style: context.textTheme.headlineLarge,
             ),
-            /*if (name.otherNames.isNotEmpty)...[
-              AppResources.spacerMedium,
-              Text(
-                name.otherNames.toLines(),
-                style: context.textTheme.titleMedium,
-              ),
-            ],*/
+            AppResources.spacerMedium,
+            ...group.names.skip(1).take(5).map<Widget>((name) => Text(
+              name.name,
+              style: context.textTheme.titleMedium,
+            )).toList()..insertBetween(AppResources.spacerSmall),
           ],
         ),
       ),
