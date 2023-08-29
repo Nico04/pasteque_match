@@ -244,8 +244,8 @@ class ProfilePageBloc with Disposable {
 
   Name _buildNameFromId(String nameId) => Name(    // TODO use database
     name: nameId,
-    gender: NameGender.unisex,
-    stats: NameQuantityStatistics(),    // TODO
+    gender: NameGender.values.first,
+    stats: NameQuantityStatistics({}),    // TODO
   );
 
   List<Name> _buildNamesFromIds(Iterable<String> namesId) => namesId.map(_buildNameFromId).toList(growable: false);

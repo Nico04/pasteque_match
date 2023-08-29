@@ -37,7 +37,7 @@ void main(List<String> rawArgs) async {
   //sortAndRenameGroups(spreadsheet);
 
   // Compute whether groups are epicene
-  //computeEpiceneGroups(spreadsheet);
+  computeEpiceneGroups(spreadsheet);
 
   // Compute database stats
   //computeDatabaseStats(spreadsheet);
@@ -46,7 +46,7 @@ void main(List<String> rawArgs) async {
   //computeRelativeTotal(spreadsheet);    // TODO remove ?
 
   // Compute relative count
-  computeRelativeCount(spreadsheet);
+  //computeRelativeCount(spreadsheet);
 
   // Save file
   print('Save file');

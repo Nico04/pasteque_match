@@ -12,6 +12,7 @@ import 'package:pasteque_match/utils/_utils.dart';
 import 'pages/main.page.dart';
 import 'pages/register.page.dart';
 import 'resources/app_theme.dart';
+import 'services/names_service.dart';
 import 'services/storage_service.dart';
 
 void main() async {
@@ -40,6 +41,15 @@ void main() async {
 
   // Init shared pref
   await StorageService.init();
+
+  // Init Names Service
+  try {
+    await NamesService.instance.load();
+  } catch(e, s) {
+    debugPrint('[NamesService] Error while loading database');
+    reportError(e, s);
+    // TODO go to an error page
+  }
 
   // Init App Service
   AppService.instance.init();

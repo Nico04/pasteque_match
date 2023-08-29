@@ -827,7 +827,7 @@ packages:
     source: hosted
     version: "1.9.1"
   spreadsheet_decoder:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: spreadsheet_decoder
       sha256: "1678ea1aa88880b9d69dd979851d05d424f2f5f5426f6b93bbd99c9a8cd1bff5"

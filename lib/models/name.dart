@@ -1,16 +1,20 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'dart:convert';
+
 import 'package:pasteque_match/utils/extensions_base.dart';
 
-part 'name.g.dart';
-
-@JsonSerializable()
 class NameGroup {
-  const NameGroup(this.id, this.names);
+  const NameGroup(this.id, this.epicene, this.names);
+  NameGroup.fromStrings({required this.id, required String epicene}) :
+    epicene = bool.parse(epicene),
+    names = [];
 
-  final String id;    // TODO ID from name
+  final String id;
+  String get name => id;
+
+  final bool epicene;
+
   final List<Name> names;
 
-  String get name => id;
   NameGroupGender get gender {
     final hasMale = names.any((n) => n.gender == NameGender.male);
     final hasFemale = names.any((n) => n.gender == NameGender.female);
@@ -19,14 +23,13 @@ class NameGroup {
     if (hasFemale) return NameGroupGender.female;
     throw UnsupportedError('Unsupported case');
   }
-
-  factory NameGroup.fromJson(Map<String, dynamic> json) => _$NameGroupFromJson(json);
-  Map<String, dynamic> toJson() => _$NameGroupToJson(this);
 }
 
-@JsonSerializable(converters: [_NameQuantityStatisticsConverter()])
 class Name {
   const Name({required this.name, required this.gender, required this.stats});
+  Name.fromStrings({required this.name, required String gender, required String stats}) :
+    gender = NameGender.values.firstWhere((e) => e.name == gender),
+    stats = NameQuantityStatistics((jsonDecode(stats) as Map<String, dynamic>).cast());
 
   String get id => name.normalized;     // TODO remove
 
@@ -39,9 +42,6 @@ class Name {
   bool get isHyphenated => name.contains('-') || name.contains("'");
   NameRarity get rarity => NameRarity.common;   // TODO
   NameAge get age => NameAge.ancient;   // TODO
-
-  factory Name.fromJson(Map<String, dynamic> json) => _$NameFromJson(json);
-  Map<String, dynamic> toJson() => _$NameToJson(this);
 }
 
 typedef NameQuantityStatisticsValue = Map<String, int>;
@@ -55,7 +55,7 @@ class NameQuantityStatistics {
 
   int get total => values.values.sum();
 
-  NameQuantityStatisticsValue toJson() => const _NameQuantityStatisticsConverter().toJson(this);
+  NameQuantityStatisticsValue toJson() => values;
 }
 
 enum NameGender {
@@ -80,14 +80,4 @@ enum NameAge {
   timeless,
   ancient,
   recent,
-}
-
-class _NameQuantityStatisticsConverter implements JsonConverter<NameQuantityStatistics, NameQuantityStatisticsValue> {
-  const _NameQuantityStatisticsConverter();
-
-  @override
-  NameQuantityStatistics fromJson(NameQuantityStatisticsValue json) => NameQuantityStatistics(json);
-
-  @override
-  NameQuantityStatisticsValue toJson(NameQuantityStatistics object) => object.values;
 }

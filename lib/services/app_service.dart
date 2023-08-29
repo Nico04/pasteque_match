@@ -5,6 +5,7 @@ import 'package:pasteque_match/main.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/pages/register.page.dart';
 import 'package:pasteque_match/services/database_service.dart';
+import 'package:pasteque_match/services/names_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/utils/exceptions/invalid_operation_exception.dart';
 import 'package:pasteque_match/utils/exceptions/unauthorized_exception.dart';
@@ -19,6 +20,7 @@ class AppService {
 
   /// Database access
   static final database = DatabaseService.instance;
+  static final names = NamesService.instance.names;
 
   UserStore? _userStore;
   User? get user => _userStore?.cached;

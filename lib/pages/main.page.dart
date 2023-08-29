@@ -50,7 +50,7 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
 
             // Swipe cards
             Expanded(
-              child: FetchBuilder.basic<List<Name>>(
+              child: FetchBuilder.basic<List<NameGroup>>(
                 task: bloc.getRemainingNames,
                 builder: (context, names) {
                   return ValueBuilder<MatchEngine>(
@@ -76,7 +76,7 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
     );
   }
 
-  MatchEngine _buildSwipeEngine(List<Name> names) {
+  MatchEngine _buildSwipeEngine(List<NameGroup> names) {
     return MatchEngine(swipeItems: names.map((name) {
       void postSwipe(SwipeValue value) async {
         // Apply vote
@@ -103,7 +103,7 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
 class _NameCard extends StatelessWidget {
   const _NameCard(this.name, {Key? key}) : super(key: key);
 
-  final Name name;
+  final NameGroup name;
 
   @override
   Widget build(BuildContext context) {
@@ -115,23 +115,23 @@ class _NameCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            /*Icon(
               name.gender.icon,
               size: 50,
               color: name.gender.color,
-            ),
+            ),*/
             AppResources.spacerMedium,
             Text(
               name.name,
               style: context.textTheme.headlineLarge,
             ),
-            if (name.otherNames.isNotEmpty)...[
+            /*if (name.otherNames.isNotEmpty)...[
               AppResources.spacerMedium,
               Text(
                 name.otherNames.toLines(),
                 style: context.textTheme.titleMedium,
               ),
-            ],
+            ],*/
           ],
         ),
       ),
@@ -144,12 +144,12 @@ class MainPageBloc with Disposable {
   User? get user => AppService.instance.user;
   User? get partner => AppService.instance.partner;
 
-  Future<List<Name>> getRemainingNames() async {
+  Future<List<NameGroup>> getRemainingNames() async {
     // Init data
     final user = await AppService.instance.initData();
 
     // Get all names
-    final allNames = await AppService.database.getNames();
+    final allNames = AppService.names;
 
     // Compute remaining votes
     final votedNamesId = user.votes.keys;

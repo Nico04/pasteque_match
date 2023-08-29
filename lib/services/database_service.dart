@@ -12,10 +12,6 @@ class DatabaseService {
 
   final _db = FirebaseFirestore.instance;
 
-  late final _names = _db.collection('names').withConverter<Name>(
-    fromFirestore: (snapshot, _) => Name.fromJson(snapshot.data()!),
-    toFirestore: (model, _) => model.toJson(),
-  );
   late final _users = _db.collection('users').withConverter<User>(
     fromFirestore: (snapshot, _) => User.fromJson(snapshot.id, snapshot.data()!),
     toFirestore: (model, _) => model.toJson(),    // Only used for the set command, which is never used.
@@ -71,28 +67,6 @@ class DatabaseService {
     batch.update(_users.doc(userId), data);
     batch.update(_users.doc(partnerId), data);
     await batch.commit();
-  }
-
-  /// Return all the names.
-  /// Use a 1 day cache, to avoid too many queries.
-  Future<List<Name>> getNames() async {
-    // Compute best source
-    final lastDatabaseNamesReadAt = StorageService.readLastDatabaseNamesReadAt();
-    final source = lastDatabaseNamesReadAt != null && lastDatabaseNamesReadAt.add(const Duration(days: 1)).isAfter(DateTime.now())
-        ? Source.cache
-        : Source.serverAndCache;
-
-    // Fetch data
-    debugPrint('[DatabaseService] get names from ${source.name}');
-    final snapshot = await _names.get(GetOptions(source: source));
-
-    // Update read date
-    if (!snapshot.metadata.isFromCache) {
-      await StorageService.saveLastDatabaseNamesReadAt(DateTime.now());
-    }
-
-    // Return data
-    return snapshot.docs.map((ref) => ref.data()).toList();
   }
 
   /// Add a new user's vote
