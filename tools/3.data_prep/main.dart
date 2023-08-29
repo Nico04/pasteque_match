@@ -37,7 +37,7 @@ void main(List<String> rawArgs) async {
   //sortAndRenameGroups(spreadsheet);
 
   // Compute whether groups are epicene
-  computeEpiceneGroups(spreadsheet);
+  //computeEpiceneGroups(spreadsheet);
 
   // Compute database stats
   //computeDatabaseStats(spreadsheet);
@@ -47,6 +47,9 @@ void main(List<String> rawArgs) async {
 
   // Compute relative count
   //computeRelativeCount(spreadsheet);
+
+  // Build graphs
+  buildGraphs(spreadsheet);
 
   // Save file
   print('Save file');
@@ -261,6 +264,59 @@ void computeRelativeCount(SpreadsheetDecoder spreadsheet) {
 
       // Update sheet
       spreadsheet.updateCell(databaseSheetName, relativeCountColumnIndex, rowIndex, jsonEncode(relativeCounts));
+    },
+  );
+}
+
+void buildGraphs(SpreadsheetDecoder spreadsheet) {
+  print('Build graphs');
+  const names = ['Léon', 'Abdel', 'Joséphine', 'Léo', 'Salma', 'Marie', 'Daenerys', 'Gérard', 'Georgette', 'Ethan'];
+
+  // Column header
+  const graphSheetName = 'Graphs';
+  const firstDataRowIndex = 1;
+  const firstYear = 1900;
+  const lastYear = 2021;
+  final columnHeaderMap = {
+    for (var i = 0; i <= (lastYear - firstYear); i++)
+      i + firstYear: firstDataRowIndex + i
+  };
+  columnHeaderMap.forEach((key, value) {
+    spreadsheet.updateCell(graphSheetName, 0, value, key);
+  });
+
+  final filledNames = <String>{};
+
+  // For each name
+  _computeEachName(
+    spreadsheet,
+    (sheet, rowIndex) {
+      // Get data
+      final row = sheet.rows[rowIndex];
+      final name = row[nameColumnIndex] as String?;
+
+      // Only compute graphs for specific names
+      if (!names.contains(name)) return;
+
+      // Only compute graphs once per name
+      if (filledNames.contains(name)) return;
+
+      // Indexes
+      final nameIndex = names.indexOf(name!);
+      final newNameColumnIndex = 1 + nameIndex;
+
+      // Deserialize
+      final data = _deserializeData(row[countColumnIndex]);
+
+      // Add header
+      spreadsheet.updateCell(graphSheetName, newNameColumnIndex, 0, name);
+
+      // Add data to graph sheet
+      for (final entry in columnHeaderMap.entries) {
+        final value = data[entry.key.toString()];
+        spreadsheet.updateCell(graphSheetName, newNameColumnIndex, entry.value, value ?? 0);
+      }
+      filledNames.add(name);
     },
   );
 }
