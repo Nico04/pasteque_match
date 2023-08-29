@@ -17,9 +17,11 @@ class NamesService {
 
     // Load file
     final bytes = await rootBundle.load(_dbFilePath);
+    debugPrint('[NamesService] file loaded ${stopwatch.elapsedMilliseconds}ms'); stopwatch.reset();
 
     // Decode
     final spreadsheet = SpreadsheetDecoder.decodeBytes(bytes.buffer.asUint8List());
+    debugPrint('[NamesService] file decoded ${stopwatch.elapsedMilliseconds}ms'); stopwatch.reset();
 
     // Read headers
     final sheet = spreadsheet.tables['BDD']!;
@@ -29,7 +31,7 @@ class NamesService {
         headersRow[i].toString(): i
     };
 
-    // Read data
+    // Build data
     _names = [];
     NameGroup? currentGroup;
     for (final row in sheet.rows.skip(1)) {
@@ -57,6 +59,7 @@ class NamesService {
         currentGroup.names.add(name);
       }
     }
-    debugPrint('[NamesService] database loaded in ${stopwatch.elapsedMilliseconds}ms');
+    debugPrint('[NamesService] data built in ${stopwatch.elapsedMilliseconds}ms');
+    debugPrint('[NamesService] database loaded');
   }
 }
