@@ -270,7 +270,7 @@ void computeRelativeCount(SpreadsheetDecoder spreadsheet) {
 
 void buildGraphs(SpreadsheetDecoder spreadsheet) {
   print('Build graphs');
-  const names = ['Léon', 'Abdel', 'Joséphine', 'Léo', 'Salma', 'Marie', 'Daenerys', 'Gérard', 'Georgette', 'Ethan'];
+  const names = ['Léon', 'Abdel', 'Josephine', 'Léo', 'Salma', 'Marie', 'Daenerys', 'Gérard', 'Georgette', 'Ethan', 'Nicolas', 'Prisca', 'Louis'];
 
   // Column header
   const graphSheetName = 'Graphs';
