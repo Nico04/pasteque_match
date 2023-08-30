@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:pasteque_match/utils/extensions_base.dart';
 import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
 
 /// Pastèque-Match data preparation script
@@ -49,7 +50,10 @@ void main(List<String> rawArgs) async {
   //computeRelativeCount(spreadsheet);
 
   // Build graphs
-  buildGraphs(spreadsheet);
+  //buildGraphs(spreadsheet);
+
+  // Compute popularity
+  computePopularity(spreadsheet);
 
   // Save file
   print('Save file');
@@ -64,14 +68,16 @@ void main(List<String> rawArgs) async {
 }
 
 const databaseSheetName = 'BDD';
+const rareNamesFieldName = '_prenoms_rares';
 const groupIdColumnIndex = 0;
 const nameColumnIndex = 1;
 const genderColumnIndex = 2;
 const countColumnIndex = 3;
 const totalCountColumnIndex = 4;
 const relativeCountColumnIndex = 5;
-const hyphenationColumnIndex = 6;
-const epiceneColumnIndex = 7;
+const popularityColumnIndex = 6;
+const hyphenationColumnIndex = 7;
+const epiceneColumnIndex = 8;
 
 const databaseStatsSheetName = 'Stats';
 const yearColumnIndex = 0;
@@ -94,7 +100,7 @@ void computeTotalCount(SpreadsheetDecoder spreadsheet) {
       final row = sheet.rows[rowIndex];
 
       // Deserialize
-      final data = _deserializeData(row[countColumnIndex]);
+      final data = _deserializeData<int>(row[countColumnIndex]);
 
       // Compute total count
       final totalCount = data.values.reduce((value, element) => value + element);
@@ -195,7 +201,7 @@ void computeDatabaseStats(SpreadsheetDecoder spreadsheet) {
       final row = sheet.rows[rowIndex];
 
       // Deserialize
-      final data = _deserializeData(row[countColumnIndex]);
+      final data = _deserializeData<int>(row[countColumnIndex]);
 
       // Add to stats
       data.forEach((year, count) {
@@ -252,7 +258,7 @@ void computeRelativeCount(SpreadsheetDecoder spreadsheet) {
       final row = sheet.rows[rowIndex];
 
       // Deserialize
-      final data = _deserializeData(row[countColumnIndex]);
+      final data = _deserializeData<int>(row[countColumnIndex]);
 
       // Compute relative count for each year
       final relativeCounts = <String, double>{};
@@ -306,7 +312,7 @@ void buildGraphs(SpreadsheetDecoder spreadsheet) {
       final newNameColumnIndex = 1 + nameIndex;
 
       // Deserialize
-      final data = _deserializeData(row[countColumnIndex]);
+      final data = _deserializeData<int>(row[countColumnIndex]);
 
       // Add header
       spreadsheet.updateCell(graphSheetName, newNameColumnIndex, 0, name);
@@ -319,6 +325,73 @@ void buildGraphs(SpreadsheetDecoder spreadsheet) {
       filledNames.add(name);
     },
   );
+}
+
+void computePopularity(SpreadsheetDecoder spreadsheet) {
+  print('Compute popularity');
+
+  // Compute weighted sum
+  final weightedSums = <int, double>{};
+  (double, String) min = (double.infinity, '-');
+  (double, String) max = (double.negativeInfinity, '-');
+  _computeEachName(
+    spreadsheet,
+    (sheet, rowIndex) {
+      // Get data
+      final row = sheet.rows[rowIndex];
+
+      // Skip rare names group
+      final name = row[nameColumnIndex] as String;
+      if (name == rareNamesFieldName) return;
+
+      // Deserialize data
+      final data = _deserializeData<double>(row[relativeCountColumnIndex]);
+
+      // Compute weighted sum
+      const t0 = 2021;
+      const oldestAge = 100;
+      double weightedSum = 0;
+      data.forEach((year, relativeCount) {
+        final yearInt = int.parse(year);
+        double weight = (yearInt - t0 + oldestAge) / oldestAge;  // Weight is 1 for t0, and 0 for t0-oldestAge (linear)
+        weight = weight.clamp(0, 1);    // Clamp to 0-1 range
+        double weightedCount = relativeCount * weight;
+        weightedSum += weightedCount;
+      });
+      weightedSums[rowIndex] = weightedSum;
+
+      // Update stats
+      if (weightedSum < min.$1) min = (weightedSum, name);
+      if (weightedSum > max.$1) max = (weightedSum, name);
+    },
+  );
+
+  // Stats
+  print('Weighted sums stats: $min > $max');
+
+  // Compute popularity indicator
+  final namesPopularity = <(String, double)>[];
+  _computeEachName(
+    spreadsheet,
+    (sheet, rowIndex) {
+      final weightedSum = weightedSums[rowIndex];
+      if (weightedSum == null) return;
+
+      // Compute popularity
+      double popularity = (weightedSum - min.$1) / (max.$1 - min.$1);    // Normalize to 0-1 range
+      popularity = popularity.roundToDecimals(2);   // Round to 2 decimals to reduce serialized file size
+
+      // Update stats
+      namesPopularity.add((sheet.rows[rowIndex][nameColumnIndex] as String, popularity));
+
+      // Update sheet
+      spreadsheet.updateCell(databaseSheetName, popularityColumnIndex, rowIndex, popularity);
+    },
+  );
+
+  // Top 10 names
+  namesPopularity.sort((a, b) => b.$2.compareTo(a.$2));
+  print('Top 10 names: ${namesPopularity.take(10).map((e) => '${e.$1} (${e.$2})').join(', ')}');
 }
 
 void _computeEachName(SpreadsheetDecoder spreadsheet, void Function(SpreadsheetTable sheet, int rowIndex) task) {
@@ -391,4 +464,4 @@ Map<String, int> _getStats(SpreadsheetDecoder spreadsheet) {
 
 bool _isStringNullOrEmpty(String? s) => s == null || s.isEmpty;
 
-Map<String, int> _deserializeData(String dataRaw) => (jsonDecode(dataRaw) as Map<String, dynamic>).cast<String, int>();
+Map<String, T> _deserializeData<T extends num>(String dataRaw) => (jsonDecode(dataRaw) as Map<String, dynamic>).cast<String, T>();

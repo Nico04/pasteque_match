@@ -1,6 +1,14 @@
+import 'dart:math';
 import 'package:diacritic/diacritic.dart';
 
 /// Separated from [extensions.dart] to allow import from Dart Command program [utils/lib/main.dart]
+
+extension ExtendedDouble on double {
+  double roundToDecimals(int decimals){
+    final mod = pow(10.0, decimals);
+    return ((this * mod).round().toDouble() / mod);
+  }
+}
 
 extension ExtendedString on String {
   /// Normalize string by removing diacritics and transform to lower case
