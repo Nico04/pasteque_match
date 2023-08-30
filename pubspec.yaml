@@ -31,6 +31,10 @@ dependencies:
   cloud_firestore: ^4.7.1
   shared_preferences: ^2.1.1
   spreadsheet_decoder: ^2.2.0
+  csv : ^5.0.1
+  fast_csv: ^0.1.44
+  serial_csv: ^0.4.0
+  archive: ^3.3.7
 
   # Platform tools
   permission_handler: ^10.2.0
