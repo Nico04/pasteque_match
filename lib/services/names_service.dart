@@ -23,6 +23,7 @@ class NamesService {
   /// 3. CSV file using csv v5.0.1 : 471ms to decode string + 1292ms to decode CSV = 1763ms
   /// 4. CSV file using fast_csv v0.1.44 : 431ms to decode string + 466ms to decode CSV = 897ms
   /// 4a.Zipped CSV file using fast_csv v0.1.44 & archive v3.3.7 : 22ms to load zip + 14ms to decode zip + 817ms to decode string + 465ms to decode CSV = 1318ms
+  /// 4b.Same as 4, but run in an isolate using Isolate.run() : around same duration.
   /// 5. CSV file using serial_csv v0.4.0 : 417ms to decode string + 3124ms to decode CSV = 3541ms
   ///
   /// Conclusions:
@@ -52,7 +53,7 @@ class NamesService {
     _names = [];
     NameGroup? currentGroup;
     for (final row in rows.skip(1)) {
-      final groupId = row[headersMap['groupId']!] as String?;
+      final groupId = row[headersMap['groupId']!];
 
       // Skip special rows
       if (groupId == '_prenoms_rares') continue;
@@ -60,7 +61,7 @@ class NamesService {
       // It's a group
       if (!isStringNullOrEmpty(groupId)) {
         currentGroup = NameGroup.fromStrings(
-          id: groupId!,
+          id: groupId,
           epicene: row[headersMap['epicene']!],
         );
         _names.add(currentGroup);
