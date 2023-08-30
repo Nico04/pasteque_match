@@ -48,3 +48,9 @@ app.*.map.json
 
 # Other
 /local.properties
+
+# Project
+*.csv
+*.xlsx
+*.zip
+*.ods
