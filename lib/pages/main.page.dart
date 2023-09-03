@@ -151,7 +151,7 @@ class MainPageBloc with Disposable {
 
     // Compute remaining votes
     final votedNamesId = user.votes.keys;
-    return allNames.where((name) => !votedNamesId.contains(name.id)).toList(growable: false);   // TODO sort random ?
+    return allNames.where((name) => !votedNamesId.contains(name.id)).toList(growable: false)..shuffle();
   }
 
   /// Apply user's vote.
