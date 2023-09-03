@@ -35,40 +35,42 @@ class _ProfilePageState extends State<ProfilePage> with BlocProvider<ProfilePage
         stream: bloc.userStream,
         builder: (context, snapshot) {
           final user = snapshot.data!;
-          return SafeArea(
-            child: Padding(
-              padding: AppResources.paddingPage,
-              child: ValueBuilder<_Votes>(
-                key: ObjectKey(user),
-                valueGetter: bloc.getVotes,
-                builder: (context, votes) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
+          return SingleChildScrollView(
+            child: SafeArea(
+              child: Padding(
+                padding: AppResources.paddingPage,
+                child: ValueBuilder<_Votes>(
+                  key: ObjectKey(user),
+                  valueGetter: bloc.getVotes,
+                  builder: (context, votes) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
 
-                      // Partner section
-                      _PartnerCard(
-                        userId: user.id,
-                        partnerId: user.partnerId,
-                      ),
-
-                      // Matches
-                      if (user.hasPartner)...[
-                        AppResources.spacerMedium,
-                        _MatchesCard(
-                          matches: votes.matchedNames,
+                        // Partner section
+                        _PartnerCard(
+                          userId: user.id,
+                          partnerId: user.partnerId,
                         ),
+
+                        // Matches
+                        if (user.hasPartner)...[
+                          AppResources.spacerMedium,
+                          _MatchesCard(
+                            matches: votes.matchedNames,
+                          ),
+                        ],
+
+                        // Votes
+                        AppResources.spacerMedium,
+                        _VotesCard(
+                          votes: votes.allVotes,
+                        ),
+
                       ],
-
-                      // Votes
-                      AppResources.spacerMedium,
-                      _VotesCard(
-                        votes: votes.allVotes,
-                      ),
-
-                    ],
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           );
