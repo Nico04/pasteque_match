@@ -201,15 +201,62 @@ class _VotesCard extends StatelessWidget {
 
             // List
             else
-              ...votes.entries.map((voteEntry) {
-                return Row(
-                  children: [
-                    Text(voteEntry.key.name),
-                    const Spacer(),
-                    Text(voteEntry.value.name),
-                  ],
+              ...votes.entries.map<Widget>((voteEntry) {
+                return InkWell(
+                  onTap: () {},
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 40,
+                        child: FittedBox(
+                          child: Text(
+                            voteEntry.key.name.substring(0, 1),
+                            style: TextStyle(
+                              fontFamily: 'Passions Conflict',
+                              color: Colors.black,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      AppResources.spacerMedium,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(voteEntry.key.name),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    children: [
+                                      Text(voteEntry.key.name, style: context.textTheme.caption),
+                                      Text(voteEntry.key.name, style: context.textTheme.caption),
+                                    ],
+                                  ),
+                                ),
+                                ToggleButtons(
+                                  isSelected: [voteEntry.value == SwipeValue.like, voteEntry.value == SwipeValue.dislike],
+                                  children: [
+                                    Icon(Icons.thumb_up),
+                                    Icon(Icons.thumb_down),
+                                  ],
+                                  onPressed: (index) {}, // TODO
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete_outline),
+                                  onPressed: () {}, // TODO
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 );
-              }),
+              }).toList()..insertBetween(AppResources.spacerMedium),
           ],
         ),
       ),
