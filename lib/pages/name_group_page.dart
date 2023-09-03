@@ -53,7 +53,8 @@ class NameGroupPage extends StatelessWidget {
           FilledButton(
             onPressed: () => askConfirmation(
               context: context,
-              text: 'Vous avez constaté un problème avec ce groupe ?\n\nSignalez-le pour que nous puissions le corriger.',
+              title: 'Signaler un problème',
+              caption: 'Vous avez constaté un problème avec ce groupe ?\nSignalez-le pour que nous puissions le corriger.',
               onConfirmation: () async {
                 await AppService.database.reportGroupError(group.id);
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

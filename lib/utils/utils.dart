@@ -88,7 +88,8 @@ Future<void> openDialog<T>({required BuildContext context, required WidgetBuilde
 /// Open a confirmation pop-up
 Future<void> askConfirmation({
   required BuildContext context,
-  required String text,
+  required String title,
+  required String caption,
   String? confirmText,
   String? cancelText,
   VoidCallback? onConfirmation,
@@ -98,9 +99,10 @@ Future<void> askConfirmation({
     builder: (context) {
       return Center(
         child: PmConfirmationDialog(
-          text: text,
-          confirmText: confirmText ?? 'OK',
-          cancelText: cancelText ?? 'Annuler',
+          title: title,
+          caption: caption,
+          confirmText: confirmText,
+          cancelText: cancelText,
         ),
       );
     },
