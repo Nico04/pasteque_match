@@ -73,6 +73,7 @@ class DatabaseService {
       'votes.$groupId': value.name,
       'lastVotedAt': DateTime.now(),  // Using 'FieldValue.serverTimestamp()' is more accurate, but it doubles the db exchanges (automatically fetch the value set by server after the update), and this value is not used in the app.
     });
+    debugPrint('[DatabaseService] set user\'s vote $groupId to $value');
   }
 
   /// Remove a user's vote
@@ -80,6 +81,7 @@ class DatabaseService {
     await _users.doc(userId).update({
       'votes.$groupId': FieldValue.delete(),
     });
+    debugPrint('[DatabaseService] remove user\'s vote $groupId');
   }
 }
 

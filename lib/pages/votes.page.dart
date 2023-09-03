@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:animated_list_plus/transitions.dart';
 import 'package:fetcher/fetcher.dart';
@@ -28,25 +30,18 @@ class VotesPage extends StatelessWidget {
           }
           return ImplicitlyAnimatedList(
             padding: AppResources.paddingPage,
-            items: votes.entries.toList(growable: false),
+            items: SplayTreeMap.of(votes).entries.toList(),   // SplayTreeMap to sort by key (needed for consistent list edition)
             areItemsTheSame: (a, b) => a.key == b.key,
             itemBuilder: (context, animation, voteEntry, index) {
               final groupId = voteEntry.key;
               final vote = voteEntry.value;
+              final group = AppService.names[groupId];
               return SizeFadeTransition(
+                key: ValueKey(groupId),
                 curve: Curves.easeOut,
                 sizeFraction: 0.3,
                 animation: animation,
-                child: ValueBuilder<NameGroup?>(
-                    key: ValueKey(groupId),
-                    valueGetter: () => AppService.names[groupId],
-                    builder: (context, group) {
-                      if (group == null) {
-                        return Text('Groupe $groupId introuvable');   // TODO
-                      }
-                      return _VoteCard(group, vote);
-                    }
-                ),
+                child: _VoteCard(groupId, group, vote),
               );
             },
             separatorBuilder: (context, index) => AppResources.spacerSmall,
@@ -58,9 +53,10 @@ class VotesPage extends StatelessWidget {
 }
 
 class _VoteCard extends StatelessWidget {
-  const _VoteCard(this.group, this.vote, {super.key});
+  const _VoteCard(this.groupId, this.group, this.vote, {super.key});
 
-  final NameGroup group;
+  final String groupId;
+  final NameGroup? group;
   final SwipeValue vote;
 
   @override
@@ -81,7 +77,7 @@ class _VoteCard extends StatelessWidget {
                   Positioned(
                     top: -backgroundLetterHeight / 2, // Couldn't find a better way to center the letter vertically.
                     child: Text(
-                      group.name.substring(0, 1),
+                      groupId.substring(0, 1),
                       style: TextStyle(
                         fontFamily: 'Passions Conflict',
                         fontSize: backgroundLetterHeight,
@@ -94,13 +90,28 @@ class _VoteCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(group.name),
-                        ...group.names.skip(1).take(2).map((name) {
-                          return Text(
-                            name.name,
-                            style: context.textTheme.bodySmall,
-                          );
-                        }).toList(growable: false),
+                        Text(groupId),
+                        if (group == null)
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                                size: 16,
+                              ),
+                              Text(
+                                ' Groupe introuvable',
+                                style: context.textTheme.bodySmall,
+                              ),
+                            ],
+                          )
+                        else
+                          ...group!.names.skip(1).take(2).map((name) {
+                            return Text(
+                              name.name,
+                              style: context.textTheme.bodySmall,
+                            );
+                          }).toList(growable: false),
                       ],
                     ),
                   ),
@@ -127,11 +138,11 @@ class _VoteCard extends StatelessWidget {
                     ],
                     multiSelectionEnabled: false,
                     showSelectedIcon: false,
-                    onSelectionChanged: (value) => AppService.instance.setUserVote(group.id, value.single),
+                    onSelectionChanged: (value) => AppService.instance.setUserVote(groupId, value.single),
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete_outline),
-                    onPressed: () => AppService.instance.clearUserVote(group.id),
+                    onPressed: () => AppService.instance.clearUserVote(groupId),
                   ),
                 ],
               ),
