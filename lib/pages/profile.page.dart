@@ -13,6 +13,7 @@ import 'package:pasteque_match/widgets/themed/pm_qr_code_widget.dart';
 import 'remove_partner.page.dart';
 import 'scan.page.dart';
 import 'scan_result.page.dart';
+import 'votes.page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -196,61 +197,7 @@ class _VotesCard extends StatelessWidget {
 
             // Empty list
             AppResources.spacerLarge,
-            if (votes.isEmpty)
-              const Text('<Vide>')    // TODO
-
-            // List
-            else
-              ...votes.entries.map<Widget>((voteEntry) {
-                return InkWell(
-                  onTap: () {},
-                  child: Stack(
-                    alignment: Alignment.centerLeft,
-                    children: [
-                      Positioned(
-                        top: 0,
-                        bottom: 0,
-                        child: FittedBox(
-                          child: Text(
-                            voteEntry.key.name.substring(0, 1),
-                            style: TextStyle(
-                              fontFamily: 'Passions Conflict',
-                              color: Colors.black.withOpacity(0.1),
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Text(voteEntry.key.name),
-                                Text(voteEntry.key.name, style: context.textTheme.caption),
-                                Text(voteEntry.key.name, style: context.textTheme.caption),
-                              ],
-                            ),
-                          ),
-                          ToggleButtons(
-                            isSelected: [voteEntry.value == SwipeValue.like, voteEntry.value == SwipeValue.dislike],
-                            children: [
-                              Icon(Icons.thumb_up),
-                              Icon(Icons.thumb_down),
-                            ],
-                            onPressed: (index) {}, // TODO
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete_outline),
-                            onPressed: () {}, // TODO
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              }).toList()..insertBetween(AppResources.spacerMedium),
+            FilledButton(onPressed: () => navigateTo(context, (context) => VotesPage(votes)), child: Text('Voir tous mes votes')),
           ],
         ),
       ),
