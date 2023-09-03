@@ -10,6 +10,8 @@ import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 
+import 'name_group_page.dart';
+
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -110,45 +112,48 @@ class _GroupCard extends StatelessWidget {
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(36))),
       elevation: 3,
       clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: AppResources.paddingContent,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Positioned.fill(
-              child: FittedBox(
-                child: Text(
-                  group.name.substring(0, 1),
-                  style: TextStyle(
-                    fontFamily: 'Passions Conflict',
-                    color: Colors.black.withOpacity(0.1),
+      child: InkWell(
+        onTap: () => navigateTo(context, (_) => NameGroupPage(group)),
+        child: Padding(
+          padding: AppResources.paddingContent,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned.fill(
+                child: FittedBox(
+                  child: Text(
+                    group.name.substring(0, 1),
+                    style: TextStyle(
+                      fontFamily: 'Passions Conflict',
+                      color: Colors.black.withOpacity(0.1),
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _NameGenderRow(
-                  name: group.name,
-                  style: context.textTheme.displayMedium?.copyWith(fontFamily: 'Beau Rivage', color: Colors.black),
-                  icon: group.names.first.gender.icon,
-                  iconSize: 40,
-                  iconColor: group.names.first.gender.color,
-                ),
-                AppResources.spacerMedium,
-                ...group.names.skip(1).take(5).map<Widget>((name) => _NameGenderRow(
-                  name: name.name,
-                  style: context.textTheme.titleMedium,
-                  icon: name.gender.icon,
-                  iconSize: 20,
-                  iconColor: name.gender.color,
-                )).toList()..insertBetween(AppResources.spacerSmall),
-              ],
-            ),
-          ],
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _NameGenderRow(
+                    name: group.name,
+                    style: context.textTheme.displayMedium?.copyWith(fontFamily: 'Beau Rivage', color: Colors.black),
+                    icon: group.names.first.gender.icon,
+                    iconSize: 40,
+                    iconColor: group.names.first.gender.color,
+                  ),
+                  AppResources.spacerMedium,
+                  ...group.names.skip(1).take(5).map<Widget>((name) => _NameGenderRow(
+                    name: name.name,
+                    style: context.textTheme.titleMedium,
+                    icon: name.gender.icon,
+                    iconSize: 20,
+                    iconColor: name.gender.color,
+                  )).toList()..insertBetween(AppResources.spacerSmall),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

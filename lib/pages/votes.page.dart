@@ -11,6 +11,8 @@ import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 
+import 'name_group_page.dart';
+
 class VotesPage extends StatelessWidget {
   const VotesPage({super.key});
 
@@ -66,7 +68,7 @@ class _VoteCard extends StatelessWidget {
       elevation: 0,
       color: Theme.of(context).colorScheme.surfaceVariant,
       child: InkWell(
-        onTap: () {},   // TODO go to group page
+        onTap: group == null ? null : () => navigateTo(context, (context) => NameGroupPage(group!)),
         child: Row(
           children: [
             Expanded(
