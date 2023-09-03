@@ -24,7 +24,7 @@ class UserData {
 
   /// Return all likes
   /// (votes with SwipeValue.like value)
-  Map<String, SwipeValue> get likes => Map.fromEntries(votes.entries.where((entry) => entry.value == SwipeValue.like));
+  List<String> get likes => votes.entries.where((entry) => entry.value == SwipeValue.like).map((entry) => entry.key).toList(growable: false);
 
   /// Date of the last vote
   /// Used to clean the database

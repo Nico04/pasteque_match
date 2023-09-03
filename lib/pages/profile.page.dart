@@ -210,7 +210,7 @@ class ProfilePageBloc with Disposable {
         final partner = AppService.instance.partner!;
         final partnerLikes = partner.likes;
 
-        final matchedNameIdEntries = userLikes.keys.where(partnerLikes.containsKey);
+        final matchedNameIdEntries = userLikes.where(partnerLikes.contains);
         return _buildNamesFromIds(matchedNameIdEntries);
       }
       return const <Name>[];

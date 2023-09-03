@@ -199,7 +199,9 @@ class MainPageBloc with Disposable {
 
     // Compute remaining votes
     final votedNamesId = user.votes.keys;
-    return allNames.values.where((name) => !votedNamesId.contains(name.id)).toList(growable: false)..shuffle();   // TODO optimise using map's key
+    final remainingNamesMap = Map.of(allNames)..removeWhere((key, value) => !votedNamesId.contains(key));
+    final remainingNames = remainingNamesMap.values.toList(growable: false);
+    return remainingNames..shuffle();
   }
 
   /// Apply user's vote.
