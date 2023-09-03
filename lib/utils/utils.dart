@@ -7,6 +7,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pasteque_match/widgets/themed/dialogs/pm_confirmation_dialog.dart';
 
 import '_utils.dart';
 import 'exceptions/connectivity_exception.dart';
@@ -70,6 +71,45 @@ Future<T?> navigateTo<T>(BuildContext context, WidgetBuilder builder, {
   } else {
     return await navigationFuture;
   }
+}
+
+/// Opens a generic dialog (pop-up)
+Future<void> openDialog<T>({required BuildContext context, required WidgetBuilder builder, ValueChanged<T>? onResult}) async {
+  final result = await showDialog<T>(
+    context: context,
+    builder: builder,
+  );
+
+  if (result != null) {
+    onResult?.call(result);
+  }
+}
+
+/// Open a confirmation pop-up
+Future<void> askConfirmation({
+  required BuildContext context,
+  required String text,
+  String? confirmText,
+  String? cancelText,
+  VoidCallback? onConfirmation,
+}) async {
+  await openDialog<bool>(
+    context: context,
+    builder: (context) {
+      return Center(
+        child: PmConfirmationDialog(
+          text: text,
+          confirmText: confirmText ?? 'OK',
+          cancelText: cancelText ?? 'Annuler',
+        ),
+      );
+    },
+    onResult: (confirm) {
+      if (confirm == true) {
+        onConfirmation?.call();
+      }
+    },
+  );
 }
 
 /// Display an error to the user

@@ -15,6 +15,8 @@ class DatabaseService {
     toFirestore: (model, _) => model.toJson(),    // Only used for the set command, which is never used.
   );
 
+  late final _reports = _db.collection('reports');
+
   /// Add a new user.
   /// Return user id.
   Future<String> addUser(String username) async {
@@ -32,7 +34,6 @@ class DatabaseService {
   /// Set user partner
   /// Update [userId]'s partner AND [partnerId]'s partner
   Future<void> setPartner(String userId, String partnerId) async {
-    debugPrint('[DatabaseService] set user\'s partner');
     Map<String, dynamic> buildData(String partnerId) => {
       'partnerId': partnerId,
     };
@@ -50,12 +51,12 @@ class DatabaseService {
       transaction.update(_users.doc(userId), buildData(partnerId));
       transaction.update(_users.doc(partnerId), buildData(userId));
     });
+    debugPrint('[DatabaseService] New user partner is set');
   }
 
   /// Remove user partner
   /// Update [userId]'s partner AND [partnerId]'s partner
   Future<void> removePartner(String userId, String partnerId) async {
-    debugPrint('[DatabaseService] remove user\'s partner');
     final data = {
       'partnerId': FieldValue.delete(),
     };
@@ -65,6 +66,7 @@ class DatabaseService {
     batch.update(_users.doc(userId), data);
     batch.update(_users.doc(partnerId), data);
     await batch.commit();
+    debugPrint('[DatabaseService] Partner $partnerId removed');
   }
 
   /// Add a new user's vote
@@ -73,7 +75,7 @@ class DatabaseService {
       'votes.$groupId': value.name,
       'lastVotedAt': DateTime.now(),  // Using 'FieldValue.serverTimestamp()' is more accurate, but it doubles the db exchanges (automatically fetch the value set by server after the update), and this value is not used in the app.
     });
-    debugPrint('[DatabaseService] set user\'s vote $groupId to $value');
+    debugPrint('[DatabaseService] Vote for $groupId changed to $value');
   }
 
   /// Remove a user's vote
@@ -81,7 +83,15 @@ class DatabaseService {
     await _users.doc(userId).update({
       'votes.$groupId': FieldValue.delete(),
     });
-    debugPrint('[DatabaseService] remove user\'s vote $groupId');
+    debugPrint('[DatabaseService] Vote for $groupId removed');
+  }
+
+  /// Report an error on a group
+  Future<void> reportGroupError(String groupId) async {
+    await _reports.doc(groupId).set({   // set() command create document if it does not exists (where update() doesn't).
+      'count': FieldValue.increment(1),
+    }, SetOptions(merge: true));
+    debugPrint('[DatabaseService] Group $groupId reported');
   }
 }
 
