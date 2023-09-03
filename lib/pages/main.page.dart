@@ -5,7 +5,6 @@ import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/pages/profile.page.dart';
 import 'package:pasteque_match/resources/_resources.dart';
-import 'package:pasteque_match/resources/data.dart';
 import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
@@ -62,7 +61,7 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
                         child: SwipeCards(
                           matchEngine: matchEngine,
                           onStackFinished: () => print('onStackFinished'),    // TODO
-                          itemBuilder: (context, index, distance, slideRegion) => _NameCard(names[index]),
+                          itemBuilder: (context, index, distance, slideRegion) => _GroupCard(names[index]),
                         ),
                       );
                     },
@@ -100,8 +99,8 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
   }
 }
 
-class _NameCard extends StatelessWidget {
-  const _NameCard(this.group, {super.key});
+class _GroupCard extends StatelessWidget {
+  const _GroupCard(this.group, {super.key});
 
   final NameGroup group;
 
@@ -114,21 +113,22 @@ class _NameCard extends StatelessWidget {
         padding: AppResources.paddingContent,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Icon(
-              group.gender.icon,
-              size: 50,
-              color: group.gender.color,
-            ),
-            AppResources.spacerMedium,
-            Text(
-              group.name,
+            _NameGenderRow(
+              name: group.name,
               style: context.textTheme.headlineLarge,
+              icon: group.names.first.gender.icon,
+              iconSize: 40,
+              iconColor: group.names.first.gender.color,
             ),
             AppResources.spacerMedium,
-            ...group.names.skip(1).take(5).map<Widget>((name) => Text(
-              name.name,
+            ...group.names.skip(1).take(5).map<Widget>((name) => _NameGenderRow(
+              name: name.name,
               style: context.textTheme.titleMedium,
+              icon: name.gender.icon,
+              iconSize: 20,
+              iconColor: name.gender.color,
             )).toList()..insertBetween(AppResources.spacerSmall),
           ],
         ),
@@ -136,6 +136,36 @@ class _NameCard extends StatelessWidget {
     );
   }
 }
+
+class _NameGenderRow extends StatelessWidget {
+  const _NameGenderRow({super.key, required this.name, this.style, required this.icon, required this.iconSize, this.iconColor});
+
+  final String name;
+  final TextStyle? style;
+  final IconData icon;
+  final double iconSize;
+  final Color? iconColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          name,
+          style: style,
+        ),
+        AppResources.spacerSmall,
+        Icon(
+          icon,
+          size: iconSize,
+          color: iconColor,
+        ),
+      ],
+    );
+  }
+}
+
 
 
 class MainPageBloc with Disposable {

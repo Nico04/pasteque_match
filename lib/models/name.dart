@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:pasteque_match/utils/extensions_base.dart';
 
 class NameGroup {
@@ -14,15 +15,6 @@ class NameGroup {
   final bool epicene;
 
   final List<Name> names;
-
-  NameGroupGender get gender {
-    final hasMale = names.any((n) => n.gender == NameGender.male);
-    final hasFemale = names.any((n) => n.gender == NameGender.female);
-    if (hasMale && hasFemale) return NameGroupGender.unisex;
-    if (hasMale) return NameGroupGender.male;
-    if (hasFemale) return NameGroupGender.female;
-    throw UnsupportedError('Unsupported case');
-  }
 }
 
 class Name {
@@ -59,14 +51,13 @@ class NameQuantityStatistics {
 }
 
 enum NameGender {
-  male,
-  female,
-}
+  male(Icons.male, Colors.blue),
+  female(Icons.female, Colors.pink);
 
-enum NameGroupGender {
-  male,
-  female,
-  unisex,
+  const NameGender(this.icon, this.color);
+
+  final IconData icon;
+  final Color color;
 }
 
 enum NameRarity {
