@@ -89,8 +89,8 @@ class AppService {
     _partnerStore = null;
   }
 
-  Future<void> setUserVote(String nameId, SwipeValue value) => database.setUserVote(user!.id, nameId, value);
-  Future<void> clearUserVote(String nameId) => database.clearUserVote(user!.id, nameId);
+  Future<void> setUserVote(String groupId, SwipeValue value) => database.setUserVote(user!.id, groupId, value);
+  Future<void> clearUserVote(String groupId) => database.clearUserVote(user!.id, groupId);
   //#endregion
 
   //#region Other

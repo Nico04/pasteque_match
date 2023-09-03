@@ -68,22 +68,22 @@ class DatabaseService {
   }
 
   /// Add a new user's vote
-  Future<void> setUserVote(String userId, String nameId, SwipeValue value) async {
+  Future<void> setUserVote(String userId, String groupId, SwipeValue value) async {
     await _users.doc(userId).update({
-      'votes.$nameId': value.name,
+      'votes.$groupId': value.name,
       'lastVotedAt': DateTime.now(),  // Using 'FieldValue.serverTimestamp()' is more accurate, but it doubles the db exchanges (automatically fetch the value set by server after the update), and this value is not used in the app.
     });
   }
 
-  /// Add a new user's vote
-  Future<void> clearUserVote(String userId, String nameId) async {
+  /// Remove a user's vote
+  Future<void> clearUserVote(String userId, String groupId) async {
     await _users.doc(userId).update({
-      'votes.$nameId': FieldValue.delete(),
+      'votes.$groupId': FieldValue.delete(),
     });
   }
 }
 
-class UserStore {
+class UserStore {   // TODO refactor to use a cleaner logic like in Mb App (stream only, with cache first & background update)
   UserStore(this.id);
 
   final String id;

@@ -204,14 +204,14 @@ class MainPageBloc with Disposable {
 
   /// Apply user's vote.
   /// Return true if it's a match.
-  Future<bool> applyVote(String nameId, SwipeValue value) async {
+  Future<bool> applyVote(String groupId, SwipeValue value) async {
     try {
       // Apply vote
-      await AppService.instance.setUserVote(nameId, value);
+      await AppService.instance.setUserVote(groupId, value);
 
       // Is it a match ?
       if (value == SwipeValue.like && partner != null) {
-        final partnerVote = partner!.votes[nameId];
+        final partnerVote = partner!.votes[groupId];
         if (partnerVote == SwipeValue.like) {
           return true;
         }
