@@ -188,7 +188,7 @@ class _VotesCard extends StatelessWidget {
 
             // Empty list
             AppResources.spacerLarge,
-            FilledButton(onPressed: () => navigateTo(context, (context) => VotesPage(votes)), child: Text('Voir tous mes votes')),
+            FilledButton(onPressed: () => navigateTo(context, (context) => const VotesPage()), child: Text('Voir tous mes votes')),
           ],
         ),
       ),
