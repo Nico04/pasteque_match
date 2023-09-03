@@ -9,8 +9,10 @@ class NamesService {
 
   static final instance = NamesService();
 
-  late List<NameGroup> _names;
-  List<NameGroup> get names => _names;
+  late Map<String, NameGroup> _names;
+
+  /// Map of all name groups, indexed by group id.
+  Map<String, NameGroup> get names => _names;
 
   /// Load the local database file into memory.
   ///
@@ -50,7 +52,7 @@ class NamesService {
     };
 
     // Build data
-    _names = [];
+    _names = {};
     NameGroup? currentGroup;
     for (final row in rows.skip(1)) {
       final groupId = row[headersMap['groupId']!];
@@ -64,7 +66,7 @@ class NamesService {
           id: groupId,
           epicene: row[headersMap['epicene']!],
         );
-        _names.add(currentGroup);
+        _names[currentGroup.id] = currentGroup;
       }
 
       // It's a name

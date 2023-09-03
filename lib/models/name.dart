@@ -25,7 +25,7 @@ class Name {
 
   String get id => name.normalized;     // TODO remove
 
-  final String name;
+  final String name;    // TODO rename to label ?
   final NameGender gender;
   final NameQuantityStatistics stats;
 
