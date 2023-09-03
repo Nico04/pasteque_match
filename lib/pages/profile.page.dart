@@ -28,52 +28,43 @@ class _ProfilePageState extends State<ProfilePage> with BlocProvider<ProfilePage
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profil'),
-      ),
-      body: EventStreamBuilder<User>(
+    return PmBasicPage(
+      title: 'Profil',
+      child: EventStreamBuilder<User>(
         stream: bloc.userStream,
         builder: (context, snapshot) {
           final user = snapshot.data!;
-          return SingleChildScrollView(
-            child: SafeArea(
-              child: Padding(
-                padding: AppResources.paddingPage,
-                child: ValueBuilder<_Votes>(
-                  key: ObjectKey(user),
-                  valueGetter: bloc.getVotes,
-                  builder: (context, votes) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
+          return ValueBuilder<_Votes>(
+            key: ObjectKey(user),
+            valueGetter: bloc.getVotes,
+            builder: (context, votes) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
 
-                        // Partner section
-                        _PartnerCard(
-                          userId: user.id,
-                          partnerId: user.partnerId,
-                        ),
+                  // Partner section
+                  _PartnerCard(
+                    userId: user.id,
+                    partnerId: user.partnerId,
+                  ),
 
-                        // Matches
-                        if (user.hasPartner)...[
-                          AppResources.spacerMedium,
-                          _MatchesCard(
-                            matches: votes.matchedNames,
-                          ),
-                        ],
+                  // Matches
+                  if (user.hasPartner)...[
+                    AppResources.spacerMedium,
+                    _MatchesCard(
+                      matches: votes.matchedNames,
+                    ),
+                  ],
 
-                        // Votes
-                        AppResources.spacerMedium,
-                        _VotesCard(
-                          votes: votes.allVotes,
-                        ),
+                  // Votes
+                  AppResources.spacerMedium,
+                  _VotesCard(
+                    votes: votes.allVotes,
+                  ),
 
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ),
+                ],
+              );
+            },
           );
         },
       ),

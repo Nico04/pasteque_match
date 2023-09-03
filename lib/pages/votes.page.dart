@@ -18,10 +18,10 @@ class VotesPage extends StatelessWidget {
         if (votes.isEmpty) {
           return const Center(child: Text('<Vide>'));
         }
+        const backgroundLetterHeight = 200.0;
         return Column(
           children: votes.entries.map<Widget>((voteEntry) {
             return Card(
-              clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: () {},
                 child: Row(
@@ -32,16 +32,13 @@ class VotesPage extends StatelessWidget {
                         clipBehavior: Clip.none,
                         children: [
                           Positioned(
-                            top: -100, // TODO Proper centering
-                            bottom: 0,
-                            child: Center(
-                              child: Text(
-                                voteEntry.key.name.substring(0, 1),
-                                style: TextStyle(
-                                  fontFamily: 'Passions Conflict',
-                                  fontSize: 200,
-                                  color: Colors.black.withOpacity(0.1),
-                                ),
+                            top: -backgroundLetterHeight / 2, // Couldn't find a better way to center the letter vertically.
+                            child: Text(
+                              voteEntry.key.name.substring(0, 1),
+                              style: TextStyle(
+                                fontFamily: 'Passions Conflict',
+                                fontSize: backgroundLetterHeight,
+                                color: Colors.black.withOpacity(0.1),
                               ),
                             ),
                           ),
@@ -83,7 +80,7 @@ class VotesPage extends StatelessWidget {
               ),
             );
           }).toList()
-            ..insertBetween(AppResources.spacerTiny),
+            ..insertBetween(AppResources.spacerSmall),
         );
       }(),
     );

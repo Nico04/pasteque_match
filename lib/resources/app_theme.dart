@@ -7,5 +7,9 @@ import 'package:flutter/material.dart';
 ThemeData buildAppTheme() {
   return ThemeData(
     useMaterial3: true,
+    cardTheme: const CardTheme(
+      clipBehavior: Clip.antiAlias,
+      margin: EdgeInsets.zero,
+    ),
   );
 }
