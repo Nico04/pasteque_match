@@ -39,7 +39,7 @@ class VotesPage extends StatelessWidget {
                                 clipBehavior: Clip.none,
                                 children: [
                                   Positioned(
-                                    top: -50,   // TODO Proper centering
+                                    top: -100,   // TODO Proper centering
                                     bottom: 0,
                                     child: Center(
                                       child: Text(
@@ -58,21 +58,28 @@ class VotesPage extends StatelessWidget {
                                       crossAxisAlignment: CrossAxisAlignment.stretch,
                                       children: [
                                         Text(voteEntry.key.name),
-                                        Text(voteEntry.key.name, style: context.textTheme.caption),
-                                        Text(voteEntry.key.name, style: context.textTheme.caption),
+                                        Text(voteEntry.key.name, style: context.textTheme.caption),   // TODO secondary names
+                                        Text(voteEntry.key.name, style: context.textTheme.caption),   // TODO secondary names
                                       ],
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            ToggleButtons(
-                              isSelected: [voteEntry.value == SwipeValue.like, voteEntry.value == SwipeValue.dislike],
-                              children: [
-                                Icon(Icons.thumb_up),
-                                Icon(Icons.thumb_down),
+                            SegmentedButton<SwipeValue>(
+                              selected: {voteEntry.value},
+                              segments: [
+                                ButtonSegment(
+                                  value: SwipeValue.like,
+                                  icon: Icon(Icons.thumb_up),
+                                ),
+                                ButtonSegment(
+                                  value: SwipeValue.dislike,
+                                  icon: Icon(Icons.thumb_down),
+                                ),
                               ],
-                              onPressed: (index) {}, // TODO
+                              showSelectedIcon: false,
+                              onSelectionChanged: (value) {}, // TODO
                             ),
                             IconButton(
                               icon: Icon(Icons.delete_outline),
