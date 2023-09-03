@@ -204,54 +204,48 @@ class _VotesCard extends StatelessWidget {
               ...votes.entries.map<Widget>((voteEntry) {
                 return InkWell(
                   onTap: () {},
-                  child: Row(
+                  child: Stack(
+                    alignment: Alignment.centerLeft,
                     children: [
-                      SizedBox(
-                        width: 40,
+                      Positioned(
+                        top: 0,
+                        bottom: 0,
                         child: FittedBox(
                           child: Text(
                             voteEntry.key.name.substring(0, 1),
                             style: TextStyle(
                               fontFamily: 'Passions Conflict',
-                              color: Colors.black,
+                              color: Colors.black.withOpacity(0.1),
                             ),
                             textAlign: TextAlign.center,
                           ),
                         ),
                       ),
-                      AppResources.spacerMedium,
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(voteEntry.key.name),
-                            Row(
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                                    children: [
-                                      Text(voteEntry.key.name, style: context.textTheme.caption),
-                                      Text(voteEntry.key.name, style: context.textTheme.caption),
-                                    ],
-                                  ),
-                                ),
-                                ToggleButtons(
-                                  isSelected: [voteEntry.value == SwipeValue.like, voteEntry.value == SwipeValue.dislike],
-                                  children: [
-                                    Icon(Icons.thumb_up),
-                                    Icon(Icons.thumb_down),
-                                  ],
-                                  onPressed: (index) {}, // TODO
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.delete_outline),
-                                  onPressed: () {}, // TODO
-                                ),
+                                Text(voteEntry.key.name),
+                                Text(voteEntry.key.name, style: context.textTheme.caption),
+                                Text(voteEntry.key.name, style: context.textTheme.caption),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                          ToggleButtons(
+                            isSelected: [voteEntry.value == SwipeValue.like, voteEntry.value == SwipeValue.dislike],
+                            children: [
+                              Icon(Icons.thumb_up),
+                              Icon(Icons.thumb_down),
+                            ],
+                            onPressed: (index) {}, // TODO
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete_outline),
+                            onPressed: () {}, // TODO
+                          ),
+                        ],
                       ),
                     ],
                   ),
