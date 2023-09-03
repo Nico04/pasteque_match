@@ -109,27 +109,45 @@ class _GroupCard extends StatelessWidget {
     return Card(
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(36))),
       elevation: 3,
+      clipBehavior: Clip.antiAlias,
       child: Padding(
         padding: AppResources.paddingContent,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            _NameGenderRow(
-              name: group.name,
-              style: context.textTheme.headlineLarge,
-              icon: group.names.first.gender.icon,
-              iconSize: 40,
-              iconColor: group.names.first.gender.color,
+            Positioned.fill(
+              child: FittedBox(
+                child: Text(
+                  group.name.substring(0, 1),
+                  style: TextStyle(
+                    fontFamily: 'Passions Conflict',
+                    color: Colors.black.withOpacity(0.1),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
-            AppResources.spacerMedium,
-            ...group.names.skip(1).take(5).map<Widget>((name) => _NameGenderRow(
-              name: name.name,
-              style: context.textTheme.titleMedium,
-              icon: name.gender.icon,
-              iconSize: 20,
-              iconColor: name.gender.color,
-            )).toList()..insertBetween(AppResources.spacerSmall),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _NameGenderRow(
+                  name: group.name,
+                  style: context.textTheme.displayMedium?.copyWith(fontFamily: 'Beau Rivage', color: Colors.black),
+                  icon: group.names.first.gender.icon,
+                  iconSize: 40,
+                  iconColor: group.names.first.gender.color,
+                ),
+                AppResources.spacerMedium,
+                ...group.names.skip(1).take(5).map<Widget>((name) => _NameGenderRow(
+                  name: name.name,
+                  style: context.textTheme.titleMedium,
+                  icon: name.gender.icon,
+                  iconSize: 20,
+                  iconColor: name.gender.color,
+                )).toList()..insertBetween(AppResources.spacerSmall),
+              ],
+            ),
           ],
         ),
       ),

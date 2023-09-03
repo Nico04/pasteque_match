@@ -60,3 +60,13 @@ flutter:
 
   assets:
     - assets/
+
+  fonts:
+    - family: Passions Conflict
+      fonts:
+        - asset: assets/fonts/PassionsConflict-Regular.ttf
+          weight: 400
+    - family:  Beau Rivage
+      fonts:
+        - asset: assets/fonts/BeauRivage-Regular.ttf
+          weight: 400
