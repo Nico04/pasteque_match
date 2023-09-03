@@ -309,10 +309,10 @@ packages:
     dependency: "direct main"
     description:
       name: fetcher
-      sha256: a5e603b75ca0287c3bf558459f852a9fb9a414adcecd687e9825f116f971e709
+      sha256: "4eec3a36da1eb93e46c6dbaf363ad74012df878cda6525efeb2ac41d97d1a10a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.3"
+    version: "0.3.0"
   ffi:
     dependency: transitive
     description:
@@ -725,14 +725,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
-  rxdart:
-    dependency: "direct main"
-    description:
-      name: rxdart
-      sha256: "2ef8b4e91cb3b55d155e0e34eeae0ac7107974e451495c955ac04ddee8cc21fd"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.26.0"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -929,6 +921,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  value_stream:
+    dependency: transitive
+    description:
+      name: value_stream
+      sha256: "14b111417dd2d9cd0810a7dd76d42531143ef0a1cff41d35348cc45c6f379fe6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.5"
   vector_math:
     dependency: transitive
     description:

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fetcher/fetcher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pasteque_match/main.dart';
 import 'package:pasteque_match/models/user.dart';
@@ -9,7 +10,6 @@ import 'package:pasteque_match/services/names_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/utils/exceptions/invalid_operation_exception.dart';
 import 'package:pasteque_match/utils/exceptions/unauthorized_exception.dart';
-import 'package:rxdart/rxdart.dart';
 
 import 'storage_service.dart';
 
@@ -24,7 +24,7 @@ class AppService {
 
   UserStore? _userStore;
   User? get user => _userStore?.cached;
-  ValueStream<User>? get userStream => _userStore?.stream;
+  EventStream<User>? get userStream => _userStore?.stream;
   bool get hasLocalUser => _userStore != null;
 
   UserStore? _partnerStore;

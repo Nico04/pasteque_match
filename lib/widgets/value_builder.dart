@@ -1,4 +1,4 @@
-import 'package:fetcher/fetcher.dart';
+import 'package:fetcher/fetcher.dart' hide ValueGetter;
 import 'package:flutter/material.dart';
 
 /// Simple widget that provides a value provided by [valueGetter] at init.

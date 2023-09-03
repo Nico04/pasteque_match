@@ -30,7 +30,7 @@ extension ExtendedBuildContext on BuildContext {
   /// Validate the enclosing [Form]
   Future<void> validateForm({VoidCallback? onSuccess}) async {
     clearFocus();
-    final form = Form.of(this);
+    final form = Form.maybeOf(this);
     if (form == null) return;
 
     if (form.validate()) {

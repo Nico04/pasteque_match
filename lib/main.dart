@@ -79,8 +79,8 @@ class App extends StatelessWidget {
     // Build app
     return DefaultFetcherConfig(
       config: FetcherConfig(
-        showError: showError,
-        reportError: AppService.instance.handleError,
+        onDisplayError: showError,
+        onError: AppService.instance.handleError,
       ),
       child: MaterialApp(
         title: 'Pastèque Match',

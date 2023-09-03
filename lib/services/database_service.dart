@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fetcher/fetcher.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/models/user.dart';
-import 'package:pasteque_match/services/storage_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/utils/exceptions/invalid_operation_exception.dart';
-import 'package:rxdart/rxdart.dart';
 
 class DatabaseService {
   static final instance = DatabaseService();
@@ -92,10 +90,10 @@ class UserStore {
 
   late final _dbRef = DatabaseService.instance._users.doc(id);
 
-  ValueStream<User>? stream;
+  EventStream<User>? stream;
 
   /// Return last cached user data.
-  User? get cached => stream?.value;
+  User? get cached => stream?.valueOrNull;
 
   /// Return last cached user data, and fetch last up-to-date version from database if not available.
   Future<User?> fetch() async {
@@ -108,10 +106,7 @@ class UserStore {
     if (user == null) return null;    // User does not exists
 
     // Create a stream to stay up-to-date
-    stream = _dbRef.snapshots().map((snapshot) => snapshot.data()!).shareValue();  // No need to use shareValueSeeded because snapshots() command already do it
-    stream!.listen((user) {      // 'shareValue' needs a listener to emit data
-      debugPrint('[DatabaseService] user ${user.name} value stream (lastVotedAt: ${user.lastVotedAt})');
-    });
+    stream = EventStream.fromStream(_dbRef.snapshots().map((snapshot) => snapshot.data()!));
     return user;
   }
 }

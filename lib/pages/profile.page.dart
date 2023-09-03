@@ -1,3 +1,4 @@
+import 'package:fetcher/fetcher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/models/name.dart';
@@ -8,7 +9,6 @@ import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 import 'package:pasteque_match/widgets/themed/pm_qr_code_widget.dart';
-import 'package:rxdart/rxdart.dart';
 
 import 'remove_partner.page.dart';
 import 'scan.page.dart';
@@ -31,7 +31,7 @@ class _ProfilePageState extends State<ProfilePage> with BlocProvider<ProfilePage
       appBar: AppBar(
         title: const Text('Profil'),
       ),
-      body: ValueStreamBuilder<User>(
+      body: EventStreamBuilder<User>(
         stream: bloc.userStream,
         builder: (context, snapshot) {
           final user = snapshot.data!;
@@ -219,10 +219,10 @@ class _VotesCard extends StatelessWidget {
 
 
 class ProfilePageBloc with Disposable {
-  ValueStream<User> get userStream => AppService.instance.userStream!;
+  EventStream<User> get userStream => AppService.instance.userStream!;
 
   _Votes getVotes() {
-    final user = userStream.value!;
+    final user = userStream.valueOrNull!;
 
     // Matches
     final matchedNames = () {
