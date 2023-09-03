@@ -204,7 +204,7 @@ class MainPageBloc with Disposable {
 
     // Compute remaining votes
     final votedNamesId = user.votes.keys;
-    final remainingNamesMap = Map.of(allNames)..removeWhere((key, value) => !votedNamesId.contains(key));
+    final remainingNamesMap = Map.of(allNames)..removeWhere((key, value) => votedNamesId.contains(key));
     final remainingNames = remainingNamesMap.values.toList(growable: false);
     return remainingNames..shuffle();
   }
