@@ -58,8 +58,10 @@ class _ProfilePageState extends State<ProfilePage> with BlocProvider<ProfilePage
 
                   // Votes
                   AppResources.spacerMedium,
-                  _VotesCard(
-                    votes: votes.allVotes,
+                  PmTileButton(
+                    icon: Icons.how_to_vote,
+                    label: 'Mes votes',
+                    onPressed: () => navigateTo(context, (context) => const VotesPage()),
                   ),
 
                 ],
@@ -160,35 +162,6 @@ class _MatchesCard extends StatelessWidget {
                   style: context.textTheme.bodyMedium,
                 );
               }),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _VotesCard extends StatelessWidget {
-  const _VotesCard({super.key, required this.votes});
-
-  final Map<Name, SwipeValue> votes;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: AppResources.paddingContent,
-        child: Column(
-          children: [
-
-            // Title
-            Text(
-              'Vos votes',
-              style: context.textTheme.titleLarge,
-            ),
-
-            // Empty list
-            AppResources.spacerLarge,
-            FilledButton(onPressed: () => navigateTo(context, (context) => const VotesPage()), child: Text('Voir tous mes votes')),
           ],
         ),
       ),
