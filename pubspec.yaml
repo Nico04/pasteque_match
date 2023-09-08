@@ -67,7 +67,7 @@ flutter:
       fonts:
         - asset: assets/fonts/PassionsConflict-Regular.ttf
           weight: 400
-    - family:  Beau Rivage
+    - family: Merienda
       fonts:
-        - asset: assets/fonts/BeauRivage-Regular.ttf
+        - asset: assets/fonts/Merienda-Regular.ttf
           weight: 400

@@ -54,8 +54,9 @@ class _MainPageState extends State<MainPage> with BlocProvider<MainPage, MainPag
               child: FetchBuilder.basic<List<NameGroup>>(
                 task: bloc.getRemainingNames,
                 builder: (context, names) {
+                  if (names.isEmpty) return const Center(child: Text('Vous avez tout voté !'));
                   return ValueBuilder<MatchEngine>(
-                  key: ObjectKey(names),
+                    key: ObjectKey(names),
                     valueGetter: () => _buildSwipeEngine(names),
                     builder: (context, matchEngine) {
                       return Padding(
@@ -115,7 +116,7 @@ class _GroupCard extends StatelessWidget {
       child: InkWell(
         onTap: () => navigateTo(context, (_) => NameGroupPage(group)),
         child: Padding(
-          padding: AppResources.paddingContent,
+          padding: AppResources.paddingPage,
           child: Stack(
             alignment: Alignment.center,
             children: [
@@ -135,17 +136,20 @@ class _GroupCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _NameGenderRow(
-                    name: group.name,
-                    style: context.textTheme.displayMedium?.copyWith(fontFamily: 'Beau Rivage', color: Colors.black),
-                    icon: group.names.first.gender.icon,
-                    iconSize: 40,
-                    iconColor: group.names.first.gender.color,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: _NameGenderRow(
+                      name: group.name,
+                      style: context.textTheme.displayMedium?.copyWith(fontFamily: 'Merienda', color: Colors.black),
+                      icon: group.names.first.gender.icon,
+                      iconSize: 40,
+                      iconColor: group.names.first.gender.color,
+                    ),
                   ),
                   AppResources.spacerMedium,
                   ...group.names.skip(1).take(5).map<Widget>((name) => _NameGenderRow(
                     name: name.name,
-                    style: context.textTheme.titleMedium,
+                    style: context.textTheme.titleMedium?.copyWith(fontFamily: 'Merienda', color: Colors.black),
                     icon: name.gender.icon,
                     iconSize: 20,
                     iconColor: name.gender.color,
