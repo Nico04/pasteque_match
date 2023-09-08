@@ -35,14 +35,9 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
             child: SizedBox(
               height: kToolbarHeight,
               child: AlignedRow(
-                center: const Text('🍉 Pastèque Match 🍉'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.person),
-                  onPressed: () {
-                    if (bloc.user != null) {
-                      navigateTo(context, (_) => const ProfilePage());
-                    }
-                  },
+                center: Text(
+                  '🍉  Pastèque  👶  Match  ♥️',
+                  style: context.textTheme.titleMedium
                 ),
               ),
             ),
