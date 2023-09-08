@@ -5,7 +5,7 @@ import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 
-import 'name_page.dart';
+import 'name.page.dart';
 
 class NameGroupPage extends StatelessWidget {
   const NameGroupPage(this.group, {super.key});

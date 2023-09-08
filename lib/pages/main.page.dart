@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/widgets/themed/pages/pm_tabbed_page.dart';
 
-import 'swipe_page.dart';
-import 'matches_page.dart';
+import 'swipe.page.dart';
+import 'matches.page.dart';
 import 'profile.page.dart';
 
 class MainPage extends StatelessWidget {

@@ -11,7 +11,7 @@ import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 
-import 'name_group_page.dart';
+import 'name_group.page.dart';
 
 class VotesPage extends StatelessWidget {
   const VotesPage({super.key});

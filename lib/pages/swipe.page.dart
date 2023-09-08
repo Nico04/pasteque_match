@@ -10,7 +10,7 @@ import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 
-import 'name_group_page.dart';
+import 'name_group.page.dart';
 
 class SwipePage extends StatefulWidget {
   const SwipePage({super.key});
