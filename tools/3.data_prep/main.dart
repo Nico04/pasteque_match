@@ -53,7 +53,10 @@ void main(List<String> rawArgs) async {
   //buildGraphs(spreadsheet);
 
   // Compute popularity
-  computePopularity(spreadsheet);
+  //computePopularity(spreadsheet);
+
+  // Count names per group
+  countNamesPerGroup(spreadsheet);
 
   // Save file
   print('Save file');
@@ -393,6 +396,20 @@ void computePopularity(SpreadsheetDecoder spreadsheet) {
   namesPopularity.sort((a, b) => b.$2.compareTo(a.$2));
   print('Top 10 names: ${namesPopularity.take(10).map((e) => '${e.$1} (${e.$2})').join(', ')}');
 }
+
+void countNamesPerGroup(SpreadsheetDecoder spreadsheet) {
+  print('Count names per group');
+  List<(String, int)> namesPerGroup = [];
+  _computeEachGroup(
+    spreadsheet,
+    (groupHeaderRowIndex, namesRows) {
+      namesPerGroup.add((namesRows.first[nameColumnIndex] as String, namesRows.length));
+    },
+  );
+  namesPerGroup.sort((a, b) => b.$2.compareTo(a.$2));
+  print('Groups with more than 8 names: ${namesPerGroup.where((e) => e.$2 >= 8).map((e) => '${e.$1} (${e.$2})').join(', ')}');
+}
+
 
 void _computeEachName(SpreadsheetDecoder spreadsheet, void Function(SpreadsheetTable sheet, int rowIndex) task) {
   // Get sheet
