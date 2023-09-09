@@ -3,19 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
+import 'package:pasteque_match/widgets/_widgets.dart';
 
 class RemovePartnerPage extends StatelessWidget {
   const RemovePartnerPage(this.partnerName, {super.key});
 
-  final String partnerName;   // Use field instead of direct AppService access so widget doesn't throw when rebuilt after deletion
+  final String partnerName;   // TODO Use field instead of direct AppService access so widget doesn't throw when rebuilt after deletion
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Suppression du partenaire'),
-      ),
-      body: AsyncTaskBuilder<void>(
+    return PmBasicPage(
+      title: 'Suppression du partenaire',
+      child: AsyncTaskBuilder<void>(
         task: AppService.instance.removePartner,
         onSuccess: (_) async {
           showMessage(context, 'Partenaire supprimé');

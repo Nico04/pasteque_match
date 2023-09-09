@@ -107,7 +107,7 @@ class UserStore with Disposable {
   /// The initial state can come from the server directly, or from a local cache.
   /// If there is state available in a local cache, it will be initially populated with the cached data,
   /// then updated with the server's data when the client has caught up with the server's state.
-  late final stream = EventStream.fromStream(_dbRef.snapshots().map((snapshot) => snapshot.data()));
+  late final stream = EventStream.fromStream(_dbRef.snapshots().map((snapshot) => snapshot.data()!));
 
   @override
   void dispose() {

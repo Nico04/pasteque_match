@@ -96,9 +96,9 @@ class UserSession with Disposable {
     StreamSubscription? subscription;
     subscription = userStream.listen((user) {
       // If user has a partner, listen to his changes
-      if (user?.hasPartner == true) {
+      if (user.hasPartner == true) {
         if (_partnerStore == null) {
-          _partnerStore = UserStore(user!.partnerId!);
+          _partnerStore = UserStore(user.partnerId!);
           StreamSubscription? subscription;
           subscription = _partnerStore!.stream.listen(partnerStream.add, onError: partnerStream.addError, onDone: () {
             subscription?.cancel();
@@ -124,7 +124,7 @@ class UserSession with Disposable {
   final String userId;
 
   final UserStore _userStore;
-  EventStream<User?> get userStream => _userStore.stream;
+  EventStream<User> get userStream => _userStore.stream;
   User? get user => userStream.valueOrNull;
 
   UserStore? _partnerStore;

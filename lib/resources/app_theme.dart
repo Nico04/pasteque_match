@@ -12,5 +12,8 @@ ThemeData buildAppTheme() {
       clipBehavior: Clip.antiAlias,
       margin: EdgeInsets.zero,
     ),
+    appBarTheme: const AppBarTheme(
+      centerTitle: true,
+    ),
   );
 }
