@@ -1,11 +1,14 @@
+import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/models/name.dart';
+import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 
 import 'name.page.dart';
+import 'votes.page.dart';
 
 class NameGroupPage extends StatelessWidget {
   const NameGroupPage(this.group, {super.key});
@@ -29,6 +32,30 @@ class NameGroupPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               AppResources.spacerLarge,
+              Card(
+                child: Padding(
+                  padding: AppResources.paddingContent,
+                  child: Column(
+                    children: [
+                      Text(
+                        'Mon vote',
+                        style: context.textTheme.titleMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                      AppResources.spacerMedium,
+                      EventFetchBuilder<User>(
+                        stream: AppService.instance.userSession!.userStream,
+                        builder: (context, user) {
+                          return Center(
+                            child: GroupVoteButtons(group.id, user.votes[group.id]),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              AppResources.spacerLarge,
               Text(
                 'Ce groupe contient ${group.names.length} noms :',
                 style: context.textTheme.titleMedium,
@@ -50,7 +77,7 @@ class NameGroupPage extends StatelessWidget {
 
           // Flag
           AppResources.spacerMedium,
-          FilledButton(
+          TextButton(
             onPressed: () => askConfirmation(
               context: context,
               title: 'Signaler un problème',

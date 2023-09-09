@@ -124,34 +124,51 @@ class _VoteCard extends StatelessWidget {
             // Buttons
             Padding(
               padding: AppResources.paddingContent,
-              child: Row(
-                children: [
-                  SegmentedButton<SwipeValue>(
-                    selected: {vote},
-                    segments: const [
-                      ButtonSegment(
-                        value: SwipeValue.like,
-                        icon: Icon(Icons.thumb_up),
-                      ),
-                      ButtonSegment(
-                        value: SwipeValue.dislike,
-                        icon: Icon(Icons.thumb_down),
-                      ),
-                    ],
-                    multiSelectionEnabled: false,
-                    showSelectedIcon: false,
-                    onSelectionChanged: (value) => AppService.instance.setUserVote(groupId, value.single),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    onPressed: () => AppService.instance.clearUserVote(groupId),
-                  ),
-                ],
-              ),
+              child: GroupVoteButtons(groupId, vote),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class GroupVoteButtons extends StatelessWidget {
+  const GroupVoteButtons(this.groupId, this.vote, {super.key});
+
+  final String groupId;
+  final SwipeValue? vote;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SegmentedButton<SwipeValue>(
+          selected: {if (vote != null) vote!},
+          segments: const [
+            ButtonSegment(
+              value: SwipeValue.like,
+              icon: Icon(Icons.thumb_up),
+            ),
+            ButtonSegment(
+              value: SwipeValue.dislike,
+              icon: Icon(Icons.thumb_down),
+            ),
+          ],
+          multiSelectionEnabled: false,
+          showSelectedIcon: false,
+          emptySelectionAllowed: true,
+          onSelectionChanged: (value) {
+            if (value.isEmpty) return;
+            AppService.instance.setUserVote(groupId, value.single);
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.delete_outline),
+          onPressed: () => AppService.instance.clearUserVote(groupId),
+        ),
+      ],
     );
   }
 }
