@@ -23,9 +23,11 @@ class PmBasicPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: title != null
-          ? AppBar(title: Text(title!), actions: [if (action != null) action!],)
-          : null,
+      appBar: title == null ? null : AppBar(
+        title: Text(title!),
+        actions: [if (action != null) action!],
+        forceMaterialTransparency: true,
+      ),
       body: () {
         var child = this.child;
         if (withPadding) {

@@ -11,6 +11,7 @@ import 'package:pasteque_match/widgets/_widgets.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 
 import 'name_group.page.dart';
+import 'search.page.dart';
 
 class SwipePage extends StatefulWidget {
   const SwipePage({super.key});
@@ -25,48 +26,32 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-
-          // Header
-          Padding(
-            padding: AppResources.paddingPageHorizontal,
-            child: SizedBox(
-              height: kToolbarHeight,
-              child: AlignedRow(
-                center: Text(
-                  '🍉  Pastèque  👶  Match  ♥️',
-                  style: context.textTheme.titleMedium
+    return PmBasicPage(
+      title: 'Pastèque  🍉  Match ️',
+      action: IconButton(
+        icon: const Icon(Icons.search),
+        onPressed: () => navigateTo(context, (context) => const SearchPage()),
+      ),
+      withScrollView: false,
+      child: FetchBuilder.basic<List<NameGroup>>(
+        task: bloc.getRemainingNames,
+        builder: (context, names) {
+          if (names.isEmpty) return const Center(child: Text('Vous avez tout voté !'));
+          return ValueBuilder<MatchEngine>(
+            key: ObjectKey(names),
+            valueGetter: () => _buildSwipeEngine(names),
+            builder: (context, matchEngine) {
+              return Padding(
+                padding: AppResources.paddingPage,
+                child: SwipeCards(
+                  matchEngine: matchEngine,
+                  onStackFinished: () => print('onStackFinished'),    // TODO
+                  itemBuilder: (context, index, distance, slideRegion) => _GroupCard(names[index]),
                 ),
-              ),
-            ),
-          ),
-
-          // Swipe cards
-          Expanded(
-            child: FetchBuilder.basic<List<NameGroup>>(
-              task: bloc.getRemainingNames,
-              builder: (context, names) {
-                if (names.isEmpty) return const Center(child: Text('Vous avez tout voté !'));
-                return ValueBuilder<MatchEngine>(
-                  key: ObjectKey(names),
-                  valueGetter: () => _buildSwipeEngine(names),
-                  builder: (context, matchEngine) {
-                    return Padding(
-                      padding: AppResources.paddingPage,
-                      child: SwipeCards(
-                        matchEngine: matchEngine,
-                        onStackFinished: () => print('onStackFinished'),    // TODO
-                        itemBuilder: (context, index, distance, slideRegion) => _GroupCard(names[index]),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
+              );
+            },
+          );
+        },
       ),
     );
   }
