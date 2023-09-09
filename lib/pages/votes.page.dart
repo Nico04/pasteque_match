@@ -30,23 +30,37 @@ class VotesPage extends StatelessWidget {
           if (votes.isEmpty) {
             return const Center(child: Text('Aucun votes'));
           }
-          return ImplicitlyAnimatedList(
-            padding: AppResources.paddingPage,
-            items: SplayTreeMap.of(votes).entries.toList(),   // SplayTreeMap to sort by key (needed for consistent list edition)
-            areItemsTheSame: (a, b) => a.key == b.key,
-            itemBuilder: (context, animation, voteEntry, index) {
-              final groupId = voteEntry.key;
-              final vote = voteEntry.value;
-              final group = AppService.names[groupId];
-              return SizeFadeTransition(
-                key: ValueKey(groupId),
-                curve: Curves.easeOut,
-                sizeFraction: 0.3,
-                animation: animation,
-                child: _VoteCard(groupId, group, vote),
-              );
-            },
-            separatorBuilder: (context, index) => AppResources.spacerSmall,
+          return Column(
+            children: [
+              // Stats
+              Text(
+                'Vous avez voté pour ${votes.length} prénoms,\ndont ${user.likes.length} prénoms que vous aimez.',
+                style: context.textTheme.bodyMedium,
+              ),
+
+              // Content
+              AppResources.spacerSmall,
+              Expanded(
+                child: ImplicitlyAnimatedList(
+                  padding: AppResources.paddingPage,
+                  items: SplayTreeMap.of(votes).entries.toList(),   // SplayTreeMap to sort by key (needed for consistent list edition)
+                  areItemsTheSame: (a, b) => a.key == b.key,
+                  itemBuilder: (context, animation, voteEntry, index) {
+                    final groupId = voteEntry.key;
+                    final vote = voteEntry.value;
+                    final group = AppService.names[groupId];
+                    return SizeFadeTransition(
+                      key: ValueKey(groupId),
+                      curve: Curves.easeOut,
+                      sizeFraction: 0.3,
+                      animation: animation,
+                      child: _VoteCard(groupId, group, vote),
+                    );
+                  },
+                  separatorBuilder: (context, index) => AppResources.spacerSmall,
+                ),
+              ),
+            ],
           );
         },
       ),
@@ -149,11 +163,11 @@ class GroupVoteButtons extends StatelessWidget {
           segments: const [
             ButtonSegment(
               value: SwipeValue.like,
-              icon: Icon(Icons.thumb_up),
+              icon: Icon(Icons.thumb_up, color: Colors.green),
             ),
             ButtonSegment(
               value: SwipeValue.dislike,
-              icon: Icon(Icons.thumb_down),
+              icon: Icon(Icons.thumb_down, color: Colors.red),
             ),
           ],
           multiSelectionEnabled: false,
