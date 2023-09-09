@@ -41,3 +41,7 @@ extension ExtendedBuildContext on BuildContext {
 
   void popToRoot() => Navigator.of(this).popUntil((route) => route.isFirst);
 }
+
+extension ExtendedColor on Color {
+  Color get foregroundTextColor => computeLuminance() > 0.5 ? Colors.black : Colors.white;
+}

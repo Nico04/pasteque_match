@@ -16,7 +16,7 @@ dependencies:
   fetcher: ^0.4.0
 
   # Widgets / UI
-  flash: ^2.0.3+3
+  flash: ^3.0.5+1
   swipe_cards:
     path: ./plugins/swipe_cards/   # Local fork to extends capabilities
   animated_list_plus: ^0.5.2
