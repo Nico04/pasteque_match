@@ -8,7 +8,6 @@ import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 
 import 'name.page.dart';
-import 'votes.page.dart';
 
 class NameGroupPage extends StatelessWidget {
   const NameGroupPage(this.group, {super.key});
