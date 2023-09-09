@@ -54,17 +54,16 @@ class DatabaseService {
     debugPrint('[DatabaseService] New user partner is set');
   }
 
+  final _deletePartnerIdData = {
+    'partnerId': FieldValue.delete(),
+  };
+
   /// Remove user partner
   /// Update [userId]'s partner AND [partnerId]'s partner
   Future<void> removePartner(String userId, String partnerId) async {
-    final data = {
-      'partnerId': FieldValue.delete(),
-    };
-
-    // Batch update
     final batch = _db.batch();
-    batch.update(_users.doc(userId), data);
-    batch.update(_users.doc(partnerId), data);
+    batch.update(_users.doc(userId), _deletePartnerIdData);
+    batch.update(_users.doc(partnerId), _deletePartnerIdData);
     await batch.commit();
     debugPrint('[DatabaseService] Partner $partnerId removed');
   }
@@ -95,8 +94,11 @@ class DatabaseService {
   }
 
   /// Delete user
-  Future<void> deleteUser(String userId) async {
-    await _users.doc(userId).delete();
+  Future<void> deleteUser(String userId, String? partnerId) async {
+    final batch = _db.batch();
+    if (partnerId != null) batch.update(_users.doc(partnerId), _deletePartnerIdData);
+    batch.delete(_reports.doc(userId));
+    await batch.commit();
     debugPrint('[DatabaseService] User $userId deleted');
   }
 }
