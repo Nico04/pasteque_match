@@ -65,6 +65,10 @@ class AppService {
 
   Future<void> setUserVote(String groupId, SwipeValue value) => database.setUserVote(userId!, groupId, value);
   Future<void> clearUserVote(String groupId) => database.clearUserVote(userId!, groupId);
+  void deleteUser() {
+    database.deleteUser(userId!).then((_) => showMessage(App.navigatorContext, 'Votre compte a été supprimé'));
+    logOut();
+  }
   //#endregion
 
   //#region Other

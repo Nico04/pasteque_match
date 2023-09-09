@@ -57,9 +57,7 @@ class NameGroupPage extends StatelessWidget {
               caption: 'Vous avez constaté un problème avec ce groupe ?\nSignalez-le pour que nous puissions le corriger.',
               onConfirmation: () async {
                 await AppService.database.reportGroupError(group.id);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Merci, le problème est signalé !'),
-                ));
+                showMessage(context, 'Merci, le problème est signalé !');
               },
             ),
             child: const Text('Signaler un problème'),

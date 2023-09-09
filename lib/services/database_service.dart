@@ -93,6 +93,12 @@ class DatabaseService {
     }, SetOptions(merge: true));
     debugPrint('[DatabaseService] Group $groupId reported');
   }
+
+  /// Delete user
+  Future<void> deleteUser(String userId) async {
+    await _users.doc(userId).delete();
+    debugPrint('[DatabaseService] User $userId deleted');
+  }
 }
 
 class UserStore with Disposable {

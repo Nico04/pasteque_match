@@ -38,6 +38,21 @@ class ProfilePage extends StatelessWidget {
                 onPressed: () => navigateTo(context, (context) => const VotesPage()),
               ),
 
+              // Delete account
+              AppResources.spacerLarge,
+              TextButton(
+                onPressed: () => askConfirmation(
+                  context: context,
+                  title: 'Supprimer mon compte',
+                  caption: 'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.',
+                  onConfirmation: AppService.instance.deleteUser,
+                ),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.redAccent,
+                ),
+                child: Text('Supprimer mon compte'),
+              )
+
             ],
           );
         },
