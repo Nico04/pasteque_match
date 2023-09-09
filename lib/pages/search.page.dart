@@ -27,6 +27,7 @@ class _SearchPageState extends State<SearchPage> with BlocProvider<SearchPage, S
             decoration: const InputDecoration(
               hintText: 'Recherchez un prénom',
             ),
+            autofocus: true,
             textInputAction: TextInputAction.search,
             onChanged: bloc.search,
           ),
