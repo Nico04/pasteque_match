@@ -30,7 +30,7 @@ class _ProfilePageState extends State<ProfilePage> with BlocProvider<ProfilePage
   Widget build(BuildContext context) {
     return PmBasicPage(
       title: 'Profil',
-      child: EventStreamBuilder<User>(
+      child: EventStreamBuilder<User?>(   // TODO convert to EventFetchBuilder to handle loading state
         stream: bloc.userStream,
         builder: (context, snapshot) {
           final user = snapshot.data!;
@@ -113,13 +113,13 @@ class _PartnerCard extends StatelessWidget {
             // With partner
             else ...[
               Text(
-                AppService.instance.partner!.name,
+                AppService.instance.userSession!.partner!.name,   // TODO listen to partner changes
                 style: context.textTheme.headlineMedium,
               ),
               AppResources.spacerMedium,
               TextButton(
                 style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.red)),
-                onPressed: () => navigateTo(context, (_) => RemovePartnerPage(AppService.instance.partner!.name)),
+                onPressed: () => navigateTo(context, (_) => RemovePartnerPage(AppService.instance.userSession!.partner!.name)),   // TODO listen to partner changes
                 child: const Text('Supprimer votre partenaire'),
               ),
             ],
@@ -171,16 +171,16 @@ class _MatchesCard extends StatelessWidget {
 
 
 class ProfilePageBloc with Disposable {
-  EventStream<User> get userStream => AppService.instance.userStream!;
+  EventStream<User?> get userStream => AppService.instance.userSession!.userStream;
 
   _Votes getVotes() {
     final user = userStream.valueOrNull!;
 
     // Matches
     final matchedNames = () {
-      if (user.hasPartner) {
+      if (AppService.instance.userSession!.hasPartner) {
         final userLikes = user.likes;
-        final partner = AppService.instance.partner!;
+        final partner = AppService.instance.userSession!.partner!;   // TODO listen to partner changes
         final partnerLikes = partner.likes;
 
         final matchedNameIdEntries = userLikes.where(partnerLikes.contains);

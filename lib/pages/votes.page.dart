@@ -22,8 +22,8 @@ class VotesPage extends StatelessWidget {
       title: 'Mes votes',
       withPadding: false,
       withScrollView: false,
-      child: EventStreamBuilder<User>(
-        stream: AppService.instance.userStream,
+      child: EventStreamBuilder<User?>(   // TODO convert to EventFetchBuilder to handle loading state
+        stream: AppService.instance.userSession!.userStream,
         builder: (context, snapshot) {
           final user = snapshot.data!;
           final votes = user.votes;

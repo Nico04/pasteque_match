@@ -188,12 +188,12 @@ class _NameGenderRow extends StatelessWidget {
 
 
 class SwipePageBloc with Disposable {
-  User? get user => AppService.instance.user;
-  User? get partner => AppService.instance.partner;
+  User? get user => AppService.instance.userSession!.user;   // TODO listen to changes ?
+  User? get partner => AppService.instance.userSession!.partner;   // TODO listen to changes ?
 
   Future<List<NameGroup>> getRemainingNames() async {
     // Init data
-    final user = await AppService.instance.initData();
+    final user = (await AppService.instance.userSession!.userStream.first)!;
 
     // Get all names
     final allNames = AppService.names;

@@ -95,30 +95,23 @@ class DatabaseService {
   }
 }
 
-class UserStore {   // TODO refactor to use a cleaner logic like in Mb App (stream only, with cache first & background update)
+class UserStore with Disposable {
   UserStore(this.id);
 
   final String id;
 
   late final _dbRef = DatabaseService.instance._users.doc(id);
 
-  EventStream<User>? stream;
+  /// User data stream
+  ///
+  /// The initial state can come from the server directly, or from a local cache.
+  /// If there is state available in a local cache, it will be initially populated with the cached data,
+  /// then updated with the server's data when the client has caught up with the server's state.
+  late final stream = EventStream.fromStream(_dbRef.snapshots().map((snapshot) => snapshot.data()));
 
-  /// Return last cached user data.
-  User? get cached => stream?.valueOrNull;
-
-  /// Return last cached user data, and fetch last up-to-date version from database if not available.
-  Future<User?> fetch() async {
-    // Return latest cached value
-    if (cached != null) return cached!;
-
-    // If no cached value is available, get value from database
-    debugPrint('[DatabaseService] get user $id');
-    final user = (await _dbRef.get()).data();
-    if (user == null) return null;    // User does not exists
-
-    // Create a stream to stay up-to-date
-    stream = EventStream.fromStream(_dbRef.snapshots().map((snapshot) => snapshot.data()!));
-    return user;
+  @override
+  void dispose() {
+    stream.close();
+    super.dispose();
   }
 }

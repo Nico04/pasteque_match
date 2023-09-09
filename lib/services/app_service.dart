@@ -22,38 +22,14 @@ class AppService {
   static final database = DatabaseService.instance;
   static final names = NamesService.instance.names;
 
-  UserStore? _userStore;
-  User? get user => _userStore?.cached;
-  EventStream<User>? get userStream => _userStore?.stream;
-  bool get hasLocalUser => _userStore != null;
-
-  UserStore? _partnerStore;
-  User? get partner => _partnerStore?.cached;
-  bool get hasPartner => _partnerStore != null;
+  // User session
+  UserSession? userSession;
+  String? get userId => userSession?.userId;
+  bool get hasLocalUser => userSession != null;
 
   void init() {
     final userId = StorageService.readUserId();
-    if (userId != null) _userStore = UserStore(userId);
-  }
-
-  Future<User> initData() async {
-    // Fetch user
-    final user = await _userStore?.fetch();
-    if (user == null) throw const UnauthorizedException();
-
-    // Fetch his partner
-    if (user.hasPartner) {
-      _partnerStore = UserStore(user.partnerId!);
-      final partner = await _partnerStore?.fetch();
-      if (partner == null) {
-        debugPrint('[AppService] Partner ${user.partnerId} not found');
-        await database.removePartner(user.id, user.partnerId!);
-        showMessage(App.navigatorContext, 'Votre partenaire est introuvable', isError: true);
-      }
-    }
-
-    // Return user
-    return user;
+    if (userId != null) userSession = UserSession(userId);
   }
   //#endregion
 
@@ -69,28 +45,21 @@ class AppService {
     await StorageService.saveUserId(userId);
 
     // Init user store
-    _userStore = UserStore(userId);
+    userSession = UserSession(userId);
   }
 
-  Future<User> choosePartner(String partnerId) async {
+  Future<void> choosePartner(String partnerId) async {
     // Check
-    if (hasPartner) throw const InvalidOperationException('Remove your current partner first');
+    if (userSession?.hasPartner != true) throw const InvalidOperationException('Remove your current partner first');
 
     // Update database
-    await database.setPartner(user!.id, partnerId);
-
-    // Init partner store
-    _partnerStore = UserStore(partnerId);
-    return (await _partnerStore!.fetch())!;
+    await database.setPartner(userId!, partnerId);
   }
 
-  Future<void> removePartner() async {
-    await database.removePartner(user!.id, partner!.id);
-    _partnerStore = null;
-  }
+  Future<void> removePartner() => database.removePartner(userId!, userSession!.partner!.id);
 
-  Future<void> setUserVote(String groupId, SwipeValue value) => database.setUserVote(user!.id, groupId, value);
-  Future<void> clearUserVote(String groupId) => database.clearUserVote(user!.id, groupId);
+  Future<void> setUserVote(String groupId, SwipeValue value) => database.setUserVote(userId!, groupId, value);
+  Future<void> clearUserVote(String groupId) => database.clearUserVote(userId!, groupId);
   //#endregion
 
   //#region Other
@@ -105,9 +74,9 @@ class AppService {
   }
 
   void logOut({bool warnUser = false}) {
-    // Clear user & partner cache
-    _userStore = null;
-    _partnerStore = null;
+    // Clear user session
+    userSession?.dispose();
+    userSession = null;
 
     // Delete local data
     unawaited(StorageService.deleteAll());
@@ -119,4 +88,55 @@ class AppService {
     navigateTo(App.navigatorContext, (_) => const RegisterPage(), clearHistory: true);
   }
   //#endregion
+}
+
+class UserSession with Disposable {
+  UserSession(this.userId) : _userStore = UserStore(userId) {
+    // Listen to user changes
+    StreamSubscription? subscription;
+    subscription = userStream.listen((user) {
+      // If user has a partner, listen to his changes
+      if (user?.hasPartner == true) {
+        if (_partnerStore == null) {
+          _partnerStore = UserStore(user!.partnerId!);
+          StreamSubscription? subscription;
+          subscription = _partnerStore!.stream.listen(partnerStream.add, onError: partnerStream.addError, onDone: () {
+            subscription?.cancel();
+          });
+
+          /* TODO listen to partner changes, and remove partner if not found
+          debugPrint('[AppService] Partner ${user.partnerId} not found');
+          await database.removePartner(user.id, user.partnerId!);
+          showMessage(App.navigatorContext, 'Votre partenaire est introuvable', isError: true);
+          */
+        }
+      }
+
+      // Else, clear partner data
+      else {
+        _partnerStore?.dispose();
+        _partnerStore = null;
+        partnerStream.add(null, skipSame: true);
+      }
+    }, onDone: () => subscription?.cancel());
+  }
+
+  final String userId;
+
+  final UserStore _userStore;
+  EventStream<User?> get userStream => _userStore.stream;
+  User? get user => userStream.valueOrNull;
+
+  UserStore? _partnerStore;
+  final partnerStream = EventStream<User?>();
+  User? get partner => partnerStream.valueOrNull;
+  bool get hasPartner => partner != null;
+
+  @override
+  void dispose() {
+    _userStore.dispose();
+    _partnerStore?.dispose();
+    partnerStream.close();
+    super.dispose();
+  }
 }
