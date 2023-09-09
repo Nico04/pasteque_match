@@ -1,18 +1,13 @@
 import 'package:fetcher/fetcher.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/models/name.dart';
-import 'package:pasteque_match/models/scan_result.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
-import 'package:pasteque_match/widgets/themed/pm_qr_code_widget.dart';
 
-import 'remove_partner.page.dart';
-import 'scan.page.dart';
-import 'scan_result.page.dart';
+import 'partner.page.dart';
 import 'votes.page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -30,10 +25,9 @@ class _ProfilePageState extends State<ProfilePage> with BlocProvider<ProfilePage
   Widget build(BuildContext context) {
     return PmBasicPage(
       title: 'Profil',
-      child: EventStreamBuilder<User?>(   // TODO convert to EventFetchBuilder to handle loading state
-        stream: bloc.userStream,
-        builder: (context, snapshot) {
-          final user = snapshot.data!;
+      child: EventFetchBuilder<User>(
+        stream: AppService.instance.userSession!.userStream,
+        builder: (context, user) {
           return ValueBuilder<_Votes>(
             key: ObjectKey(user),
             valueGetter: bloc.getVotes,
@@ -42,11 +36,12 @@ class _ProfilePageState extends State<ProfilePage> with BlocProvider<ProfilePage
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
 
-                  // Partner section
-                  _PartnerCard(
-                    userId: user.id,
-                    partnerId: user.partnerId,
-                  ),
+                  // User data
+                  _UserDataCard(user),
+
+                  // Stats
+                  AppResources.spacerMedium,
+                  _UserStatsCard(user),
 
                   // Matches
                   if (user.hasPartner)...[
@@ -74,11 +69,10 @@ class _ProfilePageState extends State<ProfilePage> with BlocProvider<ProfilePage
   }
 }
 
-class _PartnerCard extends StatelessWidget {
-  const _PartnerCard({required this.userId, this.partnerId, super.key});
+class _UserDataCard extends StatelessWidget {
+  const _UserDataCard(this.user, {super.key});
 
-  final String userId;
-  final String? partnerId;
+  final User user;
 
   @override
   Widget build(BuildContext context) {
@@ -90,45 +84,71 @@ class _PartnerCard extends StatelessWidget {
 
             // Title
             Text(
-              'Votre partenaire',
+              user.name,
               style: context.textTheme.titleLarge,
             ),
 
-            // No partner
+            // Partner
             AppResources.spacerLarge,
-            if (partnerId == null)...[
+            if (user.hasPartner)
+              EventFetchBuilder<User?>(
+                stream: AppService.instance.userSession!.partnerStream,
+                builder: (context, partner) {
+                 return Row(
+                   children: [
+                     Expanded(
+                       child: Text('Partenaire : ${partner?.name ?? '<Inconnu>'}'),
+                     ),
+                      IconButton(
+                        icon: const Icon(Icons.settings),
+                        onPressed: () => navigateTo(context, (context) => const PartnerPage()),
+                      ),
+                   ],
+                 );
+               },
+             )
+            else
               const Text('Vous n\'avez pas encore de partenaire'),
-              AppResources.spacerMedium,
-              const Text('Votre code unique :'),
-              AppResources.spacerMedium,
-              PmQrCodeWidget(ScanResult.buildCode(userId)),
-              AppResources.spacerMedium,
-              ElevatedButton(
-                onPressed: () => ScanPage.goToScanOrPermissionPage(context),
-                onLongPress: kReleaseMode ? null : () => navigateTo(context, (_) => ScanResultPage('PM##zvWD1Mb7fyYDBLtTKnav')),
-                child: const Text('Scanner le code de votre partenaire'),
-              ),
-            ]
 
-            // With partner
-            else ...[
-              Text(
-                AppService.instance.userSession!.partner!.name,   // TODO listen to partner changes
-                style: context.textTheme.headlineMedium,
-              ),
-              AppResources.spacerMedium,
-              TextButton(
-                style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.red)),
-                onPressed: () => navigateTo(context, (_) => RemovePartnerPage(AppService.instance.userSession!.partner!.name)),   // TODO listen to partner changes
-                child: const Text('Supprimer votre partenaire'),
-              ),
-            ],
           ],
         ),
       ),
     );
   }
 }
+
+class _UserStatsCard extends StatelessWidget {
+  const _UserStatsCard(this.user, {super.key});
+
+  final User user;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: AppResources.paddingContent,
+        child: Column(
+          children: [
+
+            // Title
+            Text(
+              'Statistiques',
+              style: context.textTheme.titleLarge,
+            ),
+
+            // Content
+            AppResources.spacerLarge,
+            Text('Nombre de votes : ${user.votes.length}'),
+            AppResources.spacerSmall,
+            Text('Nombre de likes : ${user.likes.length}'),
+
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 
 class _MatchesCard extends StatelessWidget {
   const _MatchesCard({super.key, required this.matches});
