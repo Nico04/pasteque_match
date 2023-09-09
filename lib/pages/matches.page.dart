@@ -114,12 +114,7 @@ class _MatchesListView extends StatelessWidget {
               itemBuilder: (context, index) {
                 final match = matches[index];
                 final group = AppService.names[match]!;
-                final names = group.names.skip(1).map((n) => n.name).toList(growable: false);
-                return ListTile(
-                  title: Text(match),
-                  subtitle: names.isNotEmpty ? Text(names.join(', ')) : null,
-                  onTap: () => navigateTo(context, (context) => NameGroupPage(group)),
-                );
+                return VoteTile(group.id, group, SwipeValue.like);
               },
               separatorBuilder: (_, __) => AppResources.spacerSmall,
             );
