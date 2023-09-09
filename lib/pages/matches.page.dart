@@ -108,17 +108,31 @@ class _MatchesListView extends StatelessWidget {
                 child: const Text('Aucun match pour le moment'),
               );
             }
-            return ListView.separated(
-              padding: AppResources.paddingPage,
-              itemCount: matches.length,
-              itemBuilder: (context, index) {
-                final match = matches[index];
-                final group = AppService.names[match]!;
-                return VoteTile(group.id, group, SwipeValue.like);
-              },
-              separatorBuilder: (_, __) => AppResources.spacerSmall,
+            return Column(
+              children: [
+                // Stats
+                Text(
+                  'Vous avez ${matches.length} matches',
+                  style: context.textTheme.bodyMedium,
+                ),
+
+                // Content
+                AppResources.spacerSmall,
+                Expanded(
+                  child: ListView.separated(
+                    padding: AppResources.paddingPage,
+                    itemCount: matches.length,
+                    itemBuilder: (context, index) {
+                      final match = matches[index];
+                      final group = AppService.names[match]!;
+                      return VoteTile(group.id, group, SwipeValue.like);
+                    },
+                    separatorBuilder: (_, __) => AppResources.spacerSmall,
+                  ),
+                ),
+              ],
             );
-          }
+          },
         );
       },
     );
