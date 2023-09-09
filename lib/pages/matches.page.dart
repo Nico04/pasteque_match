@@ -8,6 +8,7 @@ import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 import 'package:pasteque_match/widgets/themed/pm_qr_code_widget.dart';
 
+import 'name_group.page.dart';
 import 'scan.page.dart';
 import 'partner.page.dart';
 
@@ -25,14 +26,22 @@ class MatchesPage extends StatelessWidget {
             icon: const Icon(Icons.settings),
             onPressed: () => navigateTo(context, (context) => const PartnerPage()),
           ) : null,
-          child: Column(
-            children: [
-              if (!user.hasPartner)
-                _AddPartnerCard(user.id)
-              else
-                Text('TODO matches'),
-            ],
-          ),
+          withScrollView: false,
+          withPadding: false,
+          child: () {
+            if (user.hasPartner) {
+              return _MatchesListView(user);
+            } else {
+              return Column(
+                children: [
+                  Padding(
+                    padding: AppResources.paddingPage,
+                    child: _AddPartnerCard(user.id),
+                  ),
+                ],
+              );
+            }
+          } (),
         );
       },
     );
@@ -74,6 +83,49 @@ class _AddPartnerCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _MatchesListView extends StatelessWidget {
+  const _MatchesListView(this.user, {super.key});
+
+  final User user;
+
+  @override
+  Widget build(BuildContext context) {
+    return EventFetchBuilder<User?>(
+      stream: AppService.instance.userSession!.partnerStream,
+      builder: (context, partner) {
+        return ValueBuilder<List<String>>(
+          key: ValueKey(user.hashCode ^ partner.hashCode),
+          valueGetter: () => AppService.instance.getMatches(user.likes, partner?.likes ?? []),
+          builder: (context, matches) {
+            if (matches.isEmpty) {
+              return Container(
+                padding: AppResources.paddingPage,
+                alignment: Alignment.center,
+                child: const Text('Aucun match pour le moment'),
+              );
+            }
+            return ListView.separated(
+              padding: AppResources.paddingPage,
+              itemCount: matches.length,
+              itemBuilder: (context, index) {
+                final match = matches[index];
+                final group = AppService.names[match]!;
+                final names = group.names.skip(1).map((n) => n.name).toList(growable: false);
+                return ListTile(
+                  title: Text(match),
+                  subtitle: names.isNotEmpty ? Text(names.join(', ')) : null,
+                  onTap: () => navigateTo(context, (context) => NameGroupPage(group)),
+                );
+              },
+              separatorBuilder: (_, __) => AppResources.spacerSmall,
+            );
+          }
+        );
+      },
     );
   }
 }

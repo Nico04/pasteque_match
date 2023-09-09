@@ -22,7 +22,7 @@ class AppService {
   static final database = DatabaseService.instance;
   static final names = NamesService.instance.names;
 
-  // User session
+  // User
   UserSession? userSession;
   String? get userId => userSession?.userId;
   bool get hasLocalUser => userSession != null;
@@ -30,6 +30,11 @@ class AppService {
   void init() {
     final userId = StorageService.readUserId();
     if (userId != null) userSession = UserSession(userId);
+  }
+
+  List<String> getMatches(List<String> userLikes, List<String> partnerLikes) {
+    final matchedIds = userLikes.where(partnerLikes.contains);
+    return matchedIds.toList(growable: false);
   }
   //#endregion
 
