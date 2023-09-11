@@ -105,8 +105,19 @@ class FilterPage extends StatelessWidget {
                     CheckboxListTile(
                       title: const Text('Composé'),
                       tristate: true,
-                      value: filters.hyphenated,
-                      onChanged: (value) => filterHandler.updateFilter(hyphenated: () => value),
+                      value: switch(filters.hyphenated) {
+                        null => false,
+                        false => null,
+                        true => true,
+                      },
+                      onChanged: (value) {
+                        value = switch(value) {
+                          null => false,
+                          false => null,
+                          true => true,
+                        };
+                        filterHandler.updateFilter(hyphenated: () => value);
+                      },
                     ),
 
                     // Gender

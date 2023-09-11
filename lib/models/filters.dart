@@ -50,7 +50,7 @@ class NameGroupFilters {
   const NameGroupFilters({
     this.firstLetter,
     this.length = lengthAll,
-    this.hyphenated = false,
+    this.hyphenated,
     this.groupGender,
   });
 
