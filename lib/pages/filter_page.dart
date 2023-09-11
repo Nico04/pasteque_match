@@ -22,7 +22,14 @@ class _FilterPageState extends State<FilterPage> with BlocProvider<FilterPage, F
         title: 'Filtres',
         child: Column(
           children: [
+            // Caption
+            Text(
+              'Filtrer les groupes de noms',
+              style: context.textTheme.bodyMedium,
+            ),
+
             // Stats
+            AppResources.spacerTiny,
             Text(
               'XXX groupes correspondent à vos critères',   // TODO
               style: context.textTheme.bodySmall,
@@ -59,16 +66,27 @@ class _FilterPageState extends State<FilterPage> with BlocProvider<FilterPage, F
                 const Text('Longueur'),
                 AppResources.spacerMedium,
                 Expanded(
-                  child: RangeSlider(
-                    values: bloc.length,
-                    min: FilterPageBloc._lengthMin,
-                    max: FilterPageBloc._lengthMax,
-                    divisions: FilterPageBloc._lengthDivisions.toInt(),
-                    labels: RangeLabels(
-                      bloc.length.start.round().toString(),
-                      bloc.length.end.round().toString(),
-                    ),
-                    onChanged: (RangeValues values) => setState(() => bloc.length = values),
+                  child: Column(
+                    children: [
+                      // Slider
+                      RangeSlider(
+                        values: bloc.length,
+                        min: FilterPageBloc._lengthMin,
+                        max: FilterPageBloc._lengthMax,
+                        divisions: FilterPageBloc._lengthDivisions.toInt(),
+                        labels: RangeLabels(
+                          bloc.length.start.round().toString(),
+                          bloc.length.end.round().toString(),
+                        ),
+                        onChanged: (RangeValues values) => setState(() => bloc.length = values),
+                      ),
+
+                      // Label
+                      Text(
+                        'Entre ${bloc.length.start.round()} et ${bloc.length.end.round()} lettres',
+                        style: context.textTheme.bodySmall,
+                      ),
+                    ],
                   ),
                 ),
                 IconButton(
@@ -94,16 +112,30 @@ class _FilterPageState extends State<FilterPage> with BlocProvider<FilterPage, F
                 const Text('Genre'),
                 AppResources.spacerMedium,
                 Expanded(
-                  child: SegmentedButton<GroupGenderFilter>(
-                    selected: {if (bloc.groupGender != null) bloc.groupGender!},
-                    segments: GroupGenderFilter.values.map((value) => ButtonSegment(
-                      value: value,
-                      icon: Icon(value.icon),
-                    )).toList(growable: false),
-                    multiSelectionEnabled: false,
-                    showSelectedIcon: false,
-                    emptySelectionAllowed: true,
-                    onSelectionChanged: (value) => setState(() => bloc.groupGender = value.isEmpty ? null : value.single),
+                  child: Column(
+                    children: [
+                      // Buttons
+                      SegmentedButton<GroupGenderFilter>(
+                        selected: {if (bloc.groupGender != null) bloc.groupGender!},
+                        segments: GroupGenderFilter.values.map((value) => ButtonSegment(
+                          value: value,
+                          icon: Icon(value.icon),
+                        )).toList(growable: false),
+                        multiSelectionEnabled: false,
+                        showSelectedIcon: false,
+                        emptySelectionAllowed: true,
+                        onSelectionChanged: (value) => setState(() => bloc.groupGender = value.isEmpty ? null : value.single),
+                      ),
+
+                      // Label
+                      if (bloc.groupGender != null)...[
+                        AppResources.spacerTiny,
+                        Text(
+                          bloc.groupGender!.label!,
+                          style: context.textTheme.bodySmall,
+                        ),
+                      ],
+                    ],
                   ),
                 ),
                 IconButton(
@@ -136,11 +168,12 @@ class FilterPageBloc with Disposable {
 }
 
 enum GroupGenderFilter {
-  atLeastOneFemale(Icons.female),
-  atLeastOneMale(Icons.male),
-  epicene(Icons.transgender);
+  atLeastOneFemale(Icons.female, 'Au moins une fille'),
+  atLeastOneMale(Icons.male, 'Au moins un garçon'),
+  epicene(Icons.transgender, 'Épicène');
 
-  const GroupGenderFilter(this.icon);
+  const GroupGenderFilter(this.icon, this.label);
 
   final IconData icon;
+  final String? label;
 }
