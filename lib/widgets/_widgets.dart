@@ -5,3 +5,4 @@ export 'themed/pages/pm_basic_page.dart';
 export 'themed/pm_tile_button.dart';
 export 'themed/vote_tile.dart';
 export 'themed/gender_icon.dart';
+export 'themed/letter_background.dart';
