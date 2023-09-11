@@ -80,16 +80,9 @@ class FilterPage extends StatelessWidget {
                           child: Column(
                             children: [
                               // Slider
-                              RangeSlider(
-                                values: filters.length,
-                                min: NameGroupFilters.lengthMin,
-                                max: NameGroupFilters.lengthMax,
-                                divisions: NameGroupFilters.lengthDivisions.toInt(),
-                                labels: RangeLabels(
-                                  filters.length.start.round().toString(),
-                                  filters.length.end.round().toString(),
-                                ),
-                                onChanged: (RangeValues values) => filterHandler.updateFilter(length: () => values),
+                              _NameLengthSlider(
+                                initialValue: filters.length,
+                                onChanged: (values) => filterHandler.updateFilter(length: () => values),
                               ),
 
                               // Label
@@ -170,6 +163,37 @@ class FilterPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Small wrapper around RangeSlider to optimize rebuilds (rebuilt on onChanged, but commit changes on onChangeEnd).
+class _NameLengthSlider extends StatefulWidget {
+  const _NameLengthSlider({super.key, required this.initialValue, required this.onChanged});
+
+  final RangeValues initialValue;
+  final ValueChanged<RangeValues> onChanged;
+
+  @override
+  State<_NameLengthSlider> createState() => _NameLengthSliderState();
+}
+
+class _NameLengthSliderState extends State<_NameLengthSlider> {
+  late RangeValues length = widget.initialValue;
+
+  @override
+  Widget build(BuildContext context) {
+    return RangeSlider(
+      values: length,
+      min: NameGroupFilters.lengthMin,
+      max: NameGroupFilters.lengthMax,
+      divisions: NameGroupFilters.lengthDivisions.toInt(),
+      labels: RangeLabels(
+        length.start.round().toString(),
+        length.end.round().toString(),
+      ),
+      onChanged: (RangeValues values) => setState(() => length = values),
+      onChangeEnd: widget.onChanged,
     );
   }
 }
