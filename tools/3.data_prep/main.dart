@@ -56,7 +56,10 @@ void main(List<String> rawArgs) async {
   //computePopularity(spreadsheet);
 
   // Count names per group
-  countNamesPerGroup(spreadsheet);
+  //countNamesPerGroup(spreadsheet);
+
+  // Max name length
+  computeMaxNameLength(spreadsheet);
 
   // Save file
   print('Save file');
@@ -408,6 +411,25 @@ void countNamesPerGroup(SpreadsheetDecoder spreadsheet) {
   );
   namesPerGroup.sort((a, b) => b.$2.compareTo(a.$2));
   print('Groups with more than 8 names: ${namesPerGroup.where((e) => e.$2 >= 8).map((e) => '${e.$1} (${e.$2})').join(', ')}');
+}
+
+void computeMaxNameLength(spreadsheet) {
+  print('Compute max name length');
+  int max = -1;
+  _computeEachName(
+    spreadsheet,
+    (sheet, rowIndex) {
+      // Get data
+      final row = sheet.rows[rowIndex];
+
+      // Get name
+      final name = row[nameColumnIndex] as String;
+
+      // Compute max
+      if (name.length > max) max = name.length;
+    },
+  );
+  print('Max name length: $max');
 }
 
 
