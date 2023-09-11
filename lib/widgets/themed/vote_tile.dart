@@ -18,94 +18,97 @@ class VoteTile extends StatelessWidget {
   Widget build(BuildContext context) {
     const backgroundLetterHeight = 200.0;
 
-    final child = Card(
-      elevation: 0,
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      color: Theme.of(context).colorScheme.surfaceVariant,
-      child: InkWell(
-        onTap: group == null ? null : () => navigateTo(context, (context) => NameGroupPage(group!)),
-        child: Row(
-          children: [
-            Expanded(
-              child: Stack(
-                alignment: Alignment.center,
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned(
-                    top: -backgroundLetterHeight / 2, // Couldn't find a better way to center the letter vertically.
-                    child: Text(
-                      groupId.substring(0, 1),
-                      style: TextStyle(
-                        fontFamily: 'Passions Conflict',
-                        fontSize: backgroundLetterHeight,
-                        color: Colors.black.withOpacity(0.1),
+    final child = Hero(
+      tag: groupId,
+      child: Card(
+        elevation: 0,
+        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        color: Theme.of(context).colorScheme.surfaceVariant,
+        child: InkWell(
+          onTap: group == null ? null : () => navigateTo(context, (context) => NameGroupPage(group!)),
+          child: Row(
+            children: [
+              Expanded(
+                child: Stack(
+                  alignment: Alignment.center,
+                  clipBehavior: Clip.none,
+                  children: [
+                    Positioned(
+                      top: -backgroundLetterHeight / 2, // Couldn't find a better way to center the letter vertically.
+                      child: Text(
+                        groupId.substring(0, 1),
+                        style: TextStyle(
+                          fontFamily: 'Passions Conflict',
+                          fontSize: backgroundLetterHeight,
+                          color: Colors.black.withOpacity(0.1),
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: AppResources.paddingContent,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(groupId),
-                        if (group == null)
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.error_outline,
-                                color: Colors.red,
-                                size: 16,
-                              ),
-                              Text(
-                                ' Groupe introuvable',
+                    Padding(
+                      padding: AppResources.paddingContent,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(groupId),
+                          if (group == null)
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                  size: 16,
+                                ),
+                                Text(
+                                  ' Groupe introuvable',
+                                  style: context.textTheme.bodySmall,
+                                ),
+                              ],
+                            )
+                          else
+                            ...group!.names.skip(1).take(2).map((name) {
+                              return Text(
+                                name.name,
                                 style: context.textTheme.bodySmall,
-                              ),
-                            ],
-                          )
-                        else
-                          ...group!.names.skip(1).take(2).map((name) {
-                            return Text(
-                              name.name,
-                              style: context.textTheme.bodySmall,
-                            );
-                          }).toList(growable: false),
-                      ],
+                              );
+                            }).toList(growable: false),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            // Buttons
-            Padding(
-              padding: AppResources.paddingContent,
-              child: SegmentedButton<SwipeValue>(
-                selected: {if (vote != null) vote!},
-                segments: const [
-                  ButtonSegment(
-                    value: SwipeValue.like,
-                    icon: Icon(Icons.thumb_up, color: Colors.green),
-                  ),
-                  ButtonSegment(
-                    value: SwipeValue.dislike,
-                    icon: Icon(Icons.thumb_down, color: Colors.red),
-                  ),
-                ],
-                multiSelectionEnabled: false,
-                showSelectedIcon: false,
-                emptySelectionAllowed: true,    // Needed because initial vote value might be null
-                onSelectionChanged: (value) {
-                  if (value.isEmpty) {
-                    if (!dismissible) {
-                      AppService.instance.clearUserVote(groupId);
+              // Buttons
+              Padding(
+                padding: AppResources.paddingContent,
+                child: SegmentedButton<SwipeValue>(
+                  selected: {if (vote != null) vote!},
+                  segments: const [
+                    ButtonSegment(
+                      value: SwipeValue.like,
+                      icon: Icon(Icons.thumb_up, color: Colors.green),
+                    ),
+                    ButtonSegment(
+                      value: SwipeValue.dislike,
+                      icon: Icon(Icons.thumb_down, color: Colors.red),
+                    ),
+                  ],
+                  multiSelectionEnabled: false,
+                  showSelectedIcon: false,
+                  emptySelectionAllowed: true,    // Needed because initial vote value might be null
+                  onSelectionChanged: (value) {
+                    if (value.isEmpty) {
+                      if (!dismissible) {
+                        AppService.instance.clearUserVote(groupId);
+                      }
+                    } else {
+                      AppService.instance.setUserVote(groupId, value.single);
                     }
-                  } else {
-                    AppService.instance.setUserVote(groupId, value.single);
-                  }
-                },
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
