@@ -35,56 +35,62 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
       ),
       withScrollView: false,
       withPadding: false,
-      child: FetchBuilder.basic<List<NameGroup>>(
-        task: bloc.getRemainingNames,
-        builder: (context, groups) {
-          return Column(
-            children: [
-              // Filters
-              Padding(
-                padding: AppResources.paddingPageHorizontal,
-                child: Row(
-                  children: [
-                    Text('TODO'),
-                    const Spacer(),
-                    IconButton(
-                      icon: const Icon(Icons.filter_alt),
-                      onPressed: () => navigateTo(context, (context) => FilterPage(bloc.filteredNameGroupsHandler)),
+      child: DataStreamBuilder<FilteredNameGroups>(
+        stream: bloc.filteredNameGroupsHandler.dataStream,
+        builder: (context, filteredData) {
+          return FetchBuilder.basic<List<NameGroup>>(
+            key: ObjectKey(filteredData),
+            task: () => bloc.getRemainingNames(filteredData.filtered),
+            builder: (context, groups) {
+              return Column(
+                children: [
+                  // Filters
+                  Padding(
+                    padding: AppResources.paddingPageHorizontal,
+                    child: Row(
+                      children: [
+                        Text('TODO'),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.filter_alt),
+                          onPressed: () => navigateTo(context, (context) => FilterPage(bloc.filteredNameGroupsHandler)),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
 
-              // Stats
-              Text(
-                '${groups.length} groupes correspondent à vos critères',
-                style: context.textTheme.bodySmall,
-              ),
+                  // Stats
+                  Text(
+                    '${filteredData.filtered.length} groupes correspondent à vos critères',
+                    style: context.textTheme.bodySmall,
+                  ),
 
-              // Swipe cards
-              Expanded(
-                child: Padding(
-                  padding: AppResources.paddingPage,
-                  child: () {
-                    if (groups.isEmpty) return const Center(child: Text('Vous avez tout voté !'));
-                    return ValueBuilder<MatchEngine>(
-                      key: ObjectKey(groups),
-                      valueGetter: () => _buildSwipeEngine(groups),
-                      builder: (context, matchEngine) {
-                        return Padding(
-                          padding: AppResources.paddingPage,
-                          child: SwipeCards(
-                            matchEngine: matchEngine,
-                            onStackFinished: () => print('onStackFinished'),    // TODO
-                            itemBuilder: (context, index, distance, slideRegion) => _GroupCard(groups[index]),
-                          ),
+                  // Swipe cards
+                  Expanded(
+                    child: Padding(
+                      padding: AppResources.paddingPage,
+                      child: () {
+                        if (groups.isEmpty) return const Center(child: Text('Vous avez tout voté !'));
+                        return ValueBuilder<MatchEngine>(
+                          key: ObjectKey(groups),
+                          valueGetter: () => _buildSwipeEngine(groups),
+                          builder: (context, matchEngine) {
+                            return Padding(
+                              padding: AppResources.paddingPage,
+                              child: SwipeCards(
+                                matchEngine: matchEngine,
+                                onStackFinished: () => print('onStackFinished'),    // TODO
+                                itemBuilder: (context, index, distance, slideRegion) => _GroupCard(groups[index]),
+                              ),
+                            );
+                          },
                         );
-                      },
-                    );
-                  } (),
-                ),
-              ),
-            ],
+                      } (),
+                    ),
+                  ),
+                ],
+              );
+            },
           );
         },
       ),
@@ -205,16 +211,13 @@ class SwipePageBloc with Disposable {
 
   final filteredNameGroupsHandler = FilteredNameGroupsHandler();
 
-  Future<List<NameGroup>> getRemainingNames() async {
+  Future<List<NameGroup>> getRemainingNames(Map<String, NameGroup> names) async {
     // Init data
     final user = await AppService.instance.userSession!.userStream.first;
 
-    // Get all names
-    final allNames = AppService.names;
-
     // Compute remaining votes
     final votedNamesId = user.votes.keys;
-    final remainingNamesMap = Map.of(allNames)..removeWhere((key, value) => votedNamesId.contains(key));
+    final remainingNamesMap = Map.of(names)..removeWhere((key, value) => votedNamesId.contains(key));
     final remainingNames = remainingNamesMap.values.toList(growable: false);
     return remainingNames..shuffle();
   }
