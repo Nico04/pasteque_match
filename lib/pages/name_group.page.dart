@@ -55,6 +55,10 @@ class NameGroupPage extends StatelessWidget {
                 'Ce groupe contient ${group.names.length} noms :',
                 style: context.textTheme.titleMedium,
               ),
+              Text(
+                '(Trié par popularité)',
+                style: context.textTheme.bodySmall,
+              ),
               AppResources.spacerMedium,
               ...group.names.map<Widget>(NameTile.new).toList()..insertBetween(AppResources.spacerSmall),
             ],
@@ -95,6 +99,11 @@ class NameTile extends StatelessWidget {
           child: Row(
             children: [
               Text(name.name),
+              AppResources.spacerTiny,
+              Text(
+                '(${name.stats.total})',    // TODO use better indicator
+                style: context.textTheme.bodySmall,
+              ),
               const Spacer(),
               GenderIcon(name.gender),
             ],
