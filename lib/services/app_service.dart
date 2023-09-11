@@ -55,7 +55,7 @@ class AppService {
 
   Future<void> choosePartner(String partnerId) async {
     // Check
-    if (userSession?.hasPartner != true) throw const InvalidOperationException('Remove your current partner first');
+    if (userSession?.hasPartner == true) throw const InvalidOperationException('Remove your current partner first');
 
     // Update database
     await database.setPartner(userId!, partnerId);

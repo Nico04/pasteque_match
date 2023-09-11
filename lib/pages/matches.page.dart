@@ -32,13 +32,15 @@ class MatchesPage extends StatelessWidget {
             if (user.hasPartner) {
               return _MatchesListView(user);
             } else {
-              return Column(
-                children: [
-                  Padding(
-                    padding: AppResources.paddingPage,
-                    child: _AddPartnerCard(user.id),
-                  ),
-                ],
+              return Center(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: AppResources.paddingPage,
+                      child: _AddPartnerCard(user.id),
+                    ),
+                  ],
+                ),
               );
             }
           } (),
