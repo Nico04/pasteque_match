@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 
@@ -46,6 +47,11 @@ class User extends UserData {
 }
 
 enum SwipeValue {
-  dislike,
-  like;
+  dislike(Icons.thumb_down, Colors.red),
+  like(Icons.thumb_up, Colors.green);
+
+  const SwipeValue(this.icon, this.color);
+
+  final IconData icon;
+  final Color color;
 }

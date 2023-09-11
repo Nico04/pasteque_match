@@ -83,16 +83,10 @@ class VoteTile extends StatelessWidget {
                 padding: AppResources.paddingContent,
                 child: SegmentedButton<SwipeValue>(
                   selected: {if (vote != null) vote!},
-                  segments: const [
-                    ButtonSegment(
-                      value: SwipeValue.like,
-                      icon: Icon(Icons.thumb_up, color: Colors.green),
-                    ),
-                    ButtonSegment(
-                      value: SwipeValue.dislike,
-                      icon: Icon(Icons.thumb_down, color: Colors.red),
-                    ),
-                  ],
+                  segments: SwipeValue.values.map((value) => ButtonSegment(
+                    value: value,
+                    icon: Icon(value.icon, color: value.color),
+                  )).toList(growable: false),
                   multiSelectionEnabled: false,
                   showSelectedIcon: false,
                   emptySelectionAllowed: true,    // Needed because initial vote value might be null
