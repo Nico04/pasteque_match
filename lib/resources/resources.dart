@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AppResources {
   // Padding
@@ -14,13 +15,25 @@ class AppResources {
   static const spacerExtraLarge = SizedBox(width: 30, height: 30);
   static const spacerHuge = SizedBox(width: 45, height: 45);
 
+  // Border Radius
+  static const borderRadiusTiny = BorderRadius.all(Radius.circular(5));
+  static const borderRadiusSmall = BorderRadius.all(Radius.circular(10));
+  static const borderRadiusMedium = BorderRadius.all(Radius.circular(15));
+  static const borderRadiusMax = BorderRadius.all(Radius.circular(500));
+
   // Duration
   static const durationAnimationMedium = Duration(milliseconds: 250);
   static const durationAnimationShort = Duration(milliseconds: 100);
 
+  // Input formatter
+  static maxLengthInputFormatter([int? maxLength = 50]) => LengthLimitingTextInputFormatter(maxLength);   // Must be a new instance for each page
+  static get onlyLettersInputFormatter => FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')); // Must be a new instance for each page
+
   // Validator
   static String? validatorNotEmpty(String? value) => value?.isNotEmpty != true ? textFormMandatory : null;
+  static String? validatorLength(String? value, int min, int max) => (value == null || value.length < min || value.length > max) ? textFormIncorrect : null;
 
   // String
-  static const textFormMandatory = 'Obligatoire';
+  static const textFormMandatory = 'Ⓧ Obligatoire';
+  static const textFormIncorrect = 'Ⓧ Format incorrect';
 }

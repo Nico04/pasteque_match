@@ -10,6 +10,7 @@ import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 
+import 'filter_page.dart';
 import 'name_group.page.dart';
 import 'search.page.dart';
 
@@ -33,23 +34,57 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
         onPressed: () => navigateTo(context, (context) => const SearchPage()),
       ),
       withScrollView: false,
+      withPadding: false,
       child: FetchBuilder.basic<List<NameGroup>>(
         task: bloc.getRemainingNames,
-        builder: (context, names) {
-          if (names.isEmpty) return const Center(child: Text('Vous avez tout voté !'));
-          return ValueBuilder<MatchEngine>(
-            key: ObjectKey(names),
-            valueGetter: () => _buildSwipeEngine(names),
-            builder: (context, matchEngine) {
-              return Padding(
-                padding: AppResources.paddingPage,
-                child: SwipeCards(
-                  matchEngine: matchEngine,
-                  onStackFinished: () => print('onStackFinished'),    // TODO
-                  itemBuilder: (context, index, distance, slideRegion) => _GroupCard(names[index]),
+        builder: (context, groups) {
+          return Column(
+            children: [
+              // Filters
+              Padding(
+                padding: AppResources.paddingPageHorizontal,
+                child: Row(
+                  children: [
+                    Text('TODO'),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.filter_alt),
+                      onPressed: () => navigateTo(context, (context) => const FilterPage()),
+                    ),
+                  ],
                 ),
-              );
-            },
+              ),
+
+              // Stats
+              Text(
+                '${groups.length} groupes correspondent à vos critères',
+                style: context.textTheme.bodySmall,
+              ),
+
+              // Swipe cards
+              Expanded(
+                child: Padding(
+                  padding: AppResources.paddingPage,
+                  child: () {
+                    if (groups.isEmpty) return const Center(child: Text('Vous avez tout voté !'));
+                    return ValueBuilder<MatchEngine>(
+                      key: ObjectKey(groups),
+                      valueGetter: () => _buildSwipeEngine(groups),
+                      builder: (context, matchEngine) {
+                        return Padding(
+                          padding: AppResources.paddingPage,
+                          child: SwipeCards(
+                            matchEngine: matchEngine,
+                            onStackFinished: () => print('onStackFinished'),    // TODO
+                            itemBuilder: (context, index, distance, slideRegion) => _GroupCard(groups[index]),
+                          ),
+                        );
+                      },
+                    );
+                  } (),
+                ),
+              ),
+            ],
           );
         },
       ),

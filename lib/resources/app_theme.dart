@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'resources.dart';
+
 /// Build App Theme.
 ///
 /// It's NOT a simple variable to allow hot reload to work properly.
@@ -14,6 +16,13 @@ ThemeData buildAppTheme() {
     ),
     appBarTheme: const AppBarTheme(
       centerTitle: true,
+    ),
+    inputDecorationTheme: const InputDecorationTheme(
+      border: OutlineInputBorder(
+        borderRadius: AppResources.borderRadiusSmall,
+      ),
+      isDense: true,    // Allow icons to be correctly sized
+      contentPadding: const EdgeInsets.all(15),
     ),
   );
 }

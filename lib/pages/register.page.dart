@@ -39,6 +39,7 @@ class _RegisterPageState extends State<RegisterPage> with BlocProvider<RegisterP
                       hintText: 'Pseudo',
                     ),
                     autofocus: true,
+                    inputFormatters: [ AppResources.maxLengthInputFormatter() ],
                     textInputAction: TextInputAction.done,
                     onFieldSubmitted: (value) => validate(),
                     validator: AppResources.validatorNotEmpty,
