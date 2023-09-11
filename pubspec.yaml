@@ -19,7 +19,7 @@ dependencies:
   flash: ^3.0.5+1
   swipe_cards:
     path: ./plugins/swipe_cards/   # Local fork to extends capabilities
-  animated_list_plus: ^0.5.2
+  fl_chart: ^0.63.0
 
   # Network
   http: ^1.1.0

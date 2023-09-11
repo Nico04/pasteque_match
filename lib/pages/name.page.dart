@@ -14,9 +14,33 @@ class NamePage extends StatelessWidget {
     return PmBasicPage(
       title: name.name,
       withScrollView: false,
-      child: Center(
-        child: Text(
-          'TODO'
+      child: LetterBackground(
+        letter: name.name,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+
+            // Gender
+            GenderIcon(
+              name.gender,
+              iconSize: 70,
+            ),
+
+            // Name
+            AppResources.spacerLarge,
+            Text(
+              name.name,
+              style: context.textTheme.headlineMedium,
+              textAlign: TextAlign.center,
+            ),
+
+            // Stats
+            AppResources.spacerLarge,
+            Text(
+              'Ce prénom a été donné ${name.totalCount} fois en France depuis 1900',
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
