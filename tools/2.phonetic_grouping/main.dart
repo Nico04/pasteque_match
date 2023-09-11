@@ -52,11 +52,12 @@ void main(List<String> rawArgs) async {
   print('Convert to a list of Name');
   final rawNames = <Name>[];
   for (final nameEntry in nameEntries.entries) {
+    /* TODO update to new Name model
     rawNames.add(Name(
       name: nameEntry.key.name,
       gender: nameEntry.key.gender,
       stats: NameQuantityStatistics(nameEntry.value),
-    ));
+    ));*/
   }
 
   // Remove short names
@@ -156,7 +157,9 @@ void main(List<String> rawArgs) async {
   for (final groupEntry in rawGroups.entries) {
     rows.add([groupEntry.key.capitalizedFull]);
     for (final name in groupEntry.value) {
+      /* TODO update to new Name model
       rows.add(['', name.name.capitalizedFull, name.gender.name, json.encode(name.stats.toJson())]);
+      */
     }
   }
 

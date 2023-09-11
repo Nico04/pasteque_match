@@ -18,37 +18,30 @@ class NameGroup {
 }
 
 class Name {
-  const Name({required this.name, required this.gender, required this.stats});
-  Name.fromStrings({required this.name, required String gender, required String stats}) :
+  const Name({required this.name, required this.gender, required this.countByYear, required this.totalCount, required this.relativeCountByYear, required this.isHyphenated});
+  Name.fromStrings({required this.name, required String gender, required String countByYear, required String totalCount, required String relativeCountByYear, required String isHyphenated}) :
     gender = NameGender.values.firstWhere((e) => e.name == gender),
-    stats = NameQuantityStatistics((jsonDecode(stats) as Map<String, dynamic>).cast());
-
-  String get id => name.normalized;     // TODO remove
+    countByYear = (jsonDecode(countByYear) as Map<String, dynamic>).cast(),
+    totalCount = int.parse(totalCount),
+    relativeCountByYear = (jsonDecode(relativeCountByYear) as Map<String, dynamic>).cast(),
+    isHyphenated = bool.parse(isHyphenated);
 
   final String name;    // TODO rename to label ?
   final NameGender gender;
-  final NameQuantityStatistics stats;
+  final NameQuantityStatisticsValue countByYear;
+  final int totalCount;
+  final NameQuantityStatisticsValue relativeCountByYear;
+  final bool isHyphenated;
 
   String get firstLetter => name.substringSafe(length: 1);
   int get length => name.length;
-  bool get isHyphenated => name.contains('-') || name.contains("'");
   NameRarity get rarity => NameRarity.common;   // TODO
   NameAge get age => NameAge.ancient;   // TODO
 }
 
+/// Map<Year, Quantity>.
+/// Years with values under 3 are not included. All theses years are summed into a special Year == 0.
 typedef NameQuantityStatisticsValue = Map<String, int>;
-
-class NameQuantityStatistics {
-  const NameQuantityStatistics(this.values);
-
-  /// Map<Year, Quantity>.
-  /// Years with values under 3 are not included. All theses years are summed into a special Year == 0.
-  final NameQuantityStatisticsValue values;    // TODO use Map<int, int> (need conversion)
-
-  int get total => values.values.sum();
-
-  NameQuantityStatisticsValue toJson() => values;
-}
 
 enum NameGender {
   male(Icons.male, Colors.blue),

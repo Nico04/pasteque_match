@@ -101,7 +101,7 @@ class NameTile extends StatelessWidget {
               Text(name.name),
               AppResources.spacerTiny,
               Text(
-                '(${name.stats.total})',    // TODO use better indicator
+                '(${name.totalCount})',    // TODO use better indicator
                 style: context.textTheme.bodySmall,
               ),
               const Spacer(),

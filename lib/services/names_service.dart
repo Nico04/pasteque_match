@@ -74,7 +74,10 @@ class NamesService {
         final name = Name.fromStrings(
           name: row[headersMap['name']!],
           gender: row[headersMap['gender']!],
-          stats: row[headersMap['count']!],
+          countByYear: row[headersMap['count']!],
+          totalCount: row[headersMap['total']!],
+          relativeCountByYear: row[headersMap['relativeCount']!],
+          isHyphenated: row[headersMap['hyphenated']!],
         );
         currentGroup.names.add(name);
       }
