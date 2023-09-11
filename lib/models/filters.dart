@@ -72,6 +72,13 @@ class NameGroupFilters {
       (hyphenated == null || group.names.first.isHyphenated == hyphenated) &&
       (groupGender == null || groupGender!.match(group));
 
+  List<String> getLabels() => [
+    if (firstLetter != null) 'Commence par $firstLetter',
+    if (length != lengthAll) 'Entre ${length.start.round()} et ${length.end.round()} caractères',
+    if (hyphenated != null) hyphenated! ? 'Composés' : 'Non-composés',
+    if (groupGender != null) groupGender!.label!,
+  ];
+
   NameGroupFilters copyWith({
     ValueGetter<String?>? firstLetter,
     ValueGetter<RangeValues?>? length,

@@ -49,8 +49,28 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                     padding: AppResources.paddingPageHorizontal,
                     child: Row(
                       children: [
-                        Text('TODO'),
-                        const Spacer(),
+                        Expanded(
+                          child: () {
+                            if (filteredData.filters == null) {
+                              return const Text('Aucun filtre');
+                            } else {
+                              return Wrap(
+                                spacing: 5,
+                                runSpacing: 5,
+                                children: filteredData.filters!.getLabels().map((label) {
+                                  return Chip(
+                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    label: Text(
+                                      label,
+                                      style: context.textTheme.bodySmall,
+                                    ),
+                                  );
+                                }).toList(growable: false),
+                              );
+                            }
+                          } (),
+                        ),
+                        AppResources.spacerSmall,
                         IconButton(
                           icon: const Icon(Icons.filter_alt),
                           onPressed: () => navigateTo(context, (context) => FilterPage(bloc.filteredNameGroupsHandler)),
@@ -60,6 +80,7 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                   ),
 
                   // Stats
+                  AppResources.spacerSmall,
                   Text(
                     '${filteredData.filtered.length} groupes correspondent à vos critères',
                     style: context.textTheme.bodySmall,
