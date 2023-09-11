@@ -1,9 +1,9 @@
 import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/main.dart';
+import 'package:pasteque_match/models/filters.dart';
 import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/models/user.dart';
-import 'package:pasteque_match/pages/profile.page.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
@@ -203,9 +203,11 @@ class SwipePageBloc with Disposable {
   User? get user => AppService.instance.userSession!.user;   // TODO listen to changes ?
   User? get partner => AppService.instance.userSession!.partner;   // TODO listen to changes ?
 
+  final filteredNames = FilteredNameGroups(AppService.names);
+
   Future<List<NameGroup>> getRemainingNames() async {
     // Init data
-    final user = (await AppService.instance.userSession!.userStream.first)!;
+    final user = await AppService.instance.userSession!.userStream.first;
 
     // Get all names
     final allNames = AppService.names;
@@ -239,5 +241,11 @@ class SwipePageBloc with Disposable {
       showError(App.navigatorContext, e);
     }
     return false;
+  }
+
+  @override
+  void dispose() {
+    filteredNames.dispose();
+    super.dispose();
   }
 }
