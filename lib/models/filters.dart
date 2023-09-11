@@ -1,69 +1,88 @@
-import 'package:fetcher/fetcher.dart';
+import 'package:value_stream/value_stream.dart';
 import 'package:flutter/material.dart';
+import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 
 import 'name.dart';
 
-class FilteredNameGroups with Disposable {
-  FilteredNameGroups(this.allNames) {
-    filteredNames = DataStream(_buildFilteredList());
-    filters.addListener(update);
+class FilteredNameGroupsHandler with Disposable {
+  final dataStream = DataStream<FilteredNameGroups>(FilteredNameGroups());
+
+  void updateFilter({
+    ValueGetter<String?>? firstLetter,
+    ValueGetter<RangeValues?>? length,
+    ValueGetter<bool?>? hyphenated,
+    ValueGetter<GroupGenderFilter?>? groupGender,
+  }) {
+    // Build new filter object
+    final filters = (dataStream.value.filters ?? const NameGroupFilters()).copyWith(
+      firstLetter: firstLetter,
+      length: length,
+      hyphenated: hyphenated,
+      groupGender: groupGender,
+    );
+
+    // Update data
+    dataStream.add(FilteredNameGroups(filters));
   }
-
-  Map<String, NameGroup> allNames;
-  late final DataStream<List<NameGroup>> filteredNames;
-
-  final filters = NameGroupFilters();
-
-  void update() => filteredNames.add(_buildFilteredList());
-  List<NameGroup> _buildFilteredList() => allNames.values.where(filters.match).toList(growable: false);
 
   @override
   void dispose() {
-    filters.dispose();
-    filteredNames.close();
+    dataStream.close();
     super.dispose();
   }
 }
 
-class NameGroupFilters with ChangeNotifier {
-  String? _firstLetter;
-  String? get firstLetter => _firstLetter;
-  set firstLetter(String? value) {
-    _firstLetter = value?.toUpperCase();
-    notifyListeners();
+class FilteredNameGroups {
+  FilteredNameGroups([this.filters]) {
+    filtered = _buildFilteredList();
   }
 
-  static const _lengthMin = 1.0;
-  static const _lengthMax = 20.0;
-  static const _lengthDivisions = _lengthMax - _lengthMin;
-  static const _lengthAll = RangeValues(_lengthMin, _lengthMax);
-  RangeValues _length = _lengthAll;
-  RangeValues get length => _length;
-  set length(RangeValues value) {
-    _length = value;
-    notifyListeners();
-  }
+  Map<String, NameGroup> get all => AppService.names;
 
-  bool? _hyphenated = false;
-  bool? get hyphenated => _hyphenated;
-  set hyphenated(bool? value) {
-    _hyphenated = value;
-    notifyListeners();
-  }
+  final NameGroupFilters? filters;
+  late final Map<String, NameGroup> filtered;
 
-  GroupGenderFilter? _groupGender;
-  GroupGenderFilter? get groupGender => _groupGender;
-  set groupGender(GroupGenderFilter? value) {
-    _groupGender = value;
-    notifyListeners();
-  }
+  Map<String, NameGroup> _buildFilteredList() => filters == null ? all : Map.fromEntries(all.entries.where((e) => filters!.match(e.value)));
+}
+
+class NameGroupFilters {
+  const NameGroupFilters({
+    this.firstLetter,
+    this.length = lengthAll,
+    this.hyphenated = false,
+    this.groupGender,
+  });
+
+  final String? firstLetter;
+
+  static const lengthMin = 1.0;
+  static const lengthMax = 20.0;
+  static const lengthDivisions = lengthMax - lengthMin;
+  static const lengthAll = RangeValues(lengthMin, lengthMax);
+  final RangeValues length;
+
+  final bool? hyphenated;
+
+  final GroupGenderFilter? groupGender;
 
   bool match(NameGroup group) =>
-      firstLetter == null || group.names.any((name) => name.name.startsWith(firstLetter!)) &&
-      length == _lengthAll || group.id.length >= length.start && group.id.length <= length.end &&
-      hyphenated == null || group.names.first.isHyphenated == hyphenated &&
-      groupGender == null || groupGender!.match(group);
+      (firstLetter == null || group.names.any((name) => name.name.startsWith(firstLetter!))) &&
+      (length == lengthAll || group.id.length >= length.start && group.id.length <= length.end) &&
+      (hyphenated == null || group.names.first.isHyphenated == hyphenated) &&
+      (groupGender == null || groupGender!.match(group));
+
+  NameGroupFilters copyWith({
+    ValueGetter<String?>? firstLetter,
+    ValueGetter<RangeValues?>? length,
+    ValueGetter<bool?>? hyphenated,
+    ValueGetter<GroupGenderFilter?>? groupGender,
+  }) => NameGroupFilters(
+    firstLetter: firstLetter == null ? this.firstLetter : firstLetter(),
+    length: length == null ? this.length : length() ?? lengthAll,
+    hyphenated: hyphenated == null ? this.hyphenated : hyphenated(),
+    groupGender: groupGender == null ? this.groupGender : groupGender(),
+  );
 }
 
 enum GroupGenderFilter {

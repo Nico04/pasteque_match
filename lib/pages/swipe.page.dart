@@ -49,7 +49,7 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                     const Spacer(),
                     IconButton(
                       icon: const Icon(Icons.filter_alt),
-                      onPressed: () => navigateTo(context, (context) => const FilterPage()),
+                      onPressed: () => navigateTo(context, (context) => FilterPage(bloc.filteredNameGroupsHandler)),
                     ),
                   ],
                 ),
@@ -203,7 +203,7 @@ class SwipePageBloc with Disposable {
   User? get user => AppService.instance.userSession!.user;   // TODO listen to changes ?
   User? get partner => AppService.instance.userSession!.partner;   // TODO listen to changes ?
 
-  final filteredNames = FilteredNameGroups(AppService.names);
+  final filteredNameGroupsHandler = FilteredNameGroupsHandler();
 
   Future<List<NameGroup>> getRemainingNames() async {
     // Init data
@@ -245,7 +245,7 @@ class SwipePageBloc with Disposable {
 
   @override
   void dispose() {
-    filteredNames.dispose();
+    filteredNameGroupsHandler.dispose();
     super.dispose();
   }
 }

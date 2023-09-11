@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:fetcher/fetcher.dart';
-import 'package:flutter/foundation.dart';
 import 'package:pasteque_match/main.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/pages/register.page.dart';
