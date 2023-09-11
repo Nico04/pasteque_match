@@ -56,17 +56,7 @@ class NameGroupPage extends StatelessWidget {
                 style: context.textTheme.titleMedium,
               ),
               AppResources.spacerMedium,
-              ...group.names.map<Widget>((name) {
-                return Card(
-                  child: InkWell(
-                    onTap: () => navigateTo(context, (context) => NamePage(name)),
-                    child: Padding(
-                      padding: AppResources.paddingContent,
-                      child: Text(name.name),
-                    ),
-                  ),
-                );
-              }).toList()..insertBetween(AppResources.spacerSmall),
+              ...group.names.map<Widget>(NameTile.new).toList()..insertBetween(AppResources.spacerSmall),
             ],
           ),
 
@@ -85,6 +75,31 @@ class NameGroupPage extends StatelessWidget {
             child: const Text('Signaler un problème'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class NameTile extends StatelessWidget {
+  const NameTile(this.name, {super.key});
+
+  final Name name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: InkWell(
+        onTap: () => navigateTo(context, (context) => NamePage(name)),
+        child: Padding(
+          padding: AppResources.paddingContent,
+          child: Row(
+            children: [
+              Text(name.name),
+              const Spacer(),
+              GenderIcon(name.gender),
+            ],
+          ),
+        ),
       ),
     );
   }

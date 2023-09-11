@@ -119,18 +119,15 @@ class _GroupCard extends StatelessWidget {
                     child: _NameGenderRow(
                       name: group.name,
                       style: context.textTheme.displayMedium?.copyWith(fontFamily: 'Merienda', color: Colors.black),
-                      icon: group.names.first.gender.icon,
+                      gender: group.names.first.gender,
                       iconSize: 40,
-                      iconColor: group.names.first.gender.color,
                     ),
                   ),
                   AppResources.spacerMedium,
                   ...group.names.skip(1).take(5).map<Widget>((name) => _NameGenderRow(
                     name: name.name,
                     style: context.textTheme.titleMedium?.copyWith(fontFamily: 'Merienda', color: Colors.black),
-                    icon: name.gender.icon,
-                    iconSize: 20,
-                    iconColor: name.gender.color,
+                    gender: name.gender
                   )).toList()..insertBetween(AppResources.spacerSmall),
                 ],
               ),
@@ -143,13 +140,12 @@ class _GroupCard extends StatelessWidget {
 }
 
 class _NameGenderRow extends StatelessWidget {
-  const _NameGenderRow({super.key, required this.name, this.style, required this.icon, required this.iconSize, this.iconColor});
+  const _NameGenderRow({super.key, required this.name, this.style, required this.gender, this.iconSize});
 
   final String name;
   final TextStyle? style;
-  final IconData icon;
-  final double iconSize;
-  final Color? iconColor;
+  final NameGender gender;
+  final double? iconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -161,11 +157,7 @@ class _NameGenderRow extends StatelessWidget {
           style: style,
         ),
         AppResources.spacerSmall,
-        Icon(
-          icon,
-          size: iconSize,
-          color: iconColor,
-        ),
+        GenderIcon(gender, iconSize: iconSize),
       ],
     );
   }

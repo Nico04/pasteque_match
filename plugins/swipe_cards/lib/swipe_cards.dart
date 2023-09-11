@@ -23,7 +23,7 @@ class SwipeCards extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _SwipeCardsState createState() => _SwipeCardsState();
+  State<SwipeCards> createState() => _SwipeCardsState();
 }
 
 class _SwipeCardsState extends State<SwipeCards> {
