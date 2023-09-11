@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
@@ -33,6 +34,7 @@ class _FilterPageState extends State<FilterPage> with BlocProvider<FilterPage, F
               children: [
                 const Text('Commence par'),
                 const Spacer(),
+                AppResources.spacerMedium,
                 SizedBox(
                   width: 50,
                   child: TextField(
@@ -50,6 +52,67 @@ class _FilterPageState extends State<FilterPage> with BlocProvider<FilterPage, F
               ],
             ),
 
+            // Length
+            AppResources.spacerMedium,
+            Row(
+              children: [
+                const Text('Longueur'),
+                AppResources.spacerMedium,
+                Expanded(
+                  child: RangeSlider(
+                    values: bloc.length,
+                    min: FilterPageBloc._lengthMin,
+                    max: FilterPageBloc._lengthMax,
+                    divisions: FilterPageBloc._lengthDivisions.toInt(),
+                    labels: RangeLabels(
+                      bloc.length.start.round().toString(),
+                      bloc.length.end.round().toString(),
+                    ),
+                    onChanged: (RangeValues values) => setState(() => bloc.length = values),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () => setState(() => bloc.length = FilterPageBloc._lengthAll),
+                ),
+              ],
+            ),
+
+            // Hyphenation
+            AppResources.spacerMedium,
+            CheckboxListTile(
+              title: const Text('Composé'),
+              tristate: true,
+              value: bloc.hyphenated,
+              onChanged: (value) => setState(() => bloc.hyphenated = value),
+            ),
+
+            // Gender
+            AppResources.spacerMedium,
+            Row(
+              children: [
+                const Text('Genre'),
+                AppResources.spacerMedium,
+                Expanded(
+                  child: SegmentedButton<GroupGenderFilter>(
+                    selected: {if (bloc.groupGender != null) bloc.groupGender!},
+                    segments: GroupGenderFilter.values.map((value) => ButtonSegment(
+                      value: value,
+                      icon: Icon(value.icon),
+                    )).toList(growable: false),
+                    multiSelectionEnabled: false,
+                    showSelectedIcon: false,
+                    emptySelectionAllowed: true,
+                    onSelectionChanged: (value) => setState(() => bloc.groupGender = value.isEmpty ? null : value.single),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () => setState(() => bloc.groupGender = null),
+                ),
+              ],
+            ),
+
           ],
         ),
       ),
@@ -60,4 +123,24 @@ class _FilterPageState extends State<FilterPage> with BlocProvider<FilterPage, F
 
 class FilterPageBloc with Disposable {
   String? firstLetter;
+
+  static const _lengthMin = 1.0;
+  static const _lengthMax = 20.0;
+  static const _lengthDivisions = _lengthMax - _lengthMin;
+  static const _lengthAll = RangeValues(_lengthMin, _lengthMax);
+  RangeValues length = _lengthAll;
+
+  bool? hyphenated = false;
+
+  GroupGenderFilter? groupGender;
+}
+
+enum GroupGenderFilter {
+  atLeastOneFemale(Icons.female),
+  atLeastOneMale(Icons.male),
+  epicene(Icons.transgender);
+
+  const GroupGenderFilter(this.icon);
+
+  final IconData icon;
 }
