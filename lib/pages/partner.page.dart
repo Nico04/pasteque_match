@@ -18,10 +18,11 @@ class PartnerPage extends StatelessWidget {
       child: EventFetchBuilder<User?>(
         stream: AppService.instance.userSession!.partnerStream,
         builder: (context, partner) {
+          if (partner == null) return const Center(child: Text('Vous n\'avez pas de partenaire.'));
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _PartnerCard(partner!),
+              _PartnerCard(partner),
             ],
           );
         },
