@@ -1,3 +1,4 @@
+import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/main.dart';
@@ -8,7 +9,6 @@ import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
-import 'package:swipe_cards/swipe_cards.dart';
 
 import 'filter_page.dart';
 import 'name_group.page.dart';
@@ -88,26 +88,36 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
 
                   // Swipe cards
                   Expanded(
-                    child: Padding(
-                      padding: AppResources.paddingPage,
-                      child: () {
-                        if (groups.isEmpty) return const Center(child: Text('Vous avez tout voté !'));
-                        return ValueBuilder<MatchEngine>(
-                          key: ObjectKey(groups),
-                          valueGetter: () => _buildSwipeEngine(groups),
-                          builder: (context, matchEngine) {
-                            return Padding(
-                              padding: AppResources.paddingPage,
-                              child: SwipeCards(
-                                matchEngine: matchEngine,
-                                onStackFinished: () => print('onStackFinished'),    // TODO
-                                itemBuilder: (context, index, distance, slideRegion) => _GroupCard(groups[index]),
-                              ),
-                            );
-                          },
-                        );
-                      } (),
-                    ),
+                    child: () {
+                      if (groups.isEmpty) return const Center(child: Text('Vous avez tout voté !'));
+                      return AppinioSwiper(
+                        padding: AppResources.paddingPage,
+                        cardsCount: groups.length,
+                        swipeOptions: const AppinioSwipeOptions.symmetric(horizontal: true),
+                        backgroundCardsCount: 2,
+                        cardsSpacing: 0,    // Force cards to be behind each other
+                        onSwiping: (direction) => print(direction.toString()),    // TODO
+                        onSwipe: (nextCardIndex, direction) async {
+                          final group = groups[nextCardIndex - 1];
+                          final value = switch(direction) {
+                            AppinioSwiperDirection.left => SwipeValue.dislike,
+                            AppinioSwiperDirection.right => SwipeValue.like,
+                            _ => throw Exception('Invalid swipe direction: $direction'),
+                          };
+
+                          // Apply vote
+                          debugPrint('[Swipe] ${value.name} "${group.id}"');
+                          final itsAMatch = await bloc.applyVote(group.id, value);
+
+                          // It's a match !
+                          if (mounted && itsAMatch) {
+                            showMessage(context, 'It\'s a match !');    // TODO Proper pop-up ?
+                          }
+                        },
+                        onEnd: () => print('End'),    // TODO
+                        cardsBuilder: (context, index) => _GroupCard(groups[index]),
+                      );
+                    } (),
                   ),
                 ],
               );
@@ -116,29 +126,6 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
         },
       ),
     );
-  }
-
-  MatchEngine _buildSwipeEngine(List<NameGroup> names) {
-    return MatchEngine(swipeItems: names.map((name) {
-      void postSwipe(SwipeValue value) async {
-        // Apply vote
-        debugPrint('[Swipe] ${value.name} "${name.name}"');
-        final itIsAMatch = await bloc.applyVote(name.id, value);
-
-        // It's a match !
-        if (mounted && itIsAMatch) {
-          showMessage(context, 'It\'s a match !');    // TODO Proper pop-up ?
-        }
-      }
-
-      return SwipeItem(
-        content: name,
-        nopeAction: () => postSwipe(SwipeValue.dislike),
-        likeAction: () => postSwipe(SwipeValue.like),
-      );
-    }).toList()..add(SwipeItem(
-      content: null,
-    )));
   }
 }
 

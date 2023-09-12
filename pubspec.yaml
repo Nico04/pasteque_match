@@ -1,7 +1,7 @@
 name: pasteque_match
 description: Mobile app to help find a name playfully
 publish_to: 'none'
-version: 0.0.5+5
+version: 0.0.6+6
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -17,8 +17,7 @@ dependencies:
 
   # Widgets / UI
   flash: ^3.0.5+1
-  swipe_cards:
-    path: ./plugins/swipe_cards/   # Local fork to extends capabilities
+  appinio_swiper: ^2.0.3
   fl_chart: ^0.63.0
 
   # Network
