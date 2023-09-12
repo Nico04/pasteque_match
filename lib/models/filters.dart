@@ -67,7 +67,8 @@ class NameGroupFilters {
 
   final GroupGenderFilter? groupGender;
 
-  bool get isEmpty => firstLetter == null && length == lengthAll && hyphenated == null && groupGender == null;
+  int get count => (firstLetter != null ? 1 : 0) + (length != lengthAll ? 1 : 0) + (hyphenated != null ? 1 : 0) + (groupGender != null ? 1 : 0);
+  bool get isEmpty => count == 0;
 
   bool match(NameGroup group) =>
       (firstLetter == null || group.names.any((name) => name.name.startsWith(firstLetter!))) &&

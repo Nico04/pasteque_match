@@ -103,25 +103,30 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                                 if (filteredData.filters == null) {
                                   return const Text('Aucun filtre');
                                 } else {
-                                  return Wrap(
-                                    spacing: 5,
-                                    runSpacing: 5,
-                                    children: filteredData.filters!.getLabels().map((label) {
-                                      return Chip(
-                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                        label: Text(
-                                          label,
-                                          style: context.textTheme.bodySmall,
-                                        ),
-                                      );
-                                    }).toList(growable: false),
+                                  return SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: filteredData.filters!.getLabels().map<Widget>((label) {
+                                        return Chip(
+                                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                          label: Text(
+                                            label,
+                                            style: context.textTheme.bodySmall,
+                                          ),
+                                        );
+                                      }).toList()..insertBetween(AppResources.spacerTiny),
+                                    ),
                                   );
                                 }
                               } (),
                             ),
                             AppResources.spacerSmall,
                             IconButton(
-                              icon: const Icon(Icons.filter_alt),
+                              icon: Badge(
+                                isLabelVisible: filteredData.filters != null,
+                                label: Text('${filteredData.filters?.count}'),
+                                child: const Icon(Icons.filter_alt),
+                              ),
                               onPressed: () => navigateTo(context, (context) => FilterPage(bloc.filteredNameGroupsHandler)),
                             ),
                           ],
@@ -186,7 +191,7 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                       ),
 
                       // Swipe buttons
-                      _SwipeButtons(    // TODO bug when tapping after setting filters
+                      _SwipeButtons(    // TODO bug when tapping after setting filters, see https://github.com/appinioGmbH/flutter_packages/issues/157.
                         onDislikePressed: _swipeController.swipeLeft,
                         onLikePressed: _swipeController.swipeRight,
                       ),

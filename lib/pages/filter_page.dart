@@ -81,6 +81,7 @@ class FilterPage extends StatelessWidget {
                             children: [
                               // Slider
                               _NameLengthSlider(
+                                key: ValueKey(filters.length),
                                 initialValue: filters.length,
                                 onChanged: (values) => filterHandler.updateFilter(length: () => values),
                               ),
