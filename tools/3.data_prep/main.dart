@@ -58,8 +58,8 @@ void main(List<String> rawArgs) async {
   // Count names per group
   //countNamesPerGroup(spreadsheet);
 
-  // Max name length
-  computeMaxNameLength(spreadsheet);
+  // Compute name length stats
+  computeNameLengthStats(spreadsheet);
 
   // Save file
   print('Save file');
@@ -413,8 +413,9 @@ void countNamesPerGroup(SpreadsheetDecoder spreadsheet) {
   print('Groups with more than 8 names: ${namesPerGroup.where((e) => e.$2 >= 8).map((e) => '${e.$1} (${e.$2})').join(', ')}');
 }
 
-void computeMaxNameLength(spreadsheet) {
-  print('Compute max name length');
+void computeNameLengthStats(spreadsheet) {
+  print('Compute name length stats');
+  int min = 1000;
   int max = -1;
   _computeEachName(
     spreadsheet,
@@ -425,11 +426,12 @@ void computeMaxNameLength(spreadsheet) {
       // Get name
       final name = row[nameColumnIndex] as String;
 
-      // Compute max
+      // Compute data
+      if (name.length < min) min = name.length;
       if (name.length > max) max = name.length;
     },
   );
-  print('Max name length: $max');
+  print('Name length stats: $min > $max');
 }
 
 

@@ -56,7 +56,7 @@ class NameGroupFilters {
 
   final String? firstLetter;
 
-  static const lengthMin = 1.0;
+  static const lengthMin = 3.0;
   static const lengthMax = 20.0;
   static const lengthDivisions = lengthMax - lengthMin;
   static const lengthAll = RangeValues(lengthMin, lengthMax);
