@@ -14,6 +14,12 @@ import 'filter_page.dart';
 import 'name_group.page.dart';
 import 'search.page.dart';
 
+SwipeValue swipeValueFromDirection(AppinioSwiperDirection direction) => switch(direction) {
+  AppinioSwiperDirection.left => SwipeValue.dislike,
+  AppinioSwiperDirection.right => SwipeValue.like,
+  _ => throw UnimplementedError('Unsupported swipe direction: $direction'),
+};
+
 class SwipePage extends StatefulWidget {
   const SwipePage({super.key});
 
@@ -22,6 +28,8 @@ class SwipePage extends StatefulWidget {
 }
 
 class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, SwipePageBloc> {
+  final _swiperKey = GlobalKey<State<AppinioSwiper>>();
+  int? get _currentGroupIndex => (_swiperKey.currentState as dynamic)?.currentIndex;    // TEMP remove dynamic when package is updated. See https://github.com/appinioGmbH/flutter_packages/issues/156
   final _swipeDirectionStream = DataStream<AppinioSwiperDirection?>(null);
 
   @override
@@ -131,6 +139,7 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                         child: () {
                           if (groups.isEmpty) return const Center(child: Text('Vous avez tout voté !'));
                           return AppinioSwiper(
+                            key: _swiperKey,
                             padding: AppResources.paddingPage,
                             cardsCount: groups.length,
                             swipeOptions: const AppinioSwipeOptions.symmetric(horizontal: true),
@@ -144,11 +153,7 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
 
                               // Get data
                               final group = groups[nextCardIndex - 1];
-                              final value = switch(direction) {
-                                AppinioSwiperDirection.left => SwipeValue.dislike,
-                                AppinioSwiperDirection.right => SwipeValue.like,
-                                _ => throw Exception('Invalid swipe direction: $direction'),
-                              };
+                              final value = swipeValueFromDirection(direction);
 
                               // Apply vote
                               debugPrint('[Swipe] ${value.name} "${group.id}"');
@@ -160,7 +165,20 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                               }
                             },
                             onEnd: () => print('End'),    // TODO
-                            cardsBuilder: (context, index) => _GroupCard(groups[index],key: ValueKey(index)),
+                            cardsBuilder: (context, index) {
+                              final group = groups[index];
+
+                              // Top card
+                              if (index == _currentGroupIndex) {
+                                return DataStreamBuilder<AppinioSwiperDirection?>(
+                                  stream: _swipeDirectionStream,
+                                  builder: (_, direction) => _GroupCard(group, key: ValueKey(index), swipeDirection: direction),
+                                );
+                              }
+
+                              // Background cards
+                              return _GroupCard(group, key: ValueKey(index));
+                            },
                           );
                         } (),
                       ),
@@ -183,9 +201,10 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
 }
 
 class _GroupCard extends StatelessWidget {
-  const _GroupCard(this.group, {super.key});
+  const _GroupCard(this.group, {super.key, this.swipeDirection});
 
   final NameGroup group;
+  final AppinioSwiperDirection? swipeDirection;
 
   @override
   Widget build(BuildContext context) {
@@ -245,9 +264,13 @@ class _GroupCard extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: SwipeValue.values.map((value) {
-                    return Icon(
-                      value.icon,
-                      color: value.color,
+                    return AnimatedOpacity(
+                      duration: AppResources.durationAnimationMedium,
+                      opacity: swipeDirection != null && value == swipeValueFromDirection(swipeDirection!) ? 1.0 : 0.2,
+                      child: Icon(
+                        value.icon,
+                        color: value.color,
+                      ),
                     );
                   }).toList(growable: false),
                 ),
