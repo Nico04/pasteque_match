@@ -15,12 +15,13 @@ class FilteredNameGroupsHandler with Disposable {
     ValueGetter<GroupGenderFilter?>? groupGender,
   }) {
     // Build new filter object
-    final filters = (dataStream.value.filters ?? const NameGroupFilters()).copyWith(
+    NameGroupFilters? filters = (dataStream.value.filters ?? const NameGroupFilters()).copyWith(
       firstLetter: firstLetter,
       length: length,
       hyphenated: hyphenated,
       groupGender: groupGender,
     );
+    if (filters.isEmpty) filters = null;
 
     // Update data
     dataStream.add(FilteredNameGroups(filters));
@@ -65,6 +66,8 @@ class NameGroupFilters {
   final bool? hyphenated;
 
   final GroupGenderFilter? groupGender;
+
+  bool get isEmpty => firstLetter == null && length == lengthAll && hyphenated == null && groupGender == null;
 
   bool match(NameGroup group) =>
       (firstLetter == null || group.names.any((name) => name.name.startsWith(firstLetter!))) &&
