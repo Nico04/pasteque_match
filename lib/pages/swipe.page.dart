@@ -22,6 +22,8 @@ class SwipePage extends StatefulWidget {
 }
 
 class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, SwipePageBloc> {
+  final _swipeDirectionStream = DataStream<AppinioSwiperDirection?>(null);
+
   @override
   initBloc() => SwipePageBloc();
 
@@ -35,97 +37,148 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
       ),
       withScrollView: false,
       withPadding: false,
-      child: DataStreamBuilder<FilteredNameGroups>(
-        stream: bloc.filteredNameGroupsHandler.dataStream,
-        builder: (context, filteredData) {
-          return FetchBuilder.basic<List<NameGroup>>(
-            key: ObjectKey(filteredData),
-            task: () => bloc.getRemainingNames(filteredData.filtered),
-            builder: (context, groups) {
-              return Column(
-                children: [
-                  // Filters
-                  Padding(
-                    padding: AppResources.paddingPageHorizontal,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: () {
-                            if (filteredData.filters == null) {
-                              return const Text('Aucun filtre');
-                            } else {
-                              return Wrap(
-                                spacing: 5,
-                                runSpacing: 5,
-                                children: filteredData.filters!.getLabels().map((label) {
-                                  return Chip(
-                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                    label: Text(
-                                      label,
-                                      style: context.textTheme.bodySmall,
-                                    ),
+      child: Stack(
+        children: [
+          // Background
+          Positioned.fill(
+            child: DataStreamBuilder<AppinioSwiperDirection?>(
+              stream: _swipeDirectionStream,
+              builder: (context, direction) {
+                return AnimatedContainer(
+                  duration: AppResources.durationAnimationMedium,
+                  decoration: BoxDecoration(
+                    gradient: switch(direction) {
+                      AppinioSwiperDirection.left => const LinearGradient(
+                        begin: Alignment.bottomLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Colors.red,
+                          Colors.white,
+                        ],
+                        stops: [0, 0.6],
+                      ),
+                      AppinioSwiperDirection.right => const LinearGradient(
+                        begin: Alignment.bottomRight,
+                        end: Alignment.centerLeft,
+                        colors: [
+                          Colors.green,
+                          Colors.white,
+                        ],
+                        stops: [0, 0.6],
+                      ),
+                      _ => null,
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+
+          // Content
+          DataStreamBuilder<FilteredNameGroups>(
+            stream: bloc.filteredNameGroupsHandler.dataStream,
+            builder: (context, filteredData) {
+              return FetchBuilder.basic<List<NameGroup>>(
+                key: ObjectKey(filteredData),
+                task: () => bloc.getRemainingNames(filteredData.filtered),
+                builder: (context, groups) {
+                  return Column(
+                    children: [
+                      // Filters
+                      Padding(
+                        padding: AppResources.paddingPageHorizontal,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: () {
+                                if (filteredData.filters == null) {
+                                  return const Text('Aucun filtre');
+                                } else {
+                                  return Wrap(
+                                    spacing: 5,
+                                    runSpacing: 5,
+                                    children: filteredData.filters!.getLabels().map((label) {
+                                      return Chip(
+                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        label: Text(
+                                          label,
+                                          style: context.textTheme.bodySmall,
+                                        ),
+                                      );
+                                    }).toList(growable: false),
                                   );
-                                }).toList(growable: false),
-                              );
-                            }
-                          } (),
+                                }
+                              } (),
+                            ),
+                            AppResources.spacerSmall,
+                            IconButton(
+                              icon: const Icon(Icons.filter_alt),
+                              onPressed: () => navigateTo(context, (context) => FilterPage(bloc.filteredNameGroupsHandler)),
+                            ),
+                          ],
                         ),
-                        AppResources.spacerSmall,
-                        IconButton(
-                          icon: const Icon(Icons.filter_alt),
-                          onPressed: () => navigateTo(context, (context) => FilterPage(bloc.filteredNameGroupsHandler)),
-                        ),
-                      ],
-                    ),
-                  ),
+                      ),
 
-                  // Stats
-                  AppResources.spacerSmall,
-                  Text(
-                    '${filteredData.filtered.length} groupes correspondent à vos critères',
-                    style: context.textTheme.bodySmall,
-                  ),
+                      // Stats
+                      AppResources.spacerSmall,
+                      Text(
+                        '${filteredData.filtered.length} groupes correspondent à vos critères',
+                        style: context.textTheme.bodySmall,
+                      ),
 
-                  // Swipe cards
-                  Expanded(
-                    child: () {
-                      if (groups.isEmpty) return const Center(child: Text('Vous avez tout voté !'));
-                      return AppinioSwiper(
-                        padding: AppResources.paddingPage,
-                        cardsCount: groups.length,
-                        swipeOptions: const AppinioSwipeOptions.symmetric(horizontal: true),
-                        backgroundCardsCount: 2,
-                        cardsSpacing: 0,    // Force cards to be behind each other
-                        onSwiping: (direction) => print(direction.toString()),    // TODO
-                        onSwipe: (nextCardIndex, direction) async {
-                          final group = groups[nextCardIndex - 1];
-                          final value = switch(direction) {
-                            AppinioSwiperDirection.left => SwipeValue.dislike,
-                            AppinioSwiperDirection.right => SwipeValue.like,
-                            _ => throw Exception('Invalid swipe direction: $direction'),
-                          };
+                      // Swipe cards
+                      Expanded(
+                        child: () {
+                          if (groups.isEmpty) return const Center(child: Text('Vous avez tout voté !'));
+                          return AppinioSwiper(
+                            padding: AppResources.paddingPage,
+                            cardsCount: groups.length,
+                            swipeOptions: const AppinioSwipeOptions.symmetric(horizontal: true),
+                            backgroundCardsCount: 2,
+                            cardsSpacing: 0,    // Force cards to be behind each other
+                            onSwiping: (direction) => _swipeDirectionStream.add(direction, skipSame: true, skipIfClosed: true),
+                            onSwipeCancelled: () => _swipeDirectionStream.add(null, skipSame: true, skipIfClosed: true),
+                            onSwipe: (nextCardIndex, direction) async {   // TODO move all logic to bloc ?
+                              // Stop animation
+                              _swipeDirectionStream.add(null, skipSame: true, skipIfClosed: true);
 
-                          // Apply vote
-                          debugPrint('[Swipe] ${value.name} "${group.id}"');
-                          final itsAMatch = await bloc.applyVote(group.id, value);
+                              // Get data
+                              final group = groups[nextCardIndex - 1];
+                              final value = switch(direction) {
+                                AppinioSwiperDirection.left => SwipeValue.dislike,
+                                AppinioSwiperDirection.right => SwipeValue.like,
+                                _ => throw Exception('Invalid swipe direction: $direction'),
+                              };
 
-                          // It's a match !
-                          if (mounted && itsAMatch) {
-                            showMessage(context, 'It\'s a match !');    // TODO Proper pop-up ?
-                          }
-                        },
-                        onEnd: () => print('End'),    // TODO
-                        cardsBuilder: (context, index) => _GroupCard(groups[index]),
-                      );
-                    } (),
-                  ),
-                ],
+                              // Apply vote
+                              debugPrint('[Swipe] ${value.name} "${group.id}"');
+                              final itsAMatch = await bloc.applyVote(group.id, value);
+
+                              // It's a match !
+                              if (mounted && itsAMatch) {
+                                showMessage(context, 'It\'s a match !');    // TODO Proper pop-up ?
+                              }
+                            },
+                            onEnd: () => print('End'),    // TODO
+                            cardsBuilder: (context, index) => _GroupCard(groups[index],key: ValueKey(index)),
+                          );
+                        } (),
+                      ),
+                    ],
+                  );
+                },
               );
             },
-          );
-        },
+          ),
+        ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _swipeDirectionStream.close();
+    super.dispose();
   }
 }
 
