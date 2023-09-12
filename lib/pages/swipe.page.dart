@@ -30,6 +30,7 @@ class SwipePage extends StatefulWidget {
 class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, SwipePageBloc> {
   final _swiperKey = GlobalKey<State<AppinioSwiper>>();
   int? get _currentGroupIndex => (_swiperKey.currentState as dynamic)?.currentIndex;    // TEMP remove dynamic when package is updated. See https://github.com/appinioGmbH/flutter_packages/issues/156
+  final _swipeController = AppinioSwiperController();
   final _swipeDirectionStream = DataStream<AppinioSwiperDirection?>(null);
 
   @override
@@ -140,6 +141,7 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                           if (groups.isEmpty) return const Center(child: Text('Vous avez tout voté !'));
                           return AppinioSwiper(
                             key: _swiperKey,
+                            controller: _swipeController,
                             padding: AppResources.paddingPage,
                             cardsCount: groups.length,
                             swipeOptions: const AppinioSwipeOptions.symmetric(horizontal: true),
@@ -181,6 +183,12 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                             },
                           );
                         } (),
+                      ),
+
+                      // Swipe buttons
+                      _SwipeButtons(    // TODO bug when tapping after setting filters
+                        onDislikePressed: _swipeController.swipeLeft,
+                        onLikePressed: _swipeController.swipeRight,
                       ),
                     ],
                   );
@@ -303,6 +311,35 @@ class _NameGenderRow extends StatelessWidget {
         AppResources.spacerSmall,
         GenderIcon(gender, iconSize: iconSize),
       ],
+    );
+  }
+}
+
+class _SwipeButtons extends StatelessWidget {
+  const _SwipeButtons({super.key, required this.onDislikePressed, required this.onLikePressed});
+
+  final VoidCallback onDislikePressed;
+  final VoidCallback onLikePressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: AppResources.paddingPage.copyWith(top: 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          PmCircleIconButton(
+            icon: SwipeValue.dislike.icon,
+            iconColor: SwipeValue.dislike.color,
+            onPressed: onDislikePressed,
+          ),
+          PmCircleIconButton(
+            icon: SwipeValue.like.icon,
+            iconColor: SwipeValue.like.color,
+            onPressed: onLikePressed,
+          ),
+        ],
+      ),
     );
   }
 }
