@@ -200,7 +200,8 @@ class _GroupCard extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Positioned.fill(
+              // Background
+              Positioned.fill(    // OPTI use LetterBackground widget ?
                 child: FittedBox(
                   child: Text(
                     group.name.substring(0, 1),
@@ -212,6 +213,8 @@ class _GroupCard extends StatelessWidget {
                   ),
                 ),
               ),
+
+              // Content
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -232,6 +235,22 @@ class _GroupCard extends StatelessWidget {
                     gender: name.gender
                   )).toList()..insertBetween(AppResources.spacerSmall),
                 ],
+              ),
+
+              // Swipe icons
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: SwipeValue.values.map((value) {
+                    return Icon(
+                      value.icon,
+                      color: value.color,
+                    );
+                  }).toList(growable: false),
+                ),
               ),
             ],
           ),

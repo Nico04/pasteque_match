@@ -54,6 +54,9 @@ class _SearchPageState extends State<SearchPage> with BlocProvider<SearchPage, S
                     itemCount: searchResult.length,
                     itemBuilder: (context, index) {
                       final group = searchResult[index];
+                      /* TODO use VoteTile, but without buttons to avoid request ?
+                      return VoteTile(group.id, group, null, dismissible: false);
+                      */
                       return ListTile(
                         title: Text(group.name),
                         onTap: () => navigateTo(context, (context) => NameGroupPage(group)),
