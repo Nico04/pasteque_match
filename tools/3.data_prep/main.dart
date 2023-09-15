@@ -7,7 +7,7 @@ import 'package:pasteque_match/utils/extensions_base.dart';
 import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
 
 /// Pastèque-Match data preparation script
-/// A Dart script that takes a ODS file as input, and make some calculation to prepare data.
+/// A Dart script that takes a XLSX/ODS file as input, and make some calculation to prepare data.
 ///
 /// Performance note: using ODS file is very slow and may lead to heap overflow. It's way quicker & stabler (no memory leak) using XLSX files.
 void main(List<String> rawArgs) async {
@@ -15,7 +15,7 @@ void main(List<String> rawArgs) async {
 
   // Check args
   if (rawArgs.length != 1) {
-    print('Arguments must be "[ODS file path]"');
+    print('Arguments must be "[XLSX/ODS file path]"');
     exit(0);
   }
 
@@ -24,9 +24,7 @@ void main(List<String> rawArgs) async {
 
   // Load file
   print('Load file');
-  final file = File(inputFilePath);
-  final bytes = await file.readAsBytes();
-  final spreadsheet = SpreadsheetDecoder.decodeBytes(bytes, update: true);
+  final (file, spreadsheet) = _readSpreadsheetFile(inputFilePath);
 
   // Compute total count
   //_computeTotalCount(spreadsheet);
@@ -59,7 +57,10 @@ void main(List<String> rawArgs) async {
   //countNamesPerGroup(spreadsheet);
 
   // Compute name length stats
-  computeNameLengthStats(spreadsheet);
+  //computeNameLengthStats(spreadsheet);
+
+  // Add Saints
+  addSaints(spreadsheet);
 
   // Save file
   print('Save file');
@@ -83,7 +84,8 @@ const totalCountColumnIndex = 4;
 const relativeCountColumnIndex = 5;
 const popularityColumnIndex = 6;
 const hyphenationColumnIndex = 7;
-const epiceneColumnIndex = 8;
+const saintsColumnIndex = 8;
+const epiceneColumnIndex = 9;
 
 const databaseStatsSheetName = 'Stats';
 const yearColumnIndex = 0;
@@ -434,6 +436,49 @@ void computeNameLengthStats(spreadsheet) {
   print('Name length stats: $min > $max');
 }
 
+void addSaints(spreadsheet) {
+  print('Add saints');
+  // Read saints file
+  final saintsSheet = spreadsheet.tables['Saints']!;
+
+  // Convert to list
+  final saints = <String, List<DateTime>>{};
+  for (int r = 0; r < saintsSheet.rows.length; r++) {
+    // Get data
+    final row = saintsSheet.rows[r];
+    final name = row[0] as String;
+    final date = DateTime.parse(row[1] as String);
+
+    // Add to list
+    final dates = saints.putIfAbsent(name, () => []);
+    dates.add(date);
+  }
+
+  // Add saints to database
+  _computeEachName(
+    spreadsheet,
+    (sheet, rowIndex) {
+      // Get data
+      final row = sheet.rows[rowIndex];
+
+      // Get name
+      final name = row[nameColumnIndex] as String;
+
+      // Get saint
+      final dates = saints[name];
+      if (dates == null) return;
+
+      // Add saints
+      spreadsheet.updateCell(databaseSheetName, saintsColumnIndex, rowIndex, dates.map((e) => '${e.day}-${e.month}').join(','));
+    },
+  );
+}
+
+(File, SpreadsheetDecoder) _readSpreadsheetFile(String filepath) {
+  final file = File(filepath);
+  final bytes = file.readAsBytesSync();
+  return (file, SpreadsheetDecoder.decodeBytes(bytes, update: true));
+}
 
 void _computeEachName(SpreadsheetDecoder spreadsheet, void Function(SpreadsheetTable sheet, int rowIndex) task) {
   // Get sheet
