@@ -86,9 +86,9 @@ class DatabaseService {
   }
 
   /// Report an error on a group
-  Future<void> reportGroupError(String groupId) async {
+  Future<void> reportGroupError(String groupId, String comment) async {
     await _reports.doc(groupId).set({   // set() command create document if it does not exists (where update() doesn't).
-      'count': FieldValue.increment(1),
+      'comments': FieldValue.arrayUnion([comment]),
     }, SetOptions(merge: true));
     debugPrint('[DatabaseService] Group $groupId reported');
   }
@@ -97,7 +97,7 @@ class DatabaseService {
   Future<void> deleteUser(String userId, String? partnerId) async {
     final batch = _db.batch();
     if (partnerId != null) batch.update(_users.doc(partnerId), _deletePartnerIdData);
-    batch.delete(_reports.doc(userId));
+    batch.delete(_users.doc(userId));
     await batch.commit();
     debugPrint('[DatabaseService] User $userId deleted');
   }

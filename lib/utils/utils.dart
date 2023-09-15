@@ -85,11 +85,12 @@ Future<void> openDialog<T>({required BuildContext context, required WidgetBuilde
   }
 }
 
-/// Open a confirmation pop-up
+/// Open a confirmation pop-up, with an optional form.
 Future<void> askConfirmation({
   required BuildContext context,
   required String title,
   required String caption,
+  Widget? form,
   String? confirmText,
   String? cancelText,
   VoidCallback? onConfirmation,
@@ -101,6 +102,7 @@ Future<void> askConfirmation({
         child: PmConfirmationDialog(
           title: title,
           caption: caption,
+          form: form,
           confirmText: confirmText,
           cancelText: cancelText,
         ),

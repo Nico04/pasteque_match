@@ -31,7 +31,7 @@ class AppResources {
 
   // Validator
   static String? validatorNotEmpty(String? value) => value?.isNotEmpty != true ? textFormMandatory : null;
-  static String? validatorLength(String? value, int min, int max) => (value == null || value.length < min || value.length > max) ? textFormIncorrect : null;
+  static String? validatorMinLength(String? value, int min) => (value == null || value.length < min) ? textFormMandatory : null;
 
   // String
   static const textFormMandatory = 'Ⓧ Obligatoire';

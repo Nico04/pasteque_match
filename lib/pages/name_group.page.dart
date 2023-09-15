@@ -66,18 +66,7 @@ class NameGroupPage extends StatelessWidget {
 
           // Flag
           AppResources.spacerMedium,
-          TextButton(
-            onPressed: () => askConfirmation(
-              context: context,
-              title: 'Signaler un problème',
-              caption: 'Vous avez constaté un problème avec ce groupe ?\nSignalez-le pour que nous puissions le corriger.',
-              onConfirmation: () async {
-                await AppService.database.reportGroupError(group.id);
-                showMessage(context, 'Merci, le problème est signalé !');
-              },
-            ),
-            child: const Text('Signaler un problème'),
-          ),
+          ReportButton(group.id),
         ],
       ),
     );
@@ -110,6 +99,45 @@ class NameTile extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class ReportButton extends StatefulWidget {
+  const ReportButton(this.groupId, {super.key});
+
+  final String groupId;
+
+  @override
+  State<ReportButton> createState() => _ReportButtonState();
+}
+
+class _ReportButtonState extends State<ReportButton> {
+  String? comment;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () => askConfirmation(
+        context: context,
+        title: 'Signaler un problème',
+        caption: 'Vous avez constaté un problème avec ce groupe ?\nSignalez-le pour que nous puissions le corriger.',
+        form: TextFormField(
+          decoration: const InputDecoration(
+            labelText: 'Commentaire',
+            hintText: 'Détaillez le problème',
+          ),
+          inputFormatters: [AppResources.maxLengthInputFormatter()],
+          validator: (value) => AppResources.validatorMinLength(value, 5),
+          onSaved: (value) => comment = value,
+        ),
+        confirmText: 'Signaler',
+        onConfirmation: () async {
+          await AppService.database.reportGroupError(widget.groupId, comment!);
+          showMessage(context, 'Merci, le problème est signalé !');
+        },
+      ),
+      child: const Text('Signaler un problème'),
     );
   }
 }
