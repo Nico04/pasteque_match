@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:pasteque_match/firebase_options.dart';
 import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
@@ -38,6 +39,9 @@ void main() async {
       FirebaseCrashlytics.instance.recordFlutterError(flutterErrorDetails);
     }
   };
+
+  // Set default intl package locale
+  Intl.defaultLocale = App.defaultLocale.toString();
 
   // Init shared pref
   await StorageService.init();

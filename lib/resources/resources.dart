@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class AppResources {
   // Padding
@@ -36,4 +37,10 @@ class AppResources {
   // String
   static const textFormMandatory = 'Ⓧ Obligatoire';
   static const textFormIncorrect = 'Ⓧ Format incorrect';
+}
+
+extension ExtendedDateTime on DateTime {
+  static final _formatterDate = DateFormat('d MMMM');
+
+  String toDateString() => _formatterDate.format(this);
 }

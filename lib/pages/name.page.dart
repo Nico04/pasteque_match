@@ -37,6 +37,19 @@ class NamePage extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
 
+            // Saint
+            if (name.isSaint) ...[
+              AppResources.spacerLarge,
+              const Text(
+                'Ce prénom est un prénom de saint 😇',
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                'Fête le ${name.saintDates!.map((e) => e.toDateString()).join(', ')}.',
+                textAlign: TextAlign.center,
+              ),
+            ],
+
             // Stats
             AppResources.spacerLarge,
             Text(
