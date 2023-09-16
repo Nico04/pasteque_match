@@ -36,7 +36,7 @@ void main(List<String> rawArgs) async {
   //sortAndRenameGroups(spreadsheet);
 
   // Compute whether groups are epicene
-  //computeEpiceneGroups(spreadsheet);
+  computeEpiceneGroups(spreadsheet);
 
   // Compute database stats
   //computeDatabaseStats(spreadsheet);
@@ -60,7 +60,7 @@ void main(List<String> rawArgs) async {
   //computeNameLengthStats(spreadsheet);
 
   // Add Saints
-  addSaints(spreadsheet);
+  //addSaints(spreadsheet);
 
   // Save file
   print('Save file');
@@ -178,7 +178,12 @@ void computeEpiceneGroups(SpreadsheetDecoder spreadsheet) {
       }
 
       // Sort names by total count
-      namesRows.sort((a, b) => (b[totalCountColumnIndex] as num).compareTo(a[totalCountColumnIndex] as num));
+      try {
+        namesRows.sort((a, b) => (b[totalCountColumnIndex] as num).compareTo(a[totalCountColumnIndex] as num));
+      } catch(e) {
+        print('Error while sorting group $groupHeaderRowIndex: $e');
+        rethrow;
+      }
 
       // Compute epicene
       for (int r1 = 0; r1 < namesRows.length; r1++) {
