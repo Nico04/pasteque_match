@@ -8,7 +8,6 @@ import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 import 'package:pasteque_match/widgets/themed/pm_qr_code_widget.dart';
 
-import 'name_group.page.dart';
 import 'scan.page.dart';
 import 'partner.page.dart';
 

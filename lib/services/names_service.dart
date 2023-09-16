@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/utils/_utils.dart';
+import 'package:pasteque_match/utils/exceptions/database_error.dart';
 
 class NamesService {
   static const _dbFilePath = 'assets/names.csv';
@@ -62,24 +63,33 @@ class NamesService {
 
       // It's a group
       if (!isStringNullOrEmpty(groupId)) {
-        currentGroup = NameGroup.fromStrings(
-          id: groupId,
-          epicene: row[headersMap['epicene']!],
-        );
-        _names[currentGroup.id] = currentGroup;
+        try {
+          currentGroup = NameGroup.fromStrings(
+            id: groupId,
+            epicene: row[headersMap['epicene']!],
+          );
+          _names[currentGroup.id] = currentGroup;
+        } catch(e) {
+          throw DatabaseError('Error while parsing group $groupId: $e');
+        }
       }
 
       // It's a name
       else if (currentGroup != null) {
-        final name = Name.fromStrings(
-          name: row[headersMap['name']!],
-          gender: row[headersMap['gender']!],
-          countByYear: row[headersMap['count']!],
-          totalCount: row[headersMap['total']!],
-          relativeCountByYear: row[headersMap['relativeCount']!],
-          isHyphenated: row[headersMap['hyphenated']!],
-        );
-        currentGroup.names.add(name);
+        try {
+          final name = Name.fromStrings(
+            name: row[headersMap['name']!],
+            gender: row[headersMap['gender']!],
+            countByYear: row[headersMap['count']!],
+            totalCount: row[headersMap['total']!],
+            relativeCountByYear: row[headersMap['relativeCount']!],
+            isHyphenated: row[headersMap['hyphenated']!],
+            saintDates: row[headersMap['saints']!].split(','),
+          );
+          currentGroup.names.add(name);
+        } catch(e) {
+          throw DatabaseError('Error while parsing name ${row[headersMap['name']!]}: $e');
+        }
       }
     }
     debugPrint('[NamesService] data built in ${stopwatch.elapsedMilliseconds}ms'); stopwatch.stop();

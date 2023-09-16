@@ -63,6 +63,23 @@ extension ExtendedString on String {
 
     return substring(startIndex, length);
   }
+
+  /// Constructs a new [DateTime] instance based on this String.
+  /// Expected format is 'dd-MM'.
+  DateTime? tryParseDate() {
+    // Check format
+    final regExp = RegExp(r'(\d{1,2})-(\d{1,2})');
+    final match = regExp.firstMatch(this);
+    if (match == null) return null;
+
+    // Parse
+    final day = int.tryParse(match.group(1)!);
+    final month = int.tryParse(match.group(2)!);
+    if (day == null || month == null) return null;
+
+    // Return value
+    return DateTime(2020, month, day);    // 2020 is a leap year (so it works for 29/02)
+  }
 }
 
 // Cannot import 'package:pasteque_match/utils/extensions.dart', otherwise program throws
@@ -89,9 +106,6 @@ extension ExtendedIterable<T> on Iterable<T> {
     return elementAt(index);
   }
 
-  /// Returns a new lazy [Iterable] with all elements that are NOT null
-  Iterable<T> whereNotNull() => where((element) => element != null);
-
   /// Sum each element of the iterable.
   /// Use [toNum] to convert element to a numeric value.
   /// From https://github.com/mythz/dart-linq-examples
@@ -109,6 +123,11 @@ extension ExtendedIterable<T> on Iterable<T> {
       index++;
     }
   }
+}
+
+extension ExtendedNullableIterable<T> on Iterable<T?> {
+  /// Returns a new lazy [Iterable] with all elements that are NOT null
+  Iterable<T> whereNotNull() => where((element) => element != null).cast();
 }
 
 extension ExtendedList<T> on List<T> {
