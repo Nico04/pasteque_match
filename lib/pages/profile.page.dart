@@ -16,6 +16,16 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return PmBasicPage(
       title: 'Profil',
+      action: IconButton(
+        icon: const Icon(Icons.delete_outline),
+        color: Colors.redAccent,
+        onPressed: () => askConfirmation(
+          context: context,
+          title: 'Supprimer mon compte',
+          caption: 'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.',
+          onConfirmation: AppService.instance.deleteUser,
+        ),
+      ),
       child: EventFetchBuilder<User>(
         stream: AppService.instance.userSession!.userStream,
         builder: (context, user) {
@@ -37,21 +47,6 @@ class ProfilePage extends StatelessWidget {
                 label: 'Mes votes',
                 onPressed: () => navigateTo(context, (context) => const VotesPage()),
               ),
-
-              // Delete account
-              AppResources.spacerLarge,
-              TextButton(
-                onPressed: () => askConfirmation(
-                  context: context,
-                  title: 'Supprimer mon compte',
-                  caption: 'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.',
-                  onConfirmation: AppService.instance.deleteUser,
-                ),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.redAccent,
-                ),
-                child: Text('Supprimer mon compte'),
-              )
 
             ],
           );
