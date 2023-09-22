@@ -11,7 +11,7 @@ class FilteredNameGroupsHandler with Disposable {
   void updateFilter({
     ValueGetter<String?>? firstLetter,
     ValueGetter<RangeValues?>? length,
-    ValueGetter<bool?>? hyphenated,
+    ValueGetter<BooleanFilter?>? hyphenated,
     ValueGetter<GroupGenderFilter?>? groupGender,
   }) {
     // Build new filter object
@@ -63,7 +63,7 @@ class NameGroupFilters {
   static const lengthAll = RangeValues(lengthMin, lengthMax);
   final RangeValues length;
 
-  final bool? hyphenated;
+  final BooleanFilter? hyphenated;
 
   final GroupGenderFilter? groupGender;
 
@@ -73,20 +73,20 @@ class NameGroupFilters {
   bool match(NameGroup group) =>
       (firstLetter == null || group.names.any((name) => name.name.startsWith(firstLetter!))) &&
       (length == lengthAll || group.id.length >= length.start && group.id.length <= length.end) &&
-      (hyphenated == null || group.names.first.isHyphenated == hyphenated) &&
+      (hyphenated == null || hyphenated!.match(group, (n) => n.isHyphenated)) &&
       (groupGender == null || groupGender!.match(group));
 
   List<String> getLabels() => [
     if (firstLetter != null) 'Commence par $firstLetter',
     if (length != lengthAll) 'Entre ${length.start.round()} et ${length.end.round()} caractères',
-    if (hyphenated != null) hyphenated! ? 'Composés' : 'Non-composés',
-    if (groupGender != null) groupGender!.label!,
+    if (hyphenated != null) '${hyphenated!.label} prénom composé',
+    if (groupGender != null) groupGender!.label,
   ];
 
   NameGroupFilters copyWith({
     ValueGetter<String?>? firstLetter,
     ValueGetter<RangeValues?>? length,
-    ValueGetter<bool?>? hyphenated,
+    ValueGetter<BooleanFilter?>? hyphenated,
     ValueGetter<GroupGenderFilter?>? groupGender,
   }) => NameGroupFilters(
     firstLetter: firstLetter == null ? this.firstLetter : firstLetter(),
@@ -104,11 +104,26 @@ enum GroupGenderFilter {
   const GroupGenderFilter(this.icon, this.label);
 
   final IconData icon;
-  final String? label;
+  final String label;
 
   bool match(NameGroup group) => switch(this) {
     atLeastOneFemale => group.names.any((n) => n.gender == NameGender.female),
     atLeastOneMale => group.names.any((n) => n.gender == NameGender.male),
     epicene => group.epicene,
+  };
+}
+
+enum BooleanFilter {    // OPTI rename ?
+  include(Icons.check, 'Au moins un'),
+  exclude(Icons.close, 'Aucun');
+
+  const BooleanFilter(this.icon, this.label);
+
+  final IconData icon;
+  final String label;
+
+  bool match(NameGroup group, bool Function(Name name) valueGetter) => switch(this) {
+    include => group.names.any(valueGetter),
+    exclude => group.names.every((n) => !valueGetter(n)),
   };
 }

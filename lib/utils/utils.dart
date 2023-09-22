@@ -21,6 +21,7 @@ typedef JsonObject = Map<String, dynamic>;
 typedef JsonList = Iterable<dynamic>;
 typedef OptionalValueChanged<T> = void Function([T value]);
 typedef LabelBuilder<T> = String Function(T data);
+typedef IconBuilder<T> = IconData Function(T data);
 
 /// Navigate to a new pages.
 /// Push a new pages built with [builder] on the navigation stack.

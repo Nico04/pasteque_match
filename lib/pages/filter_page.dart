@@ -1,5 +1,5 @@
 import 'package:fetcher/fetcher.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ValueGetter;
 import 'package:pasteque_match/models/filters.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/utils/_utils.dart';
@@ -103,22 +103,13 @@ class FilterPage extends StatelessWidget {
 
                     // Hyphenation
                     AppResources.spacerMedium,
-                    CheckboxListTile(
-                      title: const Text('Composé'),
-                      tristate: true,
-                      value: switch(filters.hyphenated) {
-                        null => false,
-                        false => null,
-                        true => true,
-                      },
-                      onChanged: (value) {
-                        value = switch(value) {
-                          null => false,
-                          false => null,
-                          true => true,
-                        };
-                        filterHandler.updateFilter(hyphenated: () => value);
-                      },
+                    _SegmentedButtonFilter(
+                      label: 'Composé',
+                      options: BooleanFilter.values,
+                      selected: filters.hyphenated,
+                      iconBuilder: (value) => value.icon,
+                      labelBuilder: (value) => value.label,
+                      onSelectionChanged: (value) => filterHandler.updateFilter(hyphenated: () => value),
                     ),
 
                     // Gender
@@ -147,7 +138,7 @@ class FilterPage extends StatelessWidget {
                               if (filters.groupGender != null)...[
                                 AppResources.spacerTiny,
                                 Text(
-                                  filters.groupGender!.label!,
+                                  filters.groupGender!.label,
                                   style: context.textTheme.bodySmall,
                                 ),
                               ],
@@ -206,6 +197,66 @@ class _NameLengthSliderState extends State<_NameLengthSlider> {
       ),
       onChanged: (RangeValues values) => setState(() => length = values),
       onChangeEnd: widget.onChanged,
+    );
+  }
+}
+
+class _SegmentedButtonFilter<T extends Object> extends StatelessWidget {
+  const _SegmentedButtonFilter({
+    super.key,
+    required this.label,
+    required this.options,
+    this.selected,
+    required this.iconBuilder,
+    required this.labelBuilder,
+    required this.onSelectionChanged,
+  });
+
+  final String label;
+  final List<T> options;
+  final T? selected;
+  final IconBuilder<T> iconBuilder;
+  final LabelBuilder<T> labelBuilder;
+  final ValueChanged<T?> onSelectionChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(label),
+        AppResources.spacerMedium,
+        Expanded(
+          child: Column(
+            children: [
+              // Buttons
+              SegmentedButton<T>(
+                selected: {if (selected != null) selected!},
+                segments: options.map((value) => ButtonSegment(
+                  value: value,
+                  icon: Icon(iconBuilder(value)),
+                )).toList(growable: false),
+                multiSelectionEnabled: false,
+                showSelectedIcon: false,
+                emptySelectionAllowed: true,
+                onSelectionChanged: (value) => onSelectionChanged(value.firstOrNull),
+              ),
+
+              // Label
+              if (selected != null)...[
+                AppResources.spacerTiny,
+                Text(
+                  labelBuilder(selected!),
+                  style: context.textTheme.bodySmall,
+                ),
+              ],
+            ],
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.clear),
+          onPressed: () => onSelectionChanged(null),
+        ),
+      ],
     );
   }
 }
