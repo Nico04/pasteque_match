@@ -1,11 +1,11 @@
 import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/models/name.dart';
+import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
-
-import 'name_group.page.dart';
+import 'package:pasteque_match/widgets/_widgets.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -32,39 +32,39 @@ class _SearchPageState extends State<SearchPage> with BlocProvider<SearchPage, S
             onChanged: bloc.search,
           ),
         ),
-        body: DataStreamBuilder<List<NameGroup>?>(
-          stream: bloc.searchResult,
-          builder: (context, searchResult) {
-            if (searchResult == null) return const Center(child: Text('Recherchez un prénom'));
-            if (searchResult.isEmpty) return const Center(child: Text('Aucun résultat'));
-            return Column(
-              children: [
+        body: EventStreamBuilder<User>(   // Don't use EventFetchBuilder here because it ok to display empty vote values.
+          stream: AppService.instance.userSession!.userStream,
+          builder: (context, snapshot) {
+            final userVotes = snapshot.data?.votes ?? {};
+            return DataStreamBuilder<List<NameGroup>?>(
+              stream: bloc.searchResult,
+              builder: (context, searchResult) {
+                if (searchResult == null) return const Center(child: Text('Recherchez un prénom'));
+                if (searchResult.isEmpty) return const Center(child: Text('Aucun résultat'));
+                return Column(
+                  children: [
 
-                // Stats
-                AppResources.spacerMedium,
-                Text(
-                  '${searchResult.length} résultats',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                    // Stats
+                    AppResources.spacerMedium,
+                    Text(
+                      '${searchResult.length} résultats',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
 
-                // Results
-                AppResources.spacerMedium,
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: searchResult.length,
-                    itemBuilder: (context, index) {
-                      final group = searchResult[index];
-                      /* TODO use VoteTile, but without buttons to avoid request ?
-                      return VoteTile(group.id, group, null, dismissible: false);
-                      */
-                      return ListTile(
-                        title: Text(group.name),
-                        onTap: () => navigateTo(context, (context) => NameGroupPage(group)),
-                      );
-                    },
-                  ),
-                ),
-              ],
+                    // Results
+                    AppResources.spacerMedium,
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: searchResult.length,
+                        itemBuilder: (context, index) {
+                          final group = searchResult[index];
+                          return VoteTile(group.id, group, userVotes[group.id]?.value, dismissible: false);
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
             );
           },
         ),
