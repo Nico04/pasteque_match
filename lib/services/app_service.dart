@@ -4,6 +4,7 @@ import 'package:fetcher/fetcher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pasteque_match/main.dart';
 import 'package:pasteque_match/models/user.dart';
+import 'package:pasteque_match/pages/dialogs/match_dialog.dart';
 import 'package:pasteque_match/pages/register.page.dart';
 import 'package:pasteque_match/services/database_service.dart';
 import 'package:pasteque_match/services/names_service.dart';
@@ -76,7 +77,7 @@ class AppService {
       if (value == SwipeValue.like && partner != null) {
         final partnerVote = partner.votes[groupId];
         if (partnerVote?.value == SwipeValue.like) {
-          showMessage(App.navigatorContext, 'It\'s a match !');    // TODO Proper pop-up ?
+          MatchDialog.open(App.navigatorContext, groupId);
           return true;
         }
       }

@@ -233,7 +233,7 @@ class _GroupCard extends StatelessWidget {
             children: [
               // Background
               Positioned.fill(    // OPTI use LetterBackground widget ?
-                child: FittedBox(
+                child: FittedBox(  // Auto size if too long
                   child: Text(
                     group.name.substring(0, 1),
                     style: TextStyle(
