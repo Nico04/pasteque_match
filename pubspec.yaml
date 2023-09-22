@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
 
   # Framework Tools
-  fetcher: ^0.4.0
+  fetcher: ^0.4.1
 
   # Widgets / UI
   flash: ^3.0.5+1

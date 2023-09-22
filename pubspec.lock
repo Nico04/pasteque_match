@@ -325,10 +325,10 @@ packages:
     dependency: "direct main"
     description:
       name: fetcher
-      sha256: "71f955b06f62b304b21049b10edc04cd34025ddf2b8eb89cba842b6003563715"
+      sha256: "77ee08bd568eb0d1dcb4c08e7e569586de46fe664852d57e548faa589ad65ea9"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.0"
+    version: "0.4.1"
   ffi:
     dependency: transitive
     description:
