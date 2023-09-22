@@ -1,7 +1,7 @@
 name: pasteque_match
-description: Mobile app to help find a name playfully
+description: Mobile app to help parents find a name for their baby
 publish_to: 'none'
-version: 0.0.7+7
+version: 0.0.1+1
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
