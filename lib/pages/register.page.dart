@@ -19,32 +19,57 @@ class _RegisterPageState extends State<RegisterPage> with BlocProvider<RegisterP
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: AsyncForm(
-        onValidated: bloc.registerUser,
-        onSuccess: () => navigateTo(context, (_) => const MainPage(), clearHistory: true),
-        builder: (context, validate) {
-          return SafeArea(
+    return AsyncForm(
+      onValidated: bloc.registerUser,
+      onSuccess: () => navigateTo(context, (_) => const MainPage(), clearHistory: true),
+      builder: (context, validate) {
+        return Scaffold(
+          body: SafeArea(
             child: Padding(
               padding: AppResources.paddingPage,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
 
-                  const Text('Choisissez un pseudo'),
-                  AppResources.spacerExtraLarge,
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.person),
-                      hintText: 'Pseudo',
-                    ),
-                    autofocus: true,
-                    inputFormatters: [ AppResources.maxLengthInputFormatter() ],
-                    textInputAction: TextInputAction.done,
-                    onFieldSubmitted: (value) => validate(),
-                    validator: AppResources.validatorNotEmpty,
-                    onSaved: (value) => bloc.username = value,
+                  // Center
+                  Column(
+                    children: [
+                      // Image
+                      Center(
+                        child: Image.asset(
+                          'assets/logo.png',
+                          width: 150,
+                          fit: BoxFit.scaleDown,
+                        ),
+                      ),
+
+                      // Caption
+                      AppResources.spacerExtraLarge,
+                      AppResources.spacerExtraLarge,
+                      Text(
+                        'Choisissez un pseudo',
+                        style: context.textTheme.titleMedium,
+                      ),
+
+                      // Field
+                      AppResources.spacerExtraLarge,
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.person),
+                          hintText: 'Pseudo',
+                        ),
+                        autofocus: true,
+                        inputFormatters: [ AppResources.maxLengthInputFormatter() ],
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (value) => validate(),
+                        validator: AppResources.validatorNotEmpty,
+                        onSaved: (value) => bloc.username = value,
+                      ),
+                    ],
                   ),
+
+                  // Button
                   AppResources.spacerExtraLarge,
                   ElevatedButton(
                     onPressed: validate,
@@ -54,9 +79,9 @@ class _RegisterPageState extends State<RegisterPage> with BlocProvider<RegisterP
                 ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
