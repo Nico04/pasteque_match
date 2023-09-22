@@ -44,7 +44,7 @@ class NameGroupPage extends StatelessWidget {
                       AppResources.spacerMedium,
                       EventFetchBuilder<User>(
                         stream: AppService.instance.userSession!.userStream,
-                        builder: (context, user) => VoteTile(group.id, group, user.votes[group.id], dismissible: false),
+                        builder: (context, user) => VoteTile(group.id, group, user.votes[group.id]?.value, dismissible: false),
                       ),
                     ],
                   ),

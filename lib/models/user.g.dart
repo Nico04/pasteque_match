@@ -10,31 +10,22 @@ UserData _$UserDataFromJson(Map<String, dynamic> json) => UserData(
       name: json['name'] as String,
       partnerId: json['partnerId'] as String?,
       votes: (json['votes'] as Map<String, dynamic>?)?.map(
-            (k, e) => MapEntry(k, $enumDecode(_$SwipeValueEnumMap, e)),
+            (k, e) => MapEntry(k, UserVote.fromJson(e as Map<String, dynamic>)),
           ) ??
           const {},
       lastVotedAt: const NullableTimestampConverter()
           .fromJson(json['lastVotedAt'] as Timestamp?),
     );
 
-Map<String, dynamic> _$UserDataToJson(UserData instance) {
-  final val = <String, dynamic>{
-    'name': instance.name,
-  };
+UserVote _$UserVoteFromJson(Map<String, dynamic> json) => UserVote(
+      $enumDecode(_$SwipeValueEnumMap, json['value']),
+      DateTime.parse(json['date'] as String),
+    );
 
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('partnerId', instance.partnerId);
-  val['votes'] =
-      instance.votes.map((k, e) => MapEntry(k, _$SwipeValueEnumMap[e]!));
-  writeNotNull('lastVotedAt',
-      const NullableTimestampConverter().toJson(instance.lastVotedAt));
-  return val;
-}
+Map<String, dynamic> _$UserVoteToJson(UserVote instance) => <String, dynamic>{
+      'value': _$SwipeValueEnumMap[instance.value]!,
+      'date': instance.date.toIso8601String(),
+    };
 
 const _$SwipeValueEnumMap = {
   SwipeValue.dislike: 'dislike',

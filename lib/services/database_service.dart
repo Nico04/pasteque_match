@@ -12,7 +12,7 @@ class DatabaseService {
 
   late final _users = _db.collection('users').withConverter<User>(
     fromFirestore: (snapshot, _) => User.fromJson(snapshot.id, snapshot.data()!),
-    toFirestore: (model, _) => model.toJson(),    // Only used for the set command, which is never used.
+    toFirestore: (model, _) => throw UnsupportedError('Users are read-only'),
   );
 
   late final _reports = _db.collection('reports');
@@ -71,8 +71,7 @@ class DatabaseService {
   /// Add a new user's vote
   Future<void> setUserVote(String userId, String groupId, SwipeValue value) async {
     await _users.doc(userId).update({
-      'votes.$groupId': value.name,
-      'lastVotedAt': DateTime.now(),  // Using 'FieldValue.serverTimestamp()' is more accurate, but it doubles the db exchanges (automatically fetch the value set by server after the update), and this value is not used in the app.
+      'votes.$groupId': UserVote(value, DateTime.now()).toJson(),   // Using 'FieldValue.serverTimestamp()' is more accurate, but it doubles the db exchanges (automatically fetch the value set by server after the update), and we don't need accuracy here.
     });
     debugPrint('[DatabaseService] Vote for $groupId changed to $value');
   }
