@@ -12,6 +12,7 @@ class FilteredNameGroupsHandler with Disposable {
     ValueGetter<String?>? firstLetter,
     ValueGetter<RangeValues?>? length,
     ValueGetter<BooleanFilter?>? hyphenated,
+    ValueGetter<BooleanFilter?>? saint,
     ValueGetter<GroupGenderFilter?>? groupGender,
   }) {
     // Build new filter object
@@ -19,6 +20,7 @@ class FilteredNameGroupsHandler with Disposable {
       firstLetter: firstLetter,
       length: length,
       hyphenated: hyphenated,
+      saint: saint,
       groupGender: groupGender,
     );
     if (filters.isEmpty) filters = null;
@@ -52,6 +54,7 @@ class NameGroupFilters {
     this.firstLetter,
     this.length = lengthAll,
     this.hyphenated,
+    this.saint,
     this.groupGender,
   });
 
@@ -64,22 +67,25 @@ class NameGroupFilters {
   final RangeValues length;
 
   final BooleanFilter? hyphenated;
+  final BooleanFilter? saint;
 
   final GroupGenderFilter? groupGender;
 
-  int get count => (firstLetter != null ? 1 : 0) + (length != lengthAll ? 1 : 0) + (hyphenated != null ? 1 : 0) + (groupGender != null ? 1 : 0);
+  int get count => (firstLetter != null ? 1 : 0) + (length != lengthAll ? 1 : 0) + (hyphenated != null ? 1 : 0) + (saint != null ? 1 : 0) + (groupGender != null ? 1 : 0);
   bool get isEmpty => count == 0;
 
   bool match(NameGroup group) =>
       (firstLetter == null || group.names.any((name) => name.name.startsWith(firstLetter!))) &&
       (length == lengthAll || group.id.length >= length.start && group.id.length <= length.end) &&
       (hyphenated == null || hyphenated!.match(group, (n) => n.isHyphenated)) &&
+      (saint == null || saint!.match(group, (n) => n.isSaint)) &&
       (groupGender == null || groupGender!.match(group));
 
   List<String> getLabels() => [
     if (firstLetter != null) 'Commence par $firstLetter',
     if (length != lengthAll) 'Entre ${length.start.round()} et ${length.end.round()} caractères',
-    if (hyphenated != null) '${hyphenated!.label} prénom composé',
+    if (hyphenated != null) '${hyphenated!.label} composé',
+    if (saint != null) '${saint!.label} Saint',
     if (groupGender != null) groupGender!.label,
   ];
 
@@ -87,11 +93,13 @@ class NameGroupFilters {
     ValueGetter<String?>? firstLetter,
     ValueGetter<RangeValues?>? length,
     ValueGetter<BooleanFilter?>? hyphenated,
+    ValueGetter<BooleanFilter?>? saint,
     ValueGetter<GroupGenderFilter?>? groupGender,
   }) => NameGroupFilters(
     firstLetter: firstLetter == null ? this.firstLetter : firstLetter(),
     length: length == null ? this.length : length() ?? lengthAll,
     hyphenated: hyphenated == null ? this.hyphenated : hyphenated(),
+    saint: saint == null ? this.saint : saint(),
     groupGender: groupGender == null ? this.groupGender : groupGender(),
   );
 }

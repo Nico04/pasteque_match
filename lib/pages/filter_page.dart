@@ -112,6 +112,17 @@ class FilterPage extends StatelessWidget {
                       onSelectionChanged: (value) => filterHandler.updateFilter(hyphenated: () => value),
                     ),
 
+                    // Saint
+                    AppResources.spacerMedium,
+                    _SegmentedButtonFilter(
+                      label: 'Saint',
+                      options: BooleanFilter.values,
+                      selected: filters.saint,
+                      iconBuilder: (value) => value.icon,
+                      labelBuilder: (value) => value.label,
+                      onSelectionChanged: (value) => filterHandler.updateFilter(saint: () => value),
+                    ),
+
                     // Gender
                     AppResources.spacerMedium,
                     _SegmentedButtonFilter(
