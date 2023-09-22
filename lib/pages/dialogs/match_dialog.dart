@@ -1,3 +1,4 @@
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/utils/_utils.dart';
@@ -19,6 +20,28 @@ class MatchDialog extends StatefulWidget {
 
 class _MatchDialogState extends State<MatchDialog> {
   final _stopwatch = Stopwatch()..start();
+  final _confettiController = ConfettiController(duration: const Duration(seconds: 3));
+
+  @override
+  void initState() {
+    super.initState();
+    _confettiController.play();
+  }
+
+  /// A custom Path that paint hearth shape
+  Path _buildHeartPath(Size size) {
+    final w = size.width;
+    final h = size.height;
+    final path = Path();
+    path.moveTo(0, 0);
+    path.cubicTo(0, 0, 0, -h/2, w/4, -h/2);
+    path.cubicTo(w/2, -h/2, w/2, 0, w/2, 0);
+    path.cubicTo(w/2, 0, w/2, -h/2, 3/4*w, -h/2);
+    path.cubicTo(w, -h/2, w, 0, w, 0);
+    path.cubicTo(w, 0, w, h/2, w/2, h);
+    path.cubicTo(0, h/2, 0, 0, 0, 0);
+    return path;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +62,25 @@ class _MatchDialogState extends State<MatchDialog> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Image
-              Image.asset(
-                'assets/match.png',
-                height: 300,
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Image
+                  Image.asset(
+                    'assets/match.png',
+                    height: 300,
+                  ),
+
+                  // Confetti
+                  Center(
+                    child: ConfettiWidget(
+                      confettiController: _confettiController,
+                      blastDirectionality: BlastDirectionality.explosive,
+                      emissionFrequency: 0.05,
+                      createParticlePath: _buildHeartPath,
+                    ),
+                  ),
+                ],
               ),
 
               // Title
@@ -102,6 +141,7 @@ class _MatchDialogState extends State<MatchDialog> {
   @override
   void dispose() {
     _stopwatch.stop();
+    _confettiController.dispose();
     super.dispose();
   }
 }

@@ -19,6 +19,7 @@ dependencies:
   flash: ^3.0.5+1
   appinio_swiper: ^2.0.3
   fl_chart: ^0.63.0
+  confetti: ^0.7.0
 
   # Network
   http: ^1.1.0
