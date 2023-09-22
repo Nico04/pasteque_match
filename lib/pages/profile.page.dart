@@ -8,6 +8,7 @@ import 'package:pasteque_match/widgets/_widgets.dart';
 
 import 'partner.page.dart';
 import 'votes.page.dart';
+import 'about.page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -30,24 +31,45 @@ class ProfilePage extends StatelessWidget {
         stream: AppService.instance.userSession!.userStream,
         builder: (context, user) {
           return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
 
-              // User data
-              _UserDataCard(user),
+              // Top
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
 
-              // Stats
-              AppResources.spacerMedium,
-              _UserStatsCard(user),
+                  // User data
+                  _UserDataCard(user),
 
-              // Votes
-              AppResources.spacerMedium,
-              PmTileButton(
-                icon: Icons.how_to_vote,
-                label: 'Mes votes',
-                onPressed: () => navigateTo(context, (context) => const VotesPage()),
+                  // Stats
+                  AppResources.spacerMedium,
+                  _UserStatsCard(user),
+
+                  // Votes
+                  AppResources.spacerMedium,
+                  PmTileButton(
+                    icon: Icons.how_to_vote,
+                    label: 'Mes votes',
+                    onPressed: () => navigateTo(context, (context) => const VotesPage()),
+                  ),
+
+                ],
               ),
 
+              // Bottom
+              AppResources.spacerExtraLarge,
+              Column(
+                children: [
+                // About
+                  PmTileButton(
+                    icon: Icons.help_outline,
+                    label: 'À propos',
+                    onPressed: () => navigateTo(context, (context) => const AboutPage()),
+                  ),
+
+                ],
+              ),
             ],
           );
         },
