@@ -12,7 +12,7 @@ class DatabaseService {
 
   late final _users = _db.collection('users').withConverter<User>(
     fromFirestore: (snapshot, _) => User.fromJson(snapshot.id, snapshot.data()!),
-    toFirestore: (model, _) => throw UnsupportedError('Users are read-only'),
+    toFirestore: (model, _) => model.toJson(),    // Used by 'add' command
   );
 
   late final _reports = _db.collection('reports');

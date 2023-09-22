@@ -16,7 +16,7 @@ class User extends UserData {
   factory User.fromJson(String id, JsonObject json) => User.fromBase(id: id, userData: _$UserDataFromJson(json));
 }
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class UserData {
   const UserData({required this.name, this.partnerId, this.votes = const{}});
 
@@ -39,6 +39,7 @@ class UserData {
   List<String> get likes => votes.entries.where((entry) => entry.value.value == SwipeValue.like).map((entry) => entry.key).toList(growable: false);
 
   factory UserData.fromJson(JsonObject json) => _$UserDataFromJson(json);
+  Map<String, dynamic> toJson() => _$UserDataToJson(this);
 }
 
 @JsonSerializable()

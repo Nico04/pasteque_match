@@ -15,6 +15,22 @@ UserData _$UserDataFromJson(Map<String, dynamic> json) => UserData(
           const {},
     );
 
+Map<String, dynamic> _$UserDataToJson(UserData instance) {
+  final val = <String, dynamic>{
+    'name': instance.name,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('partnerId', instance.partnerId);
+  val['votes'] = instance.votes;
+  return val;
+}
+
 UserVote _$UserVoteFromJson(Map<String, dynamic> json) => UserVote(
       $enumDecode(_$SwipeValueEnumMap, json['value']),
       DateTime.parse(json['date'] as String),
