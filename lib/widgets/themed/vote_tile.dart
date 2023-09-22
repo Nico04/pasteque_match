@@ -76,7 +76,7 @@ class VoteTile extends StatelessWidget {
                   multiSelectionEnabled: false,
                   showSelectedIcon: false,
                   emptySelectionAllowed: true,    // Needed because initial vote value might be null
-                  onSelectionChanged: (value) {
+                  onSelectionChanged: (value) {   // TODO handle errors ?
                     if (value.isEmpty) {
                       if (!dismissible) {
                         AppService.instance.clearUserVote(groupId);

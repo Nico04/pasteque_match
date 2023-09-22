@@ -154,7 +154,7 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                             cardsSpacing: 0,    // Force cards to be behind each other
                             onSwiping: (direction) => _swipeDirectionStream.add(direction, skipSame: true, skipIfClosed: true),
                             onSwipeCancelled: () => _swipeDirectionStream.add(null, skipSame: true, skipIfClosed: true),
-                            onSwipe: (nextCardIndex, direction) async {   // TODO move all logic to bloc ?
+                            onSwipe: (nextCardIndex, direction) {
                               // Stop animation
                               _swipeDirectionStream.add(null, skipSame: true, skipIfClosed: true);
 
@@ -163,13 +163,7 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                               final value = swipeValueFromDirection(direction);
 
                               // Apply vote
-                              debugPrint('[Swipe] ${value.name} "${group.id}"');
-                              final itsAMatch = await bloc.applyVote(group.id, value);
-
-                              // It's a match !
-                              if (mounted && itsAMatch) {
-                                showMessage(context, 'It\'s a match !');    // TODO Proper pop-up ?
-                              }
+                              bloc.applyVote(group.id, value);
                             },
                             onEnd: () => print('End'),    // TODO
                             cardsBuilder: (context, index) {
@@ -388,17 +382,10 @@ class SwipePageBloc with Disposable {
   /// Apply user's vote.
   /// Return true if it's a match.
   Future<bool> applyVote(String groupId, SwipeValue value) async {
+    debugPrint('[Swipe] ${value.name} "$groupId"');
     try {
       // Apply vote
-      await AppService.instance.setUserVote(groupId, value);
-
-      // Is it a match ?
-      if (value == SwipeValue.like && partner != null) {
-        final partnerVote = partner!.votes[groupId];
-        if (partnerVote == SwipeValue.like) {
-          return true;
-        }
-      }
+      return AppService.instance.setUserVote(groupId, value);
     } catch(e, s) {
       // Report error first
       reportError(e, s);

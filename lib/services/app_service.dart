@@ -62,8 +62,26 @@ class AppService {
 
   Future<void> removePartner() => database.removePartner(userId!, userSession!.partner!.id);
 
-  Future<void> setUserVote(String groupId, SwipeValue value) => database.setUserVote(userId!, groupId, value);
+  /// Apply user's vote.
+  /// Return true if it's a match.
+  Future<bool> setUserVote(String groupId, SwipeValue value) async {
+    // Apply vote
+    await database.setUserVote(userId!, groupId, value);
+
+    // Is it a match ?
+    final partner = userSession?.partner;
+    if (value == SwipeValue.like && partner != null) {
+      final partnerVote = partner.votes[groupId];
+      if (partnerVote?.value == SwipeValue.like) {
+        showMessage(App.navigatorContext, 'It\'s a match !');    // TODO Proper pop-up ?
+        return true;
+      }
+    }
+    return false;
+  }
+
   Future<void> clearUserVote(String groupId) => database.clearUserVote(userId!, groupId);
+
   void deleteUser() {
     database.deleteUser(userId!, userSession?.partner?.id).then((_) => showMessage(App.navigatorContext, 'Votre compte a été supprimé'));
     logOut();
