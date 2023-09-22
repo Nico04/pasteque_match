@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fetcher/fetcher.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pasteque_match/main.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/pages/register.page.dart';
@@ -64,23 +65,44 @@ class AppService {
 
   /// Apply user's vote.
   /// Return true if it's a match.
-  Future<bool> setUserVote(String groupId, SwipeValue value) async {
-    // Apply vote
-    await database.setUserVote(userId!, groupId, value);
+  Future<bool> setUserVoteSafe(String groupId, SwipeValue value) async {
+    debugPrint('[Swipe] ${value.name} "$groupId"');
+    try {
+      // Apply vote
+      await database.setUserVote(userId!, groupId, value);
 
-    // Is it a match ?
-    final partner = userSession?.partner;
-    if (value == SwipeValue.like && partner != null) {
-      final partnerVote = partner.votes[groupId];
-      if (partnerVote?.value == SwipeValue.like) {
-        showMessage(App.navigatorContext, 'It\'s a match !');    // TODO Proper pop-up ?
-        return true;
+      // Is it a match ?
+      final partner = userSession?.partner;
+      if (value == SwipeValue.like && partner != null) {
+        final partnerVote = partner.votes[groupId];
+        if (partnerVote?.value == SwipeValue.like) {
+          showMessage(App.navigatorContext, 'It\'s a match !');    // TODO Proper pop-up ?
+          return true;
+        }
       }
+    } catch(e, s) {
+      // Report error first
+      reportError(e, s);
+
+      // Update UI
+      showError(App.navigatorContext, e);
     }
     return false;
   }
 
-  Future<void> clearUserVote(String groupId) => database.clearUserVote(userId!, groupId);
+  Future<void> clearUserVoteSafe(String groupId) async {
+    debugPrint('[Swipe] clear "$groupId"');
+    try {
+      // Clear vote
+      await database.clearUserVote(userId!, groupId);
+    } catch(e, s) {
+      // Report error first
+      reportError(e, s);
+
+      // Update UI
+      showError(App.navigatorContext, e);
+    }
+  }
 
   void deleteUser() {
     database.deleteUser(userId!, userSession?.partner?.id).then((_) => showMessage(App.navigatorContext, 'Votre compte a été supprimé'));

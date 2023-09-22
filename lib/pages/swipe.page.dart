@@ -163,7 +163,7 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                               final value = swipeValueFromDirection(direction);
 
                               // Apply vote
-                              bloc.applyVote(group.id, value);
+                              AppService.instance.setUserVoteSafe(group.id, value);
                             },
                             onEnd: () => print('End'),    // TODO
                             cardsBuilder: (context, index) {
@@ -377,23 +377,6 @@ class SwipePageBloc with Disposable {
     final remainingNamesMap = Map.of(names)..removeWhere((key, value) => votedNamesId.contains(key));
     final remainingNames = remainingNamesMap.values.toList(growable: false);
     return remainingNames..shuffle();
-  }
-
-  /// Apply user's vote.
-  /// Return true if it's a match.
-  Future<bool> applyVote(String groupId, SwipeValue value) async {
-    debugPrint('[Swipe] ${value.name} "$groupId"');
-    try {
-      // Apply vote
-      return AppService.instance.setUserVote(groupId, value);
-    } catch(e, s) {
-      // Report error first
-      reportError(e, s);
-
-      // Update UI
-      showError(App.navigatorContext, e);
-    }
-    return false;
   }
 
   @override

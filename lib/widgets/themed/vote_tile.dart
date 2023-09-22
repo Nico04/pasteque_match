@@ -76,13 +76,13 @@ class VoteTile extends StatelessWidget {
                   multiSelectionEnabled: false,
                   showSelectedIcon: false,
                   emptySelectionAllowed: true,    // Needed because initial vote value might be null
-                  onSelectionChanged: (value) {   // TODO handle errors ?
+                  onSelectionChanged: (value) {
                     if (value.isEmpty) {
                       if (!dismissible) {
-                        AppService.instance.clearUserVote(groupId);
+                        AppService.instance.clearUserVoteSafe(groupId);
                       }
                     } else {
-                      AppService.instance.setUserVote(groupId, value.single);
+                      AppService.instance.setUserVoteSafe(groupId, value.single);
                     }
                   },
                 ),
@@ -103,7 +103,7 @@ class VoteTile extends StatelessWidget {
           padding: const EdgeInsets.only(right: 20),
           child: const Icon(Icons.delete, color: Colors.white),
         ),
-        onDismissed: (_) => AppService.instance.clearUserVote(groupId),
+        onDismissed: (_) => AppService.instance.clearUserVoteSafe(groupId),
         child: child,
       );
     } else {
