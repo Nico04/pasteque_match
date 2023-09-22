@@ -191,10 +191,11 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                       ),
 
                       // Swipe buttons
+                      /* TEMP hide for now
                       _SwipeButtons(    // TODO bug when tapping after setting filters, see https://github.com/appinioGmbH/flutter_packages/issues/157.
                         onDislikePressed: _swipeController.swipeLeft,
                         onLikePressed: _swipeController.swipeRight,
-                      ),
+                      ),*/
                     ],
                   );
                 },
