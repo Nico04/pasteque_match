@@ -8,7 +8,7 @@ import 'resources.dart';
 /// Should not affect performance much.
 ThemeData buildAppTheme() {
   return ThemeData(
-    colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0caba0)),
+    colorScheme: ColorScheme.fromSeed(seedColor: AppResources.colorBackground),
     useMaterial3: true,
     cardTheme: const CardTheme(
       clipBehavior: Clip.antiAlias,
@@ -22,7 +22,7 @@ ThemeData buildAppTheme() {
         borderRadius: AppResources.borderRadiusSmall,
       ),
       isDense: true,    // Allow icons to be correctly sized
-      contentPadding: const EdgeInsets.all(15),
+      contentPadding: EdgeInsets.all(15),
     ),
   );
 }

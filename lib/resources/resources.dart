@@ -3,6 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class AppResources {
+  // Colors
+  static const colorBackground = Color(0xFF53C4B8);
+  static const colorBackgroundDark = Color(0xFF24ACAC);
+
   // Padding
   static const paddingPage = EdgeInsets.all(20);
   static const paddingPageHorizontal = EdgeInsets.symmetric(horizontal: 20);
