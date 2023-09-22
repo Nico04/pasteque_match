@@ -114,42 +114,13 @@ class FilterPage extends StatelessWidget {
 
                     // Gender
                     AppResources.spacerMedium,
-                    Row(
-                      children: [
-                        const Text('Genre'),
-                        AppResources.spacerMedium,
-                        Expanded(
-                          child: Column(
-                            children: [
-                              // Buttons
-                              SegmentedButton<GroupGenderFilter>(
-                                selected: {if (filters.groupGender != null) filters.groupGender!},
-                                segments: GroupGenderFilter.values.map((value) => ButtonSegment(
-                                  value: value,
-                                  icon: Icon(value.icon),
-                                )).toList(growable: false),
-                                multiSelectionEnabled: false,
-                                showSelectedIcon: false,
-                                emptySelectionAllowed: true,
-                                onSelectionChanged: (value) => filterHandler.updateFilter(groupGender: () => value.firstOrNull),
-                              ),
-
-                              // Label
-                              if (filters.groupGender != null)...[
-                                AppResources.spacerTiny,
-                                Text(
-                                  filters.groupGender!.label,
-                                  style: context.textTheme.bodySmall,
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () => filterHandler.updateFilter(groupGender: () => null),
-                        ),
-                      ],
+                    _SegmentedButtonFilter(
+                      label: 'Genre',
+                      options: GroupGenderFilter.values,
+                      selected: filters.groupGender,
+                      iconBuilder: (value) => value.icon,
+                      labelBuilder: (value) => value.label,
+                      onSelectionChanged: (value) => filterHandler.updateFilter(groupGender: () => value),
                     ),
 
                   ],
