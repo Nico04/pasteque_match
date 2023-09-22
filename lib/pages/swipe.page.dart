@@ -215,6 +215,8 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
 }
 
 class _GroupCard extends StatelessWidget {
+  static const _maxOtherNames = 4;
+
   const _GroupCard(this.group, {super.key, this.swipeDirection});
 
   final NameGroup group;
@@ -222,6 +224,8 @@ class _GroupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final otherNames = group.names.skip(1);
+    final overflowCount = otherNames.length - _maxOtherNames;
     return Card(
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(36))),
       elevation: 3,
@@ -252,6 +256,7 @@ class _GroupCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // Main name
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     child: _NameGenderRow(
@@ -261,12 +266,24 @@ class _GroupCard extends StatelessWidget {
                       iconSize: 40,
                     ),
                   ),
+
+                  // Other names
                   AppResources.spacerMedium,
-                  ...group.names.skip(1).take(5).map<Widget>((name) => _NameGenderRow(
+                  ...otherNames.take(_maxOtherNames).map<Widget>((name) => _NameGenderRow(
                     name: name.name,
                     style: context.textTheme.titleMedium?.copyWith(fontFamily: 'Merienda', color: Colors.black),
                     gender: name.gender
                   )).toList()..insertBetween(AppResources.spacerSmall),
+
+                  // Overflow indicator
+                  if (otherNames.length > _maxOtherNames) ...[
+                    AppResources.spacerSmall,
+                    Text(
+                      'et $overflowCount ${'autre'.plural(overflowCount)} ',
+                      style: context.textTheme.bodySmall,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ],
               ),
 

@@ -11,6 +11,9 @@ extension ExtendedDouble on double {
 }
 
 extension ExtendedString on String {
+  /// Returns the plural of this string if [count] is greater than 1.
+  String plural(num count) => this + (count >= 2 ? 's' : '');
+
   /// Normalize string by removing diacritics and transform to lower case
   String get normalized => removeDiacritics(toLowerCase());
 
