@@ -13,8 +13,6 @@ UserData _$UserDataFromJson(Map<String, dynamic> json) => UserData(
             (k, e) => MapEntry(k, UserVote.fromJson(e as Map<String, dynamic>)),
           ) ??
           const {},
-      lastVotedAt: const NullableTimestampConverter()
-          .fromJson(json['lastVotedAt'] as Timestamp?),
     );
 
 UserVote _$UserVoteFromJson(Map<String, dynamic> json) => UserVote(

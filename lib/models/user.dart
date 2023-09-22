@@ -9,8 +9,7 @@ typedef UserVotes = Map<String, UserVote>;
 
 class User extends UserData {
   const User({required this.id, required super.name, super.partnerId, super.votes});
-  User.fromBase({required this.id, required UserData userData}):
-        super(name: userData.name, partnerId: userData.partnerId, votes: userData.votes, lastVotedAt: userData.lastVotedAt);
+  User.fromBase({required this.id, required UserData userData}): super(name: userData.name, partnerId: userData.partnerId, votes: userData.votes);
 
   final String id;
 
@@ -19,7 +18,7 @@ class User extends UserData {
 
 @JsonSerializable(createToJson: false)
 class UserData {
-  const UserData({required this.name, this.partnerId, this.votes = const{}, this.lastVotedAt});
+  const UserData({required this.name, this.partnerId, this.votes = const{}});
 
   /// User name
   final String name;
@@ -38,11 +37,6 @@ class UserData {
   /// Return all likes
   /// (votes with SwipeValue.like value)
   List<String> get likes => votes.entries.where((entry) => entry.value.value == SwipeValue.like).map((entry) => entry.key).toList(growable: false);
-
-  /// Date of the last vote
-  /// Used to clean the database
-  @NullableTimestampConverter()
-  final DateTime? lastVotedAt;
 
   factory UserData.fromJson(JsonObject json) => _$UserDataFromJson(json);
 }
