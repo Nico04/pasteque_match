@@ -147,9 +147,19 @@ extension ExtendedList<T> on List<T> {
     }
   }
 
+  /// Removes the first occurrence of each element in [elements] from this list, if present.
   void removeAll(Iterable<T> elements) {
     for (var element in elements) {
       remove(element);
+    }
+  }
+}
+
+extension ExtendedMap<K, V> on Map<K, V> {
+  /// Removes all [keys] and its associated values, if present, from the map.
+  void removeAll(Iterable<K> keys) {
+    for (var key in keys) {
+      remove(key);
     }
   }
 }

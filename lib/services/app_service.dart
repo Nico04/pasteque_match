@@ -33,7 +33,7 @@ class AppService {
     if (userId != null) userSession = UserSession(userId);
   }
 
-  List<String> getMatches(List<String> userLikes, List<String> partnerLikes) {
+  List<String> getMatches(Iterable<String> userLikes, Iterable<String> partnerLikes) {
     final matchedIds = userLikes.where(partnerLikes.contains);
     return matchedIds.toList(growable: false);
   }

@@ -1,5 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/utils/_utils.dart';
+
+extension ExtendedRandom on Random {
+  /// Generates a random integer uniformly distributed in the range from [min], inclusive, to [max], inclusive.
+  int nextIntInRange(int min, int max) {
+    assert(min <= max);
+    return nextInt(max - min + 1) + min;
+  }
+}
 
 extension ExtendedObjectIterable<T extends Object?> on Iterable<T> {
   /// Converts each element to a String and concatenates the strings, ignoring null and empty values.

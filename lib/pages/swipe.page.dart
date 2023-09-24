@@ -1,7 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
-import 'package:pasteque_match/main.dart';
 import 'package:pasteque_match/models/filters.dart';
 import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/models/user.dart';
@@ -363,20 +364,43 @@ class _SwipeButtons extends StatelessWidget {
 
 
 class SwipePageBloc with Disposable {
-  User? get user => AppService.instance.userSession!.user;   // TODO listen to changes ?
-  User? get partner => AppService.instance.userSession!.partner;   // TODO listen to changes ?
-
   final filteredNameGroupsHandler = FilteredNameGroupsHandler();
 
-  Future<List<NameGroup>> getRemainingNames(Map<String, NameGroup> names) async {
+  Future<List<NameGroup>> getRemainingNames(Map<String, NameGroup> filteredNames) async {
     // Init data
     final user = await AppService.instance.userSession!.userStream.first;
+    final partner = user.hasPartner ? await AppService.instance.userSession!.partnerStream.first : null;
 
     // Compute remaining votes
     final votedNamesId = user.votes.keys;
-    final remainingNamesMap = Map.of(names)..removeWhere((key, value) => votedNamesId.contains(key));
-    final remainingNames = remainingNamesMap.values.toList(growable: false);
-    return remainingNames..shuffle();
+    final remainingNamesMap = Map.of(filteredNames)..removeAll(votedNamesId);
+    final remainingNames = remainingNamesMap.values.toList();
+    remainingNames.shuffle();
+
+    // Insert partner likes
+    if (partner != null) {
+      final partnerLikes = partner.likes.toList();
+
+      // Remove user votes
+      partnerLikes.removeAll(votedNamesId);
+
+      // Remove them from the remaining names (will be added just after), to avoid duplicates
+      remainingNames.removeWhere((group) => partnerLikes.contains(group.id));
+
+      // Shuffle
+      partnerLikes.shuffle();
+
+      // Insert partner likes randomly on top of the list (event if not respecting filters)
+      final random = math.Random();
+      int lastInsertIndex = 0;
+      for (final partnerLike in partnerLikes) {
+        final insertIndex = lastInsertIndex + random.nextIntInRange(2, 8);
+        remainingNames.insert(insertIndex, AppService.names[partnerLike]!);
+        lastInsertIndex = insertIndex;
+      }
+    }
+
+    return remainingNames;
   }
 
   @override

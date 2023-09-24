@@ -36,7 +36,8 @@ class UserData {
 
   /// Return all likes
   /// (votes with SwipeValue.like value)
-  List<String> get likes => votes.entries.where((entry) => entry.value.value == SwipeValue.like).map((entry) => entry.key).toList(growable: false);
+  /// OPTI use basic caching ?
+  Iterable<String> get likes => votes.entries.where((entry) => entry.value.value == SwipeValue.like).map((entry) => entry.key);
 
   factory UserData.fromJson(JsonObject json) => _$UserDataFromJson(json);
   Map<String, dynamic> toJson() => _$UserDataToJson(this);
