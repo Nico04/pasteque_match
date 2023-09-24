@@ -9,12 +9,13 @@ import 'package:pasteque_match/utils/_utils.dart';
 import 'letter_background.dart';
 
 class VoteTile extends StatelessWidget {
-  const VoteTile(this.groupId, this.group, this.vote, {super.key, this.dismissible = true});
+  const VoteTile(this.groupId, this.group, this.vote, {super.key, this.dismissible = true, this.clickable = true});
 
   final String groupId;
   final NameGroup? group;
   final SwipeValue? vote;
   final bool dismissible;
+  final bool clickable;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class VoteTile extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         color: Theme.of(context).colorScheme.surfaceVariant,
         child: InkWell(
-          onTap: group == null ? null : () => navigateTo(context, (context) => NameGroupPage(group!)),
+          onTap: group == null || !clickable ? null : () => navigateTo(context, (context) => NameGroupPage(group!)),
           child: Row(
             children: [
               Expanded(
