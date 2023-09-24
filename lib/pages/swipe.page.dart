@@ -145,41 +145,54 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                       Expanded(
                         child: () {
                           if (groups.isEmpty) return const Center(child: Text('Vous avez tout voté !'));
-                          return AppinioSwiper(
-                            key: _swiperKey,
-                            controller: _swipeController,
-                            padding: AppResources.paddingPage,
-                            cardsCount: groups.length,
-                            swipeOptions: const AppinioSwipeOptions.symmetric(horizontal: true),
-                            backgroundCardsCount: 2,
-                            cardsSpacing: 0,    // Force cards to be behind each other
-                            onSwiping: (direction) => _swipeDirectionStream.add(direction, skipSame: true, skipIfClosed: true),
-                            onSwipeCancelled: () => _swipeDirectionStream.add(null, skipSame: true, skipIfClosed: true),
-                            onSwipe: (nextCardIndex, direction) {
-                              // Stop animation
-                              _swipeDirectionStream.add(null, skipSame: true, skipIfClosed: true);
 
-                              // Get data
-                              final group = groups[nextCardIndex - 1];
-                              final value = swipeValueFromDirection(direction);
+                          return EventStreamBuilder<User?>(
+                            stream: AppService.instance.userSession!.partnerStream,
+                            builder: (context, snapshot) {
+                              final partner = snapshot.data;
+                              final partnerLikes = partner?.likes.toList(growable: false) ?? [];
+                              return AppinioSwiper(
+                                key: _swiperKey,
+                                controller: _swipeController,
+                                padding: AppResources.paddingPage,
+                                cardsCount: groups.length,
+                                swipeOptions: const AppinioSwipeOptions.symmetric(horizontal: true),
+                                backgroundCardsCount: 2,
+                                cardsSpacing: 0,    // Force cards to be behind each other
+                                onSwiping: (direction) => _swipeDirectionStream.add(direction, skipSame: true, skipIfClosed: true),
+                                onSwipeCancelled: () => _swipeDirectionStream.add(null, skipSame: true, skipIfClosed: true),
+                                onSwipe: (nextCardIndex, direction) {
+                                  // Stop animation
+                                  _swipeDirectionStream.add(null, skipSame: true, skipIfClosed: true);
 
-                              // Apply vote
-                              AppService.instance.setUserVoteSafe(group.id, value);
-                            },
-                            onEnd: () => print('End'),    // TODO
-                            cardsBuilder: (context, index) {
-                              final group = groups[index];
+                                  // Get data
+                                  final group = groups[nextCardIndex - 1];
+                                  final value = swipeValueFromDirection(direction);
 
-                              // Top card
-                              if (index == _currentGroupIndex) {
-                                return DataStreamBuilder<AppinioSwiperDirection?>(
-                                  stream: _swipeDirectionStream,
-                                  builder: (_, direction) => _GroupCard(group, key: ValueKey(index), swipeDirection: direction),
-                                );
-                              }
+                                  // Apply vote
+                                  AppService.instance.setUserVoteSafe(group.id, value);
+                                },
+                                onEnd: () => print('End'),    // TODO
+                                cardsBuilder: (context, index) {
+                                  final group = groups[index];
+                                  final doesPartnerLike = partnerLikes.contains(group.id);
 
-                              // Background cards
-                              return _GroupCard(group, key: ValueKey(index));
+                                  Widget buildGroupCard([AppinioSwiperDirection? swipeDirection]) {
+                                    return _GroupCard(group, key: ValueKey(index), partnerLikesName: doesPartnerLike ? partner!.name : null, swipeDirection: swipeDirection);
+                                  }
+
+                                  // Top card
+                                  if (index == _currentGroupIndex) {
+                                    return DataStreamBuilder<AppinioSwiperDirection?>(
+                                      stream: _swipeDirectionStream,
+                                      builder: (_, direction) => buildGroupCard(direction),
+                                    );
+                                  }
+
+                                  // Background cards
+                                  return buildGroupCard();
+                                },
+                              );
                             },
                           );
                         } (),
@@ -212,10 +225,11 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
 class _GroupCard extends StatelessWidget {
   static const _maxOtherNames = 4;
 
-  const _GroupCard(this.group, {super.key, this.swipeDirection});
+  const _GroupCard(this.group, {super.key, this.swipeDirection, this.partnerLikesName});
 
   final NameGroup group;
   final AppinioSwiperDirection? swipeDirection;
+  final String? partnerLikesName;
 
   @override
   Widget build(BuildContext context) {
@@ -245,6 +259,17 @@ class _GroupCard extends StatelessWidget {
                   ),
                 ),
               ),
+
+              // Partner like
+              if (partnerLikesName != null)
+                Positioned(
+                  top: 0,
+                  child: Text(
+                    '🍉 $partnerLikesName aime 🍉',
+                    style: context.textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
 
               // Content
               Column(
