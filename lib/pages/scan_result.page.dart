@@ -1,4 +1,5 @@
 import 'package:fetcher/fetcher.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/models/scan_result.dart';
 import 'package:pasteque_match/models/user.dart';
@@ -56,39 +57,16 @@ class _UserResult extends StatelessWidget {
           );
         }
 
-        return AsyncTaskBuilder<void>(
+        return _UserFoundResultContent(
           task: () => AppService.instance.restoreUser(userId),
           onSuccess: (_) {
             showMessage(context, 'Bienvenue ${AppService.instance.userSession?.user?.name} !\nVotre compte a bien été restauré.');
             return navigateTo(context, (_) => const MainPage(), clearHistory: true);
           },
-          builder: (context, runTask) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.sentiment_satisfied_alt,
-                    size: 60,
-                  ),
-                  AppResources.spacerMedium,
-                  const Text('Utilisateur trouvé !'),
-                  AppResources.spacerMedium,
-                  Text(
-                    user.name,
-                    style: context.textTheme.headlineMedium,
-                  ),
-                  AppResources.spacerHuge,
-                  const Text('Voulez-vous restorer ce compte ?'),
-                  AppResources.spacerMedium,
-                  PmButton(
-                    label: 'Restaurer',
-                    onPressed: runTask,
-                  ),
-                ],
-              ),
-            );
-          },
+          caption: 'Utilisateur trouvé !',
+          username: user.name,
+          buttonCaption: 'Voulez-vous restorer ce compte ?',
+          buttonLabel: 'Restaurer le compte',
         );
       },
     );
@@ -119,39 +97,69 @@ class _PartnerResult extends StatelessWidget {
           );
         }
 
-        return AsyncTaskBuilder<void>(
+        return _UserFoundResultContent(
           task: () => AppService.instance.choosePartner(partnerId),
           onSuccess: (_) async {
             showMessage(context, 'Partenaire choisi !');
             context.popToRoot();
           },
-          builder: (context, runTask) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.sentiment_satisfied_alt,
-                    size: 60,
-                  ),
-                  AppResources.spacerMedium,
-                  const Text('Partenaire trouvé !'),
-                  AppResources.spacerMedium,
-                  Text(
-                    partner.name,
-                    style: context.textTheme.headlineMedium,
-                  ),
-                  AppResources.spacerHuge,
-                  const Text('Une fois validé, vous serez lié l\'un à l\'autre.'),
-                  AppResources.spacerMedium,
-                  ElevatedButton(
-                    onPressed: runTask,
-                    child: const Text('Choisir comme partenaire'),
-                  ),
-                ],
+          caption: 'Partenaire trouvé !',
+          username: partner.name,
+          buttonCaption: 'Une fois validé, vous serez lié l\'un à l\'autre.',
+          buttonLabel: 'Choisir comme partenaire',
+        );
+      },
+    );
+  }
+}
+
+class _UserFoundResultContent extends StatelessWidget {
+  const _UserFoundResultContent({
+    super.key,
+    required this.task,
+    required this.onSuccess,
+    required this.caption,
+    required this.username,
+    required this.buttonCaption,
+    required this.buttonLabel,
+  });
+
+  final AsyncValueGetter<void> task;
+  final AsyncValueSetter<void>? onSuccess;
+  final String caption;
+  final String username;
+  final String buttonCaption;
+  final String buttonLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return AsyncTaskBuilder<void>(
+      task: task,
+      onSuccess: onSuccess,
+      builder: (context, runTask) {
+        return Center(
+          child: Column(
+            children: [
+              const Icon(
+                Icons.sentiment_satisfied_alt,
+                size: 60,
               ),
-            );
-          },
+              AppResources.spacerMedium,
+              Text(caption),
+              AppResources.spacerMedium,
+              Text(
+                username,
+                style: context.textTheme.headlineMedium,
+              ),
+              AppResources.spacerHuge,
+              Text(buttonCaption),
+              AppResources.spacerMedium,
+              PmButton(
+                label: buttonLabel,
+                onPressed: runTask,
+              ),
+            ],
+          ),
         );
       },
     );
