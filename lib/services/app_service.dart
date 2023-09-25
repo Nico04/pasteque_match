@@ -9,6 +9,7 @@ import 'package:pasteque_match/pages/register.page.dart';
 import 'package:pasteque_match/services/database_service.dart';
 import 'package:pasteque_match/services/names_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
+import 'package:pasteque_match/utils/exceptions/form_validation_exception.dart';
 import 'package:pasteque_match/utils/exceptions/invalid_operation_exception.dart';
 import 'package:pasteque_match/utils/exceptions/unauthorized_exception.dart';
 
@@ -42,7 +43,7 @@ class AppService {
   //#region Operations
   Future<void> registerUser(String username) async {
     // Check
-    if (hasLocalUser) throw const InvalidOperationException('Already registered');
+    if (hasLocalUser) throw const InvalidOperationException('Already logged-in');
 
     // Register user to database
     final userId = await database.addUser(username);
@@ -52,6 +53,37 @@ class AppService {
 
     // Init user store
     userSession = UserSession(userId);
+    debugPrint('[AppService] User $username registered');
+  }
+
+  Future<void> restoreUser(String userId) async {
+    // Check
+    if (hasLocalUser) throw const InvalidOperationException('Already logged-in');
+
+    // Create session
+    UserSession? userSession;
+    try {
+      // Init user store
+      userSession = UserSession(userId);
+
+      // Check user exists
+      try {
+        await userSession.userStream.first;
+      } catch (e, s) {
+        reportError(e, s);
+        throw const FormValidationException('Utilisateur introuvable');
+      }
+    } catch (e) {
+      userSession?.dispose();
+      rethrow;
+    }
+
+    // Save id to local storage
+    await StorageService.saveUserId(userId);
+
+    // Save session
+    this.userSession = userSession;
+    debugPrint('[AppService] User $userId restored');
   }
 
   Future<void> choosePartner(String partnerId) async {

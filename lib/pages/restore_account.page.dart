@@ -1,8 +1,11 @@
-import 'package:fetcher/fetcher.dart' show ClearFocusBackground;
+import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/resources/_resources.dart';
+import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
+
+import 'main.page.dart';
 
 class RestoreAccountPage extends StatelessWidget {
   const RestoreAccountPage({super.key});
@@ -58,31 +61,32 @@ class _UserIdSectionState extends State<_UserIdSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      child: Builder(
-        builder: (context) {
-          return _Section(
-            title: 'ID utilisateur',
-            caption: 'Vous avez conservé votre ID utilisateur ?\nEntrez votre ID utilisateur pour restaurer votre compte.',
-            content: TextFormField(
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.person),
-                label: Text('Votre ID utilisateur'),
-              ),
-              inputFormatters: [ AppResources.maxLengthInputFormatter() ],
-              textInputAction: TextInputAction.done,
-              validator: AppResources.validatorNotEmpty,
-              onSaved: (value) => userId = value,
+    return AsyncForm(
+      onValidated: () => AppService.instance.restoreUser(userId!),
+      onSuccess: () {
+        showMessage(context, 'Bienvenue ${AppService.instance.userSession?.user?.name} !\nVotre compte a bien été restauré.');
+        return navigateTo(context, (_) => const MainPage(), clearHistory: true);
+      },
+        builder: (context, validate) {
+        return _Section(
+          title: 'ID utilisateur',
+          caption: 'Vous avez conservé votre ID utilisateur ?\nEntrez votre ID utilisateur pour restaurer votre compte.',
+          content: TextFormField(
+            decoration: const InputDecoration(
+              prefixIcon: Icon(Icons.person),
+              label: Text('Votre ID utilisateur'),
             ),
-            buttonData: ButtonData(
-              label: 'Restaurer mon compte',
-              onPressed: () => context.validateForm(
-                onSuccess: () {}, // TODO
-              ),
-            ),
-          );
-        }
-      ),
+            inputFormatters: [ AppResources.maxLengthInputFormatter() ],
+            textInputAction: TextInputAction.done,
+            validator: AppResources.validatorNotEmpty,
+            onSaved: (value) => userId = value,
+          ),
+          buttonData: ButtonData(
+            label: 'Restaurer mon compte',
+            onPressed: validate,
+          ),
+        );
+      },
     );
   }
 }

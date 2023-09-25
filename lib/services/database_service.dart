@@ -3,6 +3,7 @@ import 'package:fetcher/fetcher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/utils/_utils.dart';
+import 'package:pasteque_match/utils/exceptions/database_error.dart';
 import 'package:pasteque_match/utils/exceptions/invalid_operation_exception.dart';
 
 class DatabaseService {
@@ -114,7 +115,12 @@ class UserStore with Disposable {
   /// The initial state can come from the server directly, or from a local cache.
   /// If there is state available in a local cache, it will be initially populated with the cached data,
   /// then updated with the server's data when the client has caught up with the server's state.
-  late final stream = EventStream.fromStream(_dbRef.snapshots().map((snapshot) => snapshot.data()!));
+  ///
+  /// If users does not exists, a [DatabaseError] is emitted.
+  late final stream = EventStream.fromStream(_dbRef.snapshots().map((snapshot) {
+    if (!snapshot.exists) throw DatabaseError('User $id not found');
+    return snapshot.data()!;
+  }));
 
   @override
   void dispose() {
