@@ -60,8 +60,6 @@ class AppService {
     // Check
     if (hasLocalUser) throw const InvalidOperationException('Déjà connecté');
 
-    await Future.delayed(const Duration(seconds: 2));
-
     // Create session
     UserSession? userSession;
     try {

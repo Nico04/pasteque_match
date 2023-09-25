@@ -40,6 +40,20 @@ class ScanResultPage extends StatelessWidget {
   }
 }
 
+class ResultPage extends StatelessWidget {
+  const ResultPage(this.userId, {super.key});
+
+  final String userId;
+
+  @override
+  Widget build(BuildContext context) {
+    return PmBasicPage(
+      title: 'Résultat',
+      child: _UserResult(userId),
+    );
+  }
+}
+
 class _UserResult extends StatelessWidget {
   const _UserResult(this.userId, {super.key});
 
