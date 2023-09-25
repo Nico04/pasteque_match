@@ -56,33 +56,17 @@ class AppService {
     debugPrint('[AppService] User $username registered');
   }
 
+  /// Restore user login from id.
+  /// Suppose user exists.
   Future<void> restoreUser(String userId) async {
     // Check
     if (hasLocalUser) throw const InvalidOperationException('Déjà connecté');
-
-    // Create session
-    UserSession? userSession;
-    try {
-      // Init user store
-      userSession = UserSession(userId);
-
-      // Check user exists
-      try {
-        await userSession.userStream.first;
-      } catch (e, s) {
-        reportError(e, s);
-        throw const FormValidationException('Utilisateur introuvable');
-      }
-    } catch (e) {
-      userSession?.dispose();
-      rethrow;
-    }
 
     // Save id to local storage
     await StorageService.saveUserId(userId);
 
     // Save session
-    this.userSession = userSession;
+    userSession = UserSession(userId);
     debugPrint('[AppService] User $userId restored');
   }
 

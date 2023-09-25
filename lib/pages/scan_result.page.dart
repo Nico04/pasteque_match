@@ -74,7 +74,7 @@ class _UserResult extends StatelessWidget {
         return _UserFoundResultContent(
           task: () => AppService.instance.restoreUser(userId),
           onSuccess: (_) {
-            showMessage(context, 'Bienvenue ${AppService.instance.userSession?.user?.name} !\nVotre compte a bien été restauré.');
+            showMessage(context, 'Votre compte a bien été restauré.');
             return navigateTo(context, (_) => const MainPage(), clearHistory: true);
           },
           caption: 'Utilisateur trouvé !',
