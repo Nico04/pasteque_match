@@ -41,10 +41,12 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
   Widget build(BuildContext context) {
     return PmBasicPage(
       title: 'Pastèque  🍉  Match ️',
-      action: IconButton(
-        icon: const Icon(Icons.search),
-        onPressed: () => navigateTo(context, (context) => const SearchPage()),
-      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: () => navigateTo(context, (context) => const SearchPage()),
+        ),
+      ],
       withScrollView: false,
       withPadding: false,
       child: Stack(

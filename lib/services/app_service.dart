@@ -157,7 +157,6 @@ class AppService {
   void logOut({bool warnUser = false}) {
     // Clear user session
     userSession?.dispose();
-    userSession = null;
 
     // Delete local data
     unawaited(StorageService.deleteAll());
@@ -166,7 +165,10 @@ class AppService {
     if (warnUser) showMessage(App.navigatorContext, 'Vous avez été déconnecté', isError: true);
 
     // Go back to connexion page
-    navigateTo(App.navigatorContext, (_) => const RegisterPage(), clearHistory: true);
+    navigateTo(App.navigatorContext, (_) => const RegisterPage(), clearHistory: true).then((_) {
+      // Clear session (after navigation, so widgets are disposed)
+      userSession = null;
+    });
   }
   //#endregion
 }

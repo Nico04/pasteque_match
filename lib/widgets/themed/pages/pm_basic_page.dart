@@ -3,13 +3,13 @@ import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/widgets/fill_remains_scroll_view.dart';
 
 class PmBasicPage extends StatelessWidget {
-  const PmBasicPage({super.key, this.title, this.action, required this.child, this.withPadding = true, this.withScrollView = true});
+  const PmBasicPage({super.key, this.title, this.actions, required this.child, this.withPadding = true, this.withScrollView = true});
 
   /// App bar title
   final String? title;
 
-  /// Action widget to be displayed in the app bar
-  final Widget? action;
+  /// A list of Widgets to display in a row after the [title].
+  final List<Widget>? actions;
 
   /// Content
   final Widget child;
@@ -25,7 +25,7 @@ class PmBasicPage extends StatelessWidget {
     return Scaffold(
       appBar: title == null ? null : AppBar(
         title: Text(title!),
-        actions: [if (action != null) action!],
+        actions: actions,
         forceMaterialTransparency: true,
       ),
       body: () {

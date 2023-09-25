@@ -15,10 +15,12 @@ class MatchesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return PmBasicPage(
       title: 'Matches',
-      action: IconButton(
-        icon: const Icon(Icons.settings),
-        onPressed: () => navigateTo(context, (context) => const PartnerPage()),
-      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.settings),
+          onPressed: () => navigateTo(context, (context) => const PartnerPage()),
+        ),
+      ],
       withScrollView: false,
       withPadding: false,
       child: EventFetchBuilder<User>(
