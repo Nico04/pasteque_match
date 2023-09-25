@@ -27,8 +27,8 @@ class DatabaseService {
     return userRef.id;
   }
 
-  Future<User?> getPartner(String id) async {
-    debugPrint('[DatabaseService] get partner $id');
+  Future<User?> getUser(String id) async {
+    debugPrint('[DatabaseService] get user $id');
     return (await _users.doc(id).get()).data();
   }
 

@@ -7,17 +7,19 @@ import 'scan_permission.page.dart';
 import 'scan_result.page.dart';
 
 class ScanPage extends StatelessWidget {
-  static Future<void> goToScanOrPermissionPage(BuildContext context) async {
+  static Future<void> goToScanOrPermissionPage(BuildContext context, ScanResultPageType scanType) async {
     if (await Permission.camera.isGranted) {
-      navigateTo(context, (_) => const ScanPage._());
+      navigateTo(context, (_) => ScanPage._(scanType));
     } else {
       navigateTo(context, (_) => ScanPermissionPage(
-        onGranted: () => navigateTo(context, (_) => const ScanPage._(), removePreviousRoutesAmount: 1),
+        onGranted: () => navigateTo(context, (_) => ScanPage._(scanType), removePreviousRoutesAmount: 1),
       ));
     }
   }
 
-  const ScanPage._({super.key});
+  const ScanPage._(this.type, {super.key});
+
+  final ScanResultPageType type;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class ScanPage extends StatelessWidget {
             child: _BarcodeScanner(
               onResult: (result) => navigateTo(
                 context,
-                (_) => ScanResultPage(result),
+                (_) => ScanResultPage(type, result),
                 removePreviousRoutesAmount: 1,    // Easy way to properly stop scanner while on new page
               ),
             ),

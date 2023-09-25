@@ -5,7 +5,9 @@ import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 
+import 'scan.page.dart';
 import 'main.page.dart';
+import 'scan_result.page.dart';
 
 class RestoreAccountPage extends StatelessWidget {
   const RestoreAccountPage({super.key});
@@ -29,7 +31,7 @@ class RestoreAccountPage extends StatelessWidget {
               caption: 'Vous avez encore un⸱e partenaire lié à votre compte ?\nScannez le QrCode de restauration accessible depuis le menu de votre partenaire.',
               buttonData: ButtonData(
                 label: 'Scanner un QrCode de restauration',
-                onPressed: () {}, // TODO
+                onPressed: () => ScanPage.goToScanOrPermissionPage(context, ScanResultPageType.userRestore),
               ),
             ),
 
