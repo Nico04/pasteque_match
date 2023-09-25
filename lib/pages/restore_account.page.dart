@@ -1,4 +1,4 @@
-import 'package:fetcher/fetcher.dart';
+import 'package:fetcher/fetcher.dart' show ClearFocusBackground;
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/utils/_utils.dart';
@@ -31,23 +31,7 @@ class RestoreAccountPage extends StatelessWidget {
             ),
 
             // ID section
-            _Section(
-              title: 'ID utilisateur',
-              caption: 'Vous avez conservé votre ID utilisateur ?\nEntrez votre ID utilisateur pour restaurer votre compte.',
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.person),
-                  label: Text('Votre ID utilisateur'),
-                ),
-                inputFormatters: [ AppResources.maxLengthInputFormatter() ],
-                textInputAction: TextInputAction.done,
-                validator: AppResources.validatorNotEmpty,
-              ),
-              buttonData: ButtonData(
-                label: 'Restaurer mon compte',
-                onPressed: () {}, // TODO
-              )
-            ),
+            const _UserIdSection(),
 
             // Caption
             AppResources.spacerExtraLarge,
@@ -62,12 +46,53 @@ class RestoreAccountPage extends StatelessWidget {
   }
 }
 
+class _UserIdSection extends StatefulWidget {
+  const _UserIdSection({super.key});
+
+  @override
+  State<_UserIdSection> createState() => _UserIdSectionState();
+}
+
+class _UserIdSectionState extends State<_UserIdSection> {
+  String? userId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      child: Builder(
+        builder: (context) {
+          return _Section(
+            title: 'ID utilisateur',
+            caption: 'Vous avez conservé votre ID utilisateur ?\nEntrez votre ID utilisateur pour restaurer votre compte.',
+            content: TextFormField(
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.person),
+                label: Text('Votre ID utilisateur'),
+              ),
+              inputFormatters: [ AppResources.maxLengthInputFormatter() ],
+              textInputAction: TextInputAction.done,
+              validator: AppResources.validatorNotEmpty,
+              onSaved: (value) => userId = value,
+            ),
+            buttonData: ButtonData(
+              label: 'Restaurer mon compte',
+              onPressed: () => context.validateForm(
+                onSuccess: () {}, // TODO
+              ),
+            ),
+          );
+        }
+      ),
+    );
+  }
+}
+
 class _Section extends StatelessWidget {
-  const _Section({super.key, required this.title, required this.caption, this.child, required this.buttonData});
+  const _Section({super.key, required this.title, required this.caption, this.content, required this.buttonData});
 
   final String title;
   final String caption;
-  final Widget? child;
+  final Widget? content;
   final ButtonData buttonData;
 
   @override
@@ -85,9 +110,9 @@ class _Section extends StatelessWidget {
           caption,
           style: context.textTheme.bodySmall,
         ),
-        if (child != null)...[
+        if (content != null)...[
           AppResources.spacerMedium,
-          child!,
+          content!,
         ],
         AppResources.spacerMedium,
         PmButton.fromData(buttonData),
