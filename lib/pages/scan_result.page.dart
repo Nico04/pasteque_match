@@ -30,7 +30,7 @@ class _ScanResultPageState extends State<ScanResultPage> with BlocProvider<ScanR
         if (!widget.scanResult.isValid) {
           return const _ErrorMessage(
             icon: Icons.error_outline,
-            message: 'Le QrCode n\'est pas un partenaire valide',
+            message: 'Le QrCode n\'est pas un⸱e partenaire valide',
           );
         } else {
           return FetchBuilder.basic<User?>(
@@ -39,7 +39,7 @@ class _ScanResultPageState extends State<ScanResultPage> with BlocProvider<ScanR
               if (partner == null) {
                 return const _ErrorMessage(
                   icon: Icons.sentiment_dissatisfied,
-                  message: 'Aucun partenaire trouvé',
+                  message: 'Aucun⸱e partenaire trouvé',
                 );
               }
 

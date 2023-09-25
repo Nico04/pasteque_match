@@ -37,7 +37,7 @@ class MatchesPage extends StatelessWidget {
                     AppResources.spacerMedium,
                     ElevatedButton(
                       onPressed: () => navigateTo(context, (context) => const PartnerPage()),
-                      child: const Text('Ajouter un partenaire'),
+                      child: const Text('Ajouter un⸱e partenaire'),
                     ),
                   ],
                 ),
