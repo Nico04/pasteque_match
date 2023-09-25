@@ -146,56 +146,72 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                       // Swipe cards
                       Expanded(
                         child: () {
-                          if (groups.isEmpty) return const Center(child: Text('Vous avez tout voté !'));
+                          if (groups.isEmpty) return const Center(child: Text('Aucun groupe non-voté ne correspond aux filtres actuels'));
 
-                          return EventStreamBuilder<User?>(
-                            stream: AppService.instance.userSession!.partnerStream,
-                            builder: (context, snapshot) {
-                              final partner = snapshot.data;
-                              final partnerLikes = partner?.likes.toList(growable: false) ?? [];
-                              return AppinioSwiper(
-                                key: _swiperKey,
-                                controller: _swipeController,
-                                padding: AppResources.paddingPage,
-                                cardsCount: groups.length,
-                                swipeOptions: const AppinioSwipeOptions.symmetric(horizontal: true),
-                                backgroundCardsCount: 2,
-                                cardsSpacing: 0,    // Force cards to be behind each other
-                                onSwiping: (direction) => _swipeDirectionStream.add(direction, skipSame: true, skipIfClosed: true),
-                                onSwipeCancelled: () => _swipeDirectionStream.add(null, skipSame: true, skipIfClosed: true),
-                                onSwipe: (nextCardIndex, direction) {
-                                  // Stop animation
-                                  _swipeDirectionStream.add(null, skipSame: true, skipIfClosed: true);
+                          return Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Caption when no cards left
+                              const Positioned(
+                                child: Padding(
+                                  padding: AppResources.paddingPage,
+                                  child: Text(
+                                    'Vous avez tout voté !\nChangez les filtres pour continuer.',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
 
-                                  // Get data
-                                  final group = groups[nextCardIndex - 1];
-                                  final value = swipeValueFromDirection(direction);
+                              // Cards
+                              EventStreamBuilder<User?>(
+                                stream: AppService.instance.userSession!.partnerStream,
+                                builder: (context, snapshot) {
+                                  final partner = snapshot.data;
+                                  final partnerLikes = partner?.likes.toList(growable: false) ?? [];
+                                  return AppinioSwiper(
+                                    key: _swiperKey,
+                                    controller: _swipeController,
+                                    padding: AppResources.paddingPage,
+                                    cardsCount: groups.length,
+                                    swipeOptions: const AppinioSwipeOptions.symmetric(horizontal: true),
+                                    backgroundCardsCount: 2,
+                                    cardsSpacing: 0,    // Force cards to be behind each other
+                                    onSwiping: (direction) => _swipeDirectionStream.add(direction, skipSame: true, skipIfClosed: true),
+                                    onSwipeCancelled: () => _swipeDirectionStream.add(null, skipSame: true, skipIfClosed: true),
+                                    onSwipe: (nextCardIndex, direction) {
+                                      // Stop animation
+                                      _swipeDirectionStream.add(null, skipSame: true, skipIfClosed: true);
 
-                                  // Apply vote
-                                  AppService.instance.setUserVoteSafe(group.id, value);
+                                      // Get data
+                                      final group = groups[nextCardIndex - 1];
+                                      final value = swipeValueFromDirection(direction);
+
+                                      // Apply vote
+                                      AppService.instance.setUserVoteSafe(group.id, value);
+                                    },
+                                    cardsBuilder: (context, index) {
+                                      final group = groups[index];
+                                      final doesPartnerLike = partnerLikes.contains(group.id);
+
+                                      Widget buildGroupCard([AppinioSwiperDirection? swipeDirection]) {
+                                        return _GroupCard(group, key: ValueKey(index), partnerLikesName: doesPartnerLike ? partner!.name : null, swipeDirection: swipeDirection);
+                                      }
+
+                                      // Top card
+                                      if (index == _currentGroupIndex) {
+                                        return DataStreamBuilder<AppinioSwiperDirection?>(
+                                          stream: _swipeDirectionStream,
+                                          builder: (_, direction) => buildGroupCard(direction),
+                                        );
+                                      }
+
+                                      // Background cards
+                                      return buildGroupCard();
+                                    },
+                                  );
                                 },
-                                onEnd: () => print('End'),    // TODO
-                                cardsBuilder: (context, index) {
-                                  final group = groups[index];
-                                  final doesPartnerLike = partnerLikes.contains(group.id);
-
-                                  Widget buildGroupCard([AppinioSwiperDirection? swipeDirection]) {
-                                    return _GroupCard(group, key: ValueKey(index), partnerLikesName: doesPartnerLike ? partner!.name : null, swipeDirection: swipeDirection);
-                                  }
-
-                                  // Top card
-                                  if (index == _currentGroupIndex) {
-                                    return DataStreamBuilder<AppinioSwiperDirection?>(
-                                      stream: _swipeDirectionStream,
-                                      builder: (_, direction) => buildGroupCard(direction),
-                                    );
-                                  }
-
-                                  // Background cards
-                                  return buildGroupCard();
-                                },
-                              );
-                            },
+                              )
+                            ],
                           );
                         } (),
                       ),
