@@ -62,7 +62,7 @@ class FilterPage extends StatelessWidget {
                                 ],
                                 textInputAction: TextInputAction.done,
                                 textCapitalization: TextCapitalization.characters,
-                                onChanged: (value) => filterHandler.updateFilter(firstLetter: () => value),
+                                onChanged: (value) => filterHandler.updateFilter(firstLetter: () => value.isEmpty ? null : value.toUpperCase()),
                               ),
                             ),
                             AppResources.spacerMedium,
