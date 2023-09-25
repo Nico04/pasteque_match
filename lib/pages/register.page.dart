@@ -5,6 +5,7 @@ import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 
+import 'restore_account.page.dart';
 import 'main.page.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -63,6 +64,16 @@ class _RegisterPageState extends State<RegisterPage> with BlocProvider<RegisterP
                     onFieldSubmitted: (value) => validate(),
                     validator: AppResources.validatorNotEmpty,
                     onSaved: (value) => bloc.username = value,
+                  ),
+
+                  // Restore account
+                  AppResources.spacerMedium,
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => navigateTo(context, (_) => const RestoreAccountPage()),
+                      child: const Text('Restaurer mon compte'),
+                    ),
                   ),
                 ],
               ),
