@@ -82,10 +82,11 @@ class _PartnerCard extends StatelessWidget {
                 isSecondary: true,
                 onPressed: () => openRestorePartnerDialog(context),
               ),
-              TextButton(
-                style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.red)),
+              PmButton(
+                label: 'Supprimer votre partenaire',
+                isSecondary: true,
+                color: Colors.red,
                 onPressed: () => navigateTo(context, (_) => RemovePartnerPage(AppService.instance.userSession!.partner!.name)),   // TODO listen to partner changes
-                child: const Text('Supprimer votre partenaire'),
               ),
             ],
           ],
