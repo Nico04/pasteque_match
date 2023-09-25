@@ -420,6 +420,7 @@ class SwipePageBloc with Disposable {
       int lastInsertIndex = 0;
       for (final partnerLike in partnerLikes) {
         final insertIndex = lastInsertIndex + random.nextIntInRange(2, 8);
+        if (insertIndex >= remainingNames.length) break;
         remainingNames.insert(insertIndex, AppService.names[partnerLike]!);
         lastInsertIndex = insertIndex;
       }
