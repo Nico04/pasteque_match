@@ -1,3 +1,4 @@
+import 'package:clipboard/clipboard.dart';
 import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/models/user.dart';
@@ -109,8 +110,17 @@ class _UserDataCard extends StatelessWidget {
               style: context.textTheme.titleLarge,
             ),
 
+            // Id
+            Tooltip(
+              message: 'Cet ID vous permet de restaurer votre compte si vous changez de téléphone.',
+              child: PmButton(
+                label: 'Copiez votre ID',
+                isSecondary: true,
+                onPressed: () => FlutterClipboard.copy(user.id).then(( _ ) => showMessage(context, 'ID copié')),
+              ),
+            ),
+
             // Partner
-            AppResources.spacerLarge,
             if (user.hasPartner)
               EventFetchBuilder<User?>(
                 stream: AppService.instance.userSession!.partnerStream,
