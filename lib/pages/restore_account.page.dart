@@ -21,47 +21,32 @@ class RestoreAccountPage extends StatelessWidget {
             ),
 
             // Scan section
-            AppResources.spacerExtraLarge,
-            Text(
-              'QrCode de restauration',
-              style: context.textTheme.titleMedium,
-            ),
-            AppResources.spacerTiny,
-            Text(
-              'Vous avez encore un⸱e partenaire lié à votre compte ?\nScannez le QrCode de restauration accessible depuis le menu de votre partenaire.',
-              style: context.textTheme.bodySmall,
-            ),
-            AppResources.spacerMedium,
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Scanner un QrCode de restauration'),
+            _Section(
+              title: 'Scanner un QrCode de restauration',
+              caption: 'Vous avez encore un⸱e partenaire lié à votre compte ?\nScannez le QrCode de restauration accessible depuis le menu de votre partenaire.',
+              buttonData: ButtonData(
+                label: 'Scanner un QrCode de restauration',
+                onPressed: () {}, // TODO
+              ),
             ),
 
             // ID section
-            AppResources.spacerExtraLarge,
-            Text(
-              'ID utilisateur',
-              style: context.textTheme.titleMedium,
-            ),
-            AppResources.spacerTiny,
-            Text(
-              'Vous avez conservé votre ID utilisateur ?\nEntrez votre ID utilisateur pour restaurer votre compte.',
-              style: context.textTheme.bodySmall,
-            ),
-            AppResources.spacerMedium,
-            TextFormField(
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.person),
-                label: Text('Votre ID utilisateur'),
+            _Section(
+              title: 'ID utilisateur',
+              caption: 'Vous avez conservé votre ID utilisateur ?\nEntrez votre ID utilisateur pour restaurer votre compte.',
+              child: TextFormField(
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.person),
+                  label: Text('Votre ID utilisateur'),
+                ),
+                inputFormatters: [ AppResources.maxLengthInputFormatter() ],
+                textInputAction: TextInputAction.done,
+                validator: AppResources.validatorNotEmpty,
               ),
-              inputFormatters: [ AppResources.maxLengthInputFormatter() ],
-              textInputAction: TextInputAction.done,
-              validator: AppResources.validatorNotEmpty,
-            ),
-            AppResources.spacerMedium,
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Restaurer mon compte'),
+              buttonData: ButtonData(
+                label: 'Restaurer mon compte',
+                onPressed: () {}, // TODO
+              )
             ),
 
             // Caption
@@ -73,6 +58,40 @@ class RestoreAccountPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _Section extends StatelessWidget {
+  const _Section({super.key, required this.title, required this.caption, this.child, required this.buttonData});
+
+  final String title;
+  final String caption;
+  final Widget? child;
+  final ButtonData buttonData;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AppResources.spacerExtraLarge,
+        Text(
+          title,
+          style: context.textTheme.titleMedium,
+        ),
+        AppResources.spacerTiny,
+        Text(
+          caption,
+          style: context.textTheme.bodySmall,
+        ),
+        if (child != null)...[
+          AppResources.spacerMedium,
+          child!,
+        ],
+        AppResources.spacerMedium,
+        PmButton.fromData(buttonData),
+      ],
     );
   }
 }
