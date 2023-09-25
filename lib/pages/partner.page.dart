@@ -75,7 +75,12 @@ class _PartnerCard extends StatelessWidget {
                 partner!.name,
                 style: context.textTheme.headlineMedium,
               ),
-              AppResources.spacerMedium,
+              AppResources.spacerExtraLarge,
+              PmButton(
+                label: 'Restaurer le compte de votre partenaire',
+                isSecondary: true,
+                onPressed: () => openRestorePartnerDialog(context),
+              ),
               TextButton(
                 style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.red)),
                 onPressed: () => navigateTo(context, (_) => RemovePartnerPage(AppService.instance.userSession!.partner!.name)),   // TODO listen to partner changes
@@ -84,6 +89,33 @@ class _PartnerCard extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  void openRestorePartnerDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Restaurer le compte de votre partenaire'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Caption
+            const Text('Scanner ce QrCode avec l\'appareil de votre partenaire pour restaurer son compte.'),
+
+            // QrCode
+            AppResources.spacerExtraLarge,
+            PmQrCodeWidget(ScanResult.buildCode(partner!.id)),
+          ],
+        ),
+        actions: [
+          PmButton(
+            label: 'OK',
+            isSecondary: true,
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
       ),
     );
   }
