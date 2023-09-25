@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
+import 'package:pasteque_match/widgets/_widgets.dart';
 
 import 'main.page.dart';
 
@@ -23,62 +24,57 @@ class _RegisterPageState extends State<RegisterPage> with BlocProvider<RegisterP
       onValidated: bloc.registerUser,
       onSuccess: () => navigateTo(context, (_) => const MainPage(), clearHistory: true),
       builder: (context, validate) {
-        return Scaffold(
-          body: SafeArea(
-            child: Padding(
-              padding: AppResources.paddingPage,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+        return PmBasicPage(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+
+              // Center
+              Column(
                 children: [
-
-                  // Center
-                  Column(
-                    children: [
-                      // Image
-                      Center(
-                        child: Image.asset(
-                          'assets/logo.png',
-                          width: 150,
-                          fit: BoxFit.scaleDown,
-                        ),
-                      ),
-
-                      // Caption
-                      AppResources.spacerExtraLarge,
-                      AppResources.spacerExtraLarge,
-                      Text(
-                        'Choisissez un pseudo',
-                        style: context.textTheme.titleMedium,
-                      ),
-
-                      // Field
-                      AppResources.spacerExtraLarge,
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          prefixIcon: Icon(Icons.person),
-                          hintText: 'Pseudo',
-                        ),
-                        autofocus: true,
-                        inputFormatters: [ AppResources.maxLengthInputFormatter() ],
-                        textInputAction: TextInputAction.done,
-                        onFieldSubmitted: (value) => validate(),
-                        validator: AppResources.validatorNotEmpty,
-                        onSaved: (value) => bloc.username = value,
-                      ),
-                    ],
+                  // Image
+                  Center(
+                    child: Image.asset(
+                      'assets/logo.png',
+                      width: 150,
+                      fit: BoxFit.scaleDown,
+                    ),
                   ),
 
-                  // Button
+                  // Caption
                   AppResources.spacerExtraLarge,
-                  ElevatedButton(
-                    onPressed: validate,
-                    child: const Text('Valider'),
+                  AppResources.spacerExtraLarge,
+                  Text(
+                    'Choisissez un pseudo',
+                    style: context.textTheme.titleMedium,
                   ),
 
+                  // Field
+                  AppResources.spacerExtraLarge,
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.person),
+                      hintText: 'Pseudo',
+                    ),
+                    autofocus: true,
+                    inputFormatters: [ AppResources.maxLengthInputFormatter() ],
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (value) => validate(),
+                    validator: AppResources.validatorNotEmpty,
+                    onSaved: (value) => bloc.username = value,
+                  ),
                 ],
               ),
-            ),
+
+              // Button
+              AppResources.spacerExtraLarge,
+              ElevatedButton(
+                onPressed: validate,
+                child: const Text('Valider'),
+              ),
+
+            ],
           ),
         );
       },
