@@ -5,6 +5,7 @@ import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
+import 'package:pasteque_match/widgets/_widgets.dart';
 
 class ScanResultPage extends StatefulWidget {
   ScanResultPage(String scanResult, {super.key}) : scanResult = ScanResult(scanResult);
@@ -21,16 +22,14 @@ class _ScanResultPageState extends State<ScanResultPage> with BlocProvider<ScanR
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Résultat du scan'),
-      ),
-      body: () {
+    return PmBasicPage(
+      title: 'Résultat du scan',
+      child: () {
         // Is NOT valid
         if (!widget.scanResult.isValid) {
           return const _ErrorMessage(
             icon: Icons.error_outline,
-            message: 'Le QrCode n\'est pas un⸱e partenaire valide',
+            message: 'Le QrCode n\'est pas un utilisateur valide',
           );
         } else {
           return FetchBuilder.basic<User?>(
@@ -39,7 +38,7 @@ class _ScanResultPageState extends State<ScanResultPage> with BlocProvider<ScanR
               if (partner == null) {
                 return const _ErrorMessage(
                   icon: Icons.sentiment_dissatisfied,
-                  message: 'Aucun⸱e partenaire trouvé',
+                  message: 'Partenaire introuvable',
                 );
               }
 
