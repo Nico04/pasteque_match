@@ -42,32 +42,40 @@ class FilterPage extends StatelessWidget {
 
                     // First letter
                     AppResources.spacerLarge,
-                    Row(
-                      children: [
-                        const Text('Commence par'),
-                        const Spacer(),
-                        AppResources.spacerMedium,
-                        SizedBox(
-                          width: 50,
-                          child: TextField(
-                            controller: TextEditingController(text: filters.firstLetter),
-                            textAlign: TextAlign.center,
-                            keyboardType: TextInputType.text,
-                            inputFormatters: [
-                              AppResources.onlyLettersInputFormatter,
-                              AppResources.maxLengthInputFormatter(1),
-                            ],
-                            textInputAction: TextInputAction.done,
-                            textCapitalization: TextCapitalization.characters,
-                            onChanged: (value) => filterHandler.updateFilter(firstLetter: () => value),
-                          ),
-                        ),
-                        AppResources.spacerMedium,
-                        IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () => filterHandler.updateFilter(firstLetter: () => null),
-                        ),
-                      ],
+                    ValueBuilder(
+                      valueGetter: () => TextEditingController(text: filters.firstLetter),
+                      builder: (context, controller) {
+                        return Row(
+                          children: [
+                            const Text('Commence par'),
+                            const Spacer(),
+                            AppResources.spacerMedium,
+                            SizedBox(
+                              width: 50,
+                              child: TextField(
+                                controller: controller,
+                                textAlign: TextAlign.center,
+                                keyboardType: TextInputType.text,
+                                inputFormatters: [
+                                  AppResources.onlyLettersInputFormatter,
+                                  AppResources.maxLengthInputFormatter(1),
+                                ],
+                                textInputAction: TextInputAction.done,
+                                textCapitalization: TextCapitalization.characters,
+                                onChanged: (value) => filterHandler.updateFilter(firstLetter: () => value),
+                              ),
+                            ),
+                            AppResources.spacerMedium,
+                            IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                filterHandler.updateFilter(firstLetter: () => null);
+                                controller.clear();
+                              },
+                            ),
+                          ],
+                        );
+                      },
                     ),
 
                     // Length
