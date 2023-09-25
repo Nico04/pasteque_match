@@ -199,9 +199,9 @@ class _ErrorMessage extends StatelessWidget {
           AppResources.spacerMedium,
           Text(message),
           AppResources.spacerMedium,
-          ElevatedButton(
+          PmButton(
+            label: 'Retour',
             onPressed: () => context.popToRoot(),
-            child: const Text('Retour'),
           ),
         ],
       ),

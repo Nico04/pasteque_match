@@ -70,9 +70,10 @@ class _RegisterPageState extends State<RegisterPage> with BlocProvider<RegisterP
                   AppResources.spacerMedium,
                   Align(
                     alignment: Alignment.centerRight,
-                    child: TextButton(
+                    child: PmButton(
+                      label: 'Restaurer mon compte',
+                      isSecondary: true,
                       onPressed: () => navigateTo(context, (_) => const RestoreAccountPage()),
-                      child: const Text('Restaurer mon compte'),
                     ),
                   ),
                 ],
@@ -80,9 +81,9 @@ class _RegisterPageState extends State<RegisterPage> with BlocProvider<RegisterP
 
               // Button
               AppResources.spacerExtraLarge,
-              ElevatedButton(
+              PmButton(
+                label: 'Valider',
                 onPressed: validate,
-                child: const Text('Valider'),
               ),
 
             ],

@@ -64,9 +64,9 @@ class _PartnerCard extends StatelessWidget {
               AppResources.spacerMedium,
               PmQrCodeWidget(ScanResult.buildCode(userId)),
               AppResources.spacerMedium,
-              ElevatedButton(
+              PmButton(
+                label: 'Scanner le code de votre partenaire',
                 onPressed: () => ScanPage.goToScanOrPermissionPage(context, ScanResultPageType.partner),
-                child: const Text('Scanner le code de votre partenaire'),
               ),
             ]
 

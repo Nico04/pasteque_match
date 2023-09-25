@@ -117,7 +117,9 @@ class _ReportButtonState extends State<ReportButton> {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
+    return PmButton(
+      label: 'Signaler un problème',
+      isSecondary: true,
       onPressed: () => askConfirmation(
         context: context,
         title: 'Signaler un problème',
@@ -137,7 +139,6 @@ class _ReportButtonState extends State<ReportButton> {
           showMessage(context, 'Merci, le problème est signalé !');
         },
       ),
-      child: const Text('Signaler un problème'),
     );
   }
 }

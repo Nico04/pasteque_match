@@ -39,9 +39,9 @@ class RemovePartnerPage extends StatelessWidget {
                 AppResources.spacerHuge,
                 const Text('Une fois supprimé, votre lien sera perdu.\nMais vous pourrez toujours re-faire le lien plus tard :)'),
                 AppResources.spacerMedium,
-                ElevatedButton(
+                PmButton(
+                  label: 'Supprimer votre partenaire',
                   onPressed: runTask,
-                  child: const Text('Supprimer votre partenaire'),
                 ),
               ],
             ),

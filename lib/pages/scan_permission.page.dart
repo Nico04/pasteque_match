@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/utils/_utils.dart';
+import 'package:pasteque_match/widgets/_widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ScanPermissionPage extends StatelessWidget {
@@ -34,9 +35,9 @@ class ScanPermissionPage extends StatelessWidget {
 
             AppResources.spacerHuge,
             Center(
-              child: ElevatedButton(
+              child: PmButton(
+                label: 'Suivant',
                 onPressed: () => askPermission(context),
-                child: const Text('Suivant'),
               ),
             ),
           ],

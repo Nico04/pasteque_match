@@ -37,9 +37,9 @@ class MatchesPage extends StatelessWidget {
                       'Vous n\'avez pas encore de partenaire.',
                     ),
                     AppResources.spacerMedium,
-                    ElevatedButton(
+                    PmButton(
+                      label: 'Ajouter un⸱e partenaire',
                       onPressed: () => navigateTo(context, (context) => const PartnerPage()),
-                      child: const Text('Ajouter un⸱e partenaire'),
                     ),
                   ],
                 ),
