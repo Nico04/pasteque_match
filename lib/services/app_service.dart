@@ -43,7 +43,7 @@ class AppService {
   //#region Operations
   Future<void> registerUser(String username) async {
     // Check
-    if (hasLocalUser) throw const InvalidOperationException('Already logged-in');
+    if (hasLocalUser) throw const InvalidOperationException('Déjà connecté');
 
     // Register user to database
     final userId = await database.addUser(username);
@@ -58,7 +58,9 @@ class AppService {
 
   Future<void> restoreUser(String userId) async {
     // Check
-    if (hasLocalUser) throw const InvalidOperationException('Already logged-in');
+    if (hasLocalUser) throw const InvalidOperationException('Déjà connecté');
+
+    await Future.delayed(const Duration(seconds: 2));
 
     // Create session
     UserSession? userSession;
@@ -88,7 +90,7 @@ class AppService {
 
   Future<void> choosePartner(String partnerId) async {
     // Check
-    if (userSession?.hasPartner == true) throw const InvalidOperationException('Remove your current partner first');
+    if (userSession?.hasPartner == true) throw const InvalidOperationException('Supprimez votre partenaire actuel d\'abord');
 
     // Update database
     await database.setPartner(userId!, partnerId);
