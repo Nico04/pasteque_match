@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 
@@ -54,8 +55,8 @@ class UserVote {
 }
 
 enum SwipeValue {
-  dislike(Icons.thumb_down, Colors.red),
-  like(Icons.thumb_up, Colors.green);
+  dislike(FontAwesomeIcons.solidThumbsDown, Colors.red),
+  like(FontAwesomeIcons.solidThumbsUp, Colors.green);
 
   const SwipeValue(this.icon, this.color);
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
@@ -23,7 +24,7 @@ class ScanPermissionPage extends StatelessWidget {
           children: [
             AppResources.spacerLarge,
             const Icon(
-              Icons.camera_alt,
+              FontAwesomeIcons.camera,
               size: 60,
             ),
 

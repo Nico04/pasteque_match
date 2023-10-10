@@ -1,5 +1,6 @@
 import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/app_service.dart';
@@ -17,7 +18,7 @@ class MatchesPage extends StatelessWidget {
       title: 'Matches',
       actions: [
         IconButton(
-          icon: const Icon(Icons.settings),
+          icon: const Icon(FontAwesomeIcons.gear),
           onPressed: () => navigateTo(context, (context) => const PartnerPage()),
         ),
       ],

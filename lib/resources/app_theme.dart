@@ -24,5 +24,10 @@ ThemeData buildAppTheme() {
       isDense: true,    // Allow icons to be correctly sized
       contentPadding: EdgeInsets.all(15),
     ),
+    iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(
+        iconSize: 20,
+      ),
+    ),
   );
 }

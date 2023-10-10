@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/models/filters.dart';
 import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/models/user.dart';
@@ -43,7 +44,7 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
       title: 'Pastèque  🍉  Match ️',
       actions: [
         IconButton(
-          icon: const Icon(Icons.search),
+          icon: const Icon(FontAwesomeIcons.magnifyingGlass),
           onPressed: () => navigateTo(context, (context) => const SearchPage()),
         ),
       ],
@@ -128,7 +129,7 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                               icon: Badge(
                                 isLabelVisible: filteredData.filters != null,
                                 label: Text('${filteredData.filters?.count}'),
-                                child: const Icon(Icons.filter_alt),
+                                child: const Icon(FontAwesomeIcons.filter),
                               ),
                               onPressed: () => navigateTo(context, (context) => FilterPage(bloc.filteredNameGroupsHandler)),
                             ),
@@ -301,7 +302,7 @@ class _GroupCard extends StatelessWidget {
                       name: group.name,
                       style: context.textTheme.displayMedium?.copyWith(fontFamily: 'Merienda', color: Colors.black),
                       gender: group.names.first.gender,
-                      iconSize: 40,
+                      iconSize: 35,
                     ),
                   ),
 

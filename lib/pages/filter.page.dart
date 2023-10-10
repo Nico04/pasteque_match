@@ -1,5 +1,6 @@
 import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart' hide ValueGetter;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/models/filters.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/utils/_utils.dart';
@@ -67,7 +68,7 @@ class FilterPage extends StatelessWidget {
                             ),
                             AppResources.spacerMedium,
                             IconButton(
-                              icon: const Icon(Icons.clear),
+                              icon: const Icon(FontAwesomeIcons.xmark),
                               onPressed: () {
                                 filterHandler.updateFilter(firstLetter: () => null);
                                 controller.clear();
@@ -103,7 +104,7 @@ class FilterPage extends StatelessWidget {
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.clear),
+                          icon: const Icon(FontAwesomeIcons.xmark),
                           onPressed: () => filterHandler.updateFilter(length: () => null),
                         ),
                       ],
@@ -243,7 +244,7 @@ class _SegmentedButtonFilter<T extends Object> extends StatelessWidget {
           ),
         ),
         IconButton(
-          icon: const Icon(Icons.clear),
+          icon: const Icon(FontAwesomeIcons.xmark),
           onPressed: () => onSelectionChanged(null),
         ),
       ],

@@ -1,6 +1,7 @@
 import 'package:fetcher/fetcher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/models/scan_result.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
@@ -66,7 +67,7 @@ class _UserResult extends StatelessWidget {
       builder: (context, user) {
         if (user == null) {
           return const _ErrorMessage(
-            icon: Icons.sentiment_dissatisfied,
+            icon: FontAwesomeIcons.faceFrownOpen,
             message: 'Utilisateur introuvable',
           );
         }
@@ -99,14 +100,14 @@ class _PartnerResult extends StatelessWidget {
       builder: (context, partner) {
         if (partner == null) {
           return const _ErrorMessage(
-            icon: Icons.sentiment_dissatisfied,
+            icon: FontAwesomeIcons.faceFrownOpen,
             message: 'Partenaire introuvable',
           );
         }
 
         if (partner.hasPartner) {
           return const _ErrorMessage(
-            icon: Icons.sentiment_dissatisfied,
+            icon: FontAwesomeIcons.faceFrownOpen,
             message: 'Votre partenaire est déjà pris',
           );
         }
@@ -155,7 +156,7 @@ class _UserFoundResultContent extends StatelessWidget {
           child: Column(
             children: [
               const Icon(
-                Icons.sentiment_satisfied_alt,
+                FontAwesomeIcons.faceGrin,
                 size: 60,
               ),
               AppResources.spacerMedium,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/pages/name_group.page.dart';
@@ -106,7 +107,7 @@ class VoteTile extends StatelessWidget {
           color: Colors.red,
           alignment: Alignment.centerRight,
           padding: const EdgeInsets.only(right: 20),
-          child: const Icon(Icons.delete, color: Colors.white),
+          child: const Icon(FontAwesomeIcons.trashCan, color: Colors.white),
         ),
         onDismissed: (_) => AppService.instance.clearUserVoteSafe(groupId),
         child: child,

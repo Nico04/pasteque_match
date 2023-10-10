@@ -1,3 +1,4 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:value_stream/value_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/services/app_service.dart';
@@ -105,9 +106,9 @@ class NameGroupFilters {
 }
 
 enum GroupGenderFilter {
-  atLeastOneFemale(Icons.female, 'Au moins une fille'),
-  atLeastOneMale(Icons.male, 'Au moins un garçon'),
-  epicene(Icons.transgender, 'Épicène');
+  atLeastOneFemale(FontAwesomeIcons.venus, 'Au moins une fille'),
+  atLeastOneMale(FontAwesomeIcons.mars, 'Au moins un garçon'),
+  epicene(FontAwesomeIcons.marsAndVenus, 'Épicène');
 
   const GroupGenderFilter(this.icon, this.label);
 
@@ -122,8 +123,8 @@ enum GroupGenderFilter {
 }
 
 enum BooleanFilter {    // OPTI rename ?
-  include(Icons.check, 'Au moins un'),
-  exclude(Icons.close, 'Aucun');
+  include(FontAwesomeIcons.check, 'Au moins un'),
+  exclude(FontAwesomeIcons.xmark, 'Aucun');
 
   const BooleanFilter(this.icon, this.label);
 

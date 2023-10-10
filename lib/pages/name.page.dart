@@ -16,64 +16,66 @@ class NamePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return PmBasicPage(
       title: name.name,
-      withScrollView: false,
-      child: LetterBackground(
-        letter: name.name,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
 
-            // Gender
-            GenderIcon(
-              name.gender,
-              iconSize: 70,
-            ),
-
-            // Name
-            AppResources.spacerLarge,
-            Text(
-              name.name,
-              style: context.textTheme.headlineMedium,
-              textAlign: TextAlign.center,
-            ),
-
-            // Saint
-            if (name.isSaint) ...[
-              AppResources.spacerLarge,
-              const Text(
-                'Ce prénom est un prénom de saint 😇',
-                textAlign: TextAlign.center,
-              ),
-              Text(
-                'Fête le ${name.saintDates!.map((e) => e.toDateString()).join(', ')}.',
-                textAlign: TextAlign.center,
-              ),
-            ],
-
-            // Stats
-            AppResources.spacerLarge,
-            Text(
-              'Ce prénom a été donné ${name.totalCount} fois en France depuis 1900',
-              textAlign: TextAlign.center,
-            ),
-
-            // Chart
-            AppResources.spacerLarge,
-            Text(
-              'Répartition par année',
-              style: context.textTheme.headlineSmall,
-              textAlign: TextAlign.center,
-            ),
-            AppResources.spacerSmall,
-            AspectRatio(
-              aspectRatio: 1.70,
-              child: LineChart(
-                mainData(),   // TODO Optimise this (build only once)
+          // Header
+          LetterBackground(
+            letter: name.name,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: GenderIcon(
+                name.gender,
+                iconSize: 50,
               ),
             ),
+          ),
 
+          // Name
+          AppResources.spacerLarge,
+          Text(
+            name.name,
+            style: context.textTheme.headlineMedium,
+            textAlign: TextAlign.center,
+          ),
+
+          // Saint
+          if (name.isSaint) ...[
+            AppResources.spacerLarge,
+            const Text(
+              'Ce prénom est un prénom de saint 😇',
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              'Fête le ${name.saintDates!.map((e) => e.toDateString()).join(', ')}.',
+              textAlign: TextAlign.center,
+            ),
           ],
-        ),
+
+          // Stats
+          AppResources.spacerLarge,
+          Text(
+            'Ce prénom a été donné ${name.totalCount} fois en France depuis 1900',
+            textAlign: TextAlign.center,
+          ),
+
+          // Chart
+          AppResources.spacerLarge,
+          Text(
+            'Répartition par année',
+            style: context.textTheme.headlineSmall,
+            textAlign: TextAlign.center,
+          ),
+          AppResources.spacerSmall,
+          AspectRatio(
+            aspectRatio: 1.70,
+            child: LineChart(
+              mainData(),   // TODO Optimise this (build only once)
+            ),
+          ),
+
+        ],
       ),
     );
   }

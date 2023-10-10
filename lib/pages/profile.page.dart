@@ -1,6 +1,7 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/app_service.dart';
@@ -20,7 +21,7 @@ class ProfilePage extends StatelessWidget {
       title: 'Profil',
       actions: [
         IconButton(
-          icon: const Icon(Icons.power_settings_new),
+          icon: const Icon(FontAwesomeIcons.rightFromBracket),
           color: Colors.redAccent,
           onPressed: () => askConfirmation(
             context: context,
@@ -30,7 +31,7 @@ class ProfilePage extends StatelessWidget {
           ),
         ),
         IconButton(
-          icon: const Icon(Icons.delete_outline),
+          icon: const Icon(FontAwesomeIcons.trashCan),
           color: Colors.redAccent,
           onPressed: () => askConfirmation(
             context: context,
@@ -62,7 +63,7 @@ class ProfilePage extends StatelessWidget {
                   // Votes
                   AppResources.spacerMedium,
                   PmTileButton(
-                    icon: Icons.how_to_vote,
+                    icon: FontAwesomeIcons.penToSquare,
                     label: 'Mes votes',
                     onPressed: () => navigateTo(context, (context) => const VotesPage()),
                   ),
@@ -76,7 +77,7 @@ class ProfilePage extends StatelessWidget {
                 children: [
                 // About
                   PmTileButton(
-                    icon: Icons.help_outline,
+                    icon: FontAwesomeIcons.circleQuestion,
                     label: 'À propos',
                     onPressed: () => navigateTo(context, (context) => const AboutPage()),
                   ),
@@ -131,7 +132,7 @@ class _UserDataCard extends StatelessWidget {
                        child: Text('Partenaire : ${partner?.name ?? '<Inconnu>'}'),
                      ),
                       IconButton(
-                        icon: const Icon(Icons.settings),
+                        icon: const Icon(FontAwesomeIcons.gear),
                         onPressed: () => navigateTo(context, (context) => const PartnerPage()),
                       ),
                    ],

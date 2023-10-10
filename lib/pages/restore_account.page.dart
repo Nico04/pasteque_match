@@ -1,5 +1,6 @@
 import 'package:fetcher/fetcher.dart' show ClearFocusBackground;
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
@@ -69,7 +70,7 @@ class _UserIdSectionState extends State<_UserIdSection> {
             caption: 'Vous avez conservé votre ID utilisateur ?\nEntrez votre ID utilisateur pour restaurer votre compte.',
             content: TextFormField(
               decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.person),
+                prefixIcon: Icon(FontAwesomeIcons.user),
                 label: Text('Votre ID utilisateur'),
               ),
               inputFormatters: [ AppResources.maxLengthInputFormatter() ],

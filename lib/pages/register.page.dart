@@ -1,5 +1,6 @@
 import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
@@ -55,7 +56,7 @@ class _RegisterPageState extends State<RegisterPage> with BlocProvider<RegisterP
                   AppResources.spacerExtraLarge,
                   TextFormField(
                     decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.person),
+                      prefixIcon: Icon(FontAwesomeIcons.user),
                       hintText: 'Pseudo',
                     ),
                     autofocus: true,

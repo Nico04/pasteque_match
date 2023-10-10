@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/utils/extensions_base.dart';
 
 class NameGroup {
@@ -47,8 +48,8 @@ class Name {
 typedef NameQuantityStatisticsValue = Map<String, int>;
 
 enum NameGender {
-  male(Icons.male, Colors.blue),
-  female(Icons.female, Colors.pink);
+  male(FontAwesomeIcons.mars, Colors.blue),
+  female(FontAwesomeIcons.venus, Colors.pink);
 
   const NameGender(this.icon, this.color);
 
