@@ -438,9 +438,20 @@ class SwipePageBloc with Disposable {
       final random = math.Random();
       int lastInsertIndex = 0;
       for (final partnerLike in partnerLikes) {
+        // Build random insert index
         final insertIndex = lastInsertIndex + random.nextIntInRange(2, 8);
+
+        // Stop inserting if out of bounds
         if (insertIndex >= remainingNames.length) break;
-        remainingNames.insert(insertIndex, AppService.names[partnerLike]!);
+
+        // Get corresponding group
+        final group = AppService.names[partnerLike];
+
+        // Skip if group doesn't exist anymore
+        if (group == null) continue;
+
+        // Insert group
+        remainingNames.insert(insertIndex, group);
         lastInsertIndex = insertIndex;
       }
     }

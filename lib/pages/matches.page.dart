@@ -92,8 +92,8 @@ class _MatchesListView extends StatelessWidget {
                     itemCount: matches.length,
                     itemBuilder: (context, index) {
                       final match = matches[index];
-                      final group = AppService.names[match]!;
-                      return VoteTile(group.id, group, SwipeValue.like);
+                      final group = AppService.names[match];
+                      return VoteTile(match, group, SwipeValue.like);
                     },
                     separatorBuilder: (_, __) => AppResources.spacerSmall,
                   ),
