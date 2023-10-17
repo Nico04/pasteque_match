@@ -99,20 +99,23 @@ class _MatchDialogState extends State<MatchDialog> {
 
               // Name
               AppResources.spacerMedium,
-              FittedBox(  // Auto size if too long
-                child: Text(
-                  widget.matchingName,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 100,
-                    fontFamily: 'Passions Conflict',
-                    shadows: [
-                      Shadow(
-                        color: Colors.black,
-                        offset: Offset(2, 2),
-                        blurRadius: 5,
-                      ),
-                    ],
+              Padding(
+                padding: AppResources.paddingContent,
+                child: FittedBox(  // Auto size if too long
+                  child: Text(
+                    widget.matchingName,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 100,
+                      fontFamily: 'Passions Conflict',
+                      shadows: [
+                        Shadow(
+                          color: Colors.black,
+                          offset: Offset(2, 2),
+                          blurRadius: 5,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
