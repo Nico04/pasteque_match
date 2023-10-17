@@ -65,42 +65,40 @@ class _MatchesListView extends StatelessWidget {
     return EventFetchBuilder<User?>(
       stream: AppService.instance.userSession!.partnerStream,
       builder: (context, partner) {
-        return ValueBuilder<List<String>>(
-          key: ValueKey(user.hashCode ^ partner.hashCode),
-          valueGetter: () => AppService.instance.getMatches(user.likes, partner?.likes ?? []),
-          builder: (context, matches) {
-            if (matches.isEmpty) {
-              return Container(
-                padding: AppResources.paddingPage,
-                alignment: Alignment.center,
-                child: const Text('Aucun match pour le moment'),
-              );
-            }
-            return Column(
-              children: [
-                // Stats
-                Text(
-                  'Vous avez ${matches.length} matches',
-                  style: context.textTheme.bodyMedium,
-                ),
+        // Build matches list at build time. Using ValueBuilder makes widget loose scroll state when data changes.
+        final matches = AppService.instance.getMatches(user.likes, partner?.likes ?? []);
 
-                // Content
-                AppResources.spacerSmall,
-                Expanded(
-                  child: ListView.separated(
-                    padding: AppResources.paddingPage,
-                    itemCount: matches.length,
-                    itemBuilder: (context, index) {
-                      final match = matches[index];
-                      final group = AppService.names[match];
-                      return VoteTile(match, group, SwipeValue.like);
-                    },
-                    separatorBuilder: (_, __) => AppResources.spacerSmall,
-                  ),
-                ),
-              ],
-            );
-          },
+        // Build widget
+        if (matches.isEmpty) {
+          return Container(
+            padding: AppResources.paddingPage,
+            alignment: Alignment.center,
+            child: const Text('Aucun match pour le moment'),
+          );
+        }
+        return Column(
+          children: [
+            // Stats
+            Text(
+              'Vous avez ${matches.length} matches',
+              style: context.textTheme.bodyMedium,
+            ),
+
+            // Content
+            AppResources.spacerSmall,
+            Expanded(
+              child: ListView.separated(
+                padding: AppResources.paddingPage,
+                itemCount: matches.length,
+                itemBuilder: (context, index) {
+                  final match = matches[index];
+                  final group = AppService.names[match];
+                  return VoteTile(match, group, SwipeValue.like);
+                },
+                separatorBuilder: (_, __) => AppResources.spacerSmall,
+              ),
+            ),
+          ],
         );
       },
     );

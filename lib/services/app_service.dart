@@ -35,8 +35,11 @@ class AppService {
   }
 
   List<String> getMatches(Iterable<String> userLikes, Iterable<String> partnerLikes) {
+    // Build matches
     final matchedIds = userLikes.where(partnerLikes.contains);
-    return matchedIds.toList(growable: false);
+
+    // Return sorted list
+    return matchedIds.toList(growable: false)..sort();
   }
   //#endregion
 
