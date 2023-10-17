@@ -10,6 +10,7 @@ class AppResources {
   // Padding
   static const paddingPage = EdgeInsets.all(20);
   static const paddingPageHorizontal = EdgeInsets.symmetric(horizontal: 20);
+  static const paddingPageVertical = EdgeInsets.symmetric(vertical: 20);
   static const paddingContent = EdgeInsets.all(10);
 
   // Spacer

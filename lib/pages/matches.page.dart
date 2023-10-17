@@ -1,3 +1,5 @@
+import 'package:animated_list_plus/animated_list_plus.dart';
+import 'package:animated_list_plus/transitions.dart';
 import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -87,13 +89,18 @@ class _MatchesListView extends StatelessWidget {
             // Content
             AppResources.spacerSmall,
             Expanded(
-              child: ListView.separated(
-                padding: AppResources.paddingPage,
-                itemCount: matches.length,
-                itemBuilder: (context, index) {
-                  final match = matches[index];
+              child: ImplicitlyAnimatedList<String>(
+                items: matches,
+                areItemsTheSame: (a, b) => a == b,
+                padding: AppResources.paddingPageVertical.copyWith(top: 0),
+                itemBuilder: (context, animation, match, index) {
                   final group = AppService.names[match];
-                  return VoteTile(match, group, SwipeValue.like);
+                  return SizeFadeTransition(
+                    sizeFraction: 0.3,
+                    curve: Curves.easeOut,
+                    animation: animation,
+                    child: VoteTile(match, group, SwipeValue.like, key: ValueKey(match), dismissible: false),   // Using Dismissible with AnimatedList causes issues
+                  );
                 },
                 separatorBuilder: (_, __) => AppResources.spacerSmall,
               ),
