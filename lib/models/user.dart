@@ -8,8 +8,8 @@ part 'user.g.dart';
 typedef UserVotes = Map<String, UserVote>;
 
 class User extends UserData {
-  const User({required this.id, required super.name, super.partnerId, super.votes});
-  User.fromBase({required this.id, required UserData userData}): super(name: userData.name, partnerId: userData.partnerId, votes: userData.votes);
+  const User({required this.id, required super.name, super.fcmToken, super.partnerId, super.votes});
+  User.fromBase({required this.id, required UserData userData}): super(name: userData.name, fcmToken: userData.fcmToken, partnerId: userData.partnerId, votes: userData.votes);
 
   final String id;
 
@@ -18,10 +18,13 @@ class User extends UserData {
 
 @JsonSerializable()
 class UserData {
-  const UserData({required this.name, this.partnerId, this.votes = const{}});
+  const UserData({required this.name, this.fcmToken, this.partnerId, this.votes = const{}});
 
   /// User name
   final String name;
+
+  /// User's FCM token
+  final String? fcmToken;
 
   /// Id of the user's partner, if any
   final String? partnerId;

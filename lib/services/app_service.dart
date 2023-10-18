@@ -9,10 +9,10 @@ import 'package:pasteque_match/pages/register.page.dart';
 import 'package:pasteque_match/services/database_service.dart';
 import 'package:pasteque_match/services/names_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
-import 'package:pasteque_match/utils/exceptions/form_validation_exception.dart';
 import 'package:pasteque_match/utils/exceptions/invalid_operation_exception.dart';
 import 'package:pasteque_match/utils/exceptions/unauthorized_exception.dart';
 
+import 'notification_service.dart';
 import 'storage_service.dart';
 
 class AppService {
@@ -24,14 +24,21 @@ class AppService {
   static final database = DatabaseService.instance;
   static final names = NamesService.instance.names;
 
-  // User
+  /// Notifications
+  late final NotificationService notificationService;
+
+  /// User
   UserSession? userSession;
   String? get userId => userSession?.userId;
   bool get hasLocalUser => userSession != null;
 
   void init() {
+    // Load user
     final userId = StorageService.readUserId();
     if (userId != null) userSession = UserSession(userId);
+
+    // Init notifications
+    notificationService = NotificationService(onNotificationReceived);
   }
 
   List<String> getMatches(Iterable<String> userLikes, Iterable<String> partnerLikes) {
@@ -40,6 +47,41 @@ class AppService {
 
     // Return sorted list
     return matchedIds.toList(growable: false)..sort();
+  }
+  //#endregion
+
+  //#region Notifications
+  /// Update the Firebase Messaging token for the current user, if needed.
+  /// Token should only changes when app's data is lost, or when the user logs out.
+  /// But because user has only one token while using several devices, the best and easiest way to handle this is to check the token each time the app is launched,
+  /// so that the last used device will receive notifications.
+  Future<void> updateFirebaseMessagingTokenSafe() async {
+    try {
+      // Fetch server token
+      final user = await userSession!.userStream.first;
+      final serverToken = user.fcmToken;
+
+      // Read local token
+      final localToken = await notificationService.getToken();
+
+      // Update token if needed
+      if (localToken != serverToken) {
+        await database.setUserFcmToken(userId!, localToken);
+        debugPrint('[FirebaseMessaging] token updated');
+      }
+    } catch (e, s) {
+      // Just report
+      reportError(e, s);
+    }
+  }
+
+  /// Called when a notification is received while the app is running in the foreground.
+  void onNotificationReceived(String? title, String? body) {
+    // Display notification
+    final message = [title, body].toLines();
+    if (message.isNotEmpty) {   // May be empty if the notification is silent (data-only notification)
+      showMessage(App.navigatorContext, message);
+    }
   }
   //#endregion
 

@@ -32,6 +32,14 @@ class DatabaseService {
     return (await _users.doc(id).get()).data();
   }
 
+  /// Set user's FCM token
+  Future<void> setUserFcmToken(String userId, String? token) async {
+    await _users.doc(userId).update({
+      'fcmToken': token,
+    });
+    debugPrint('[DatabaseService] User FCM token is set');
+  }
+
   /// Set user partner
   /// Update [userId]'s partner AND [partnerId]'s partner
   Future<void> setPartner(String userId, String partnerId) async {

@@ -8,6 +8,7 @@ part of 'user.dart';
 
 UserData _$UserDataFromJson(Map<String, dynamic> json) => UserData(
       name: json['name'] as String,
+      fcmToken: json['fcmToken'] as String?,
       partnerId: json['partnerId'] as String?,
       votes: (json['votes'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry(k, UserVote.fromJson(e as Map<String, dynamic>)),
@@ -26,6 +27,7 @@ Map<String, dynamic> _$UserDataToJson(UserData instance) {
     }
   }
 
+  writeNotNull('fcmToken', instance.fcmToken);
   writeNotNull('partnerId', instance.partnerId);
   val['votes'] = instance.votes;
   return val;
