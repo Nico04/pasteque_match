@@ -22,7 +22,11 @@ class PmConfirmationDialog extends StatelessWidget {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(caption),
+                Flexible(
+                  child: SingleChildScrollView(   // More small screens
+                    child: Text(caption),
+                  ),
+                ),
                 if (form != null)...[
                   AppResources.spacerMedium,
                   form!,
