@@ -88,12 +88,14 @@ class AppService {
   Future<bool> setUserVoteSafe(String groupId, SwipeValue value) async {
     debugPrint('[Swipe] ${value.name} "$groupId"');
     try {
+      final oldValue = userSession?.user?.votes[groupId]?.value;
+
       // Apply vote
       await database.setUserVote(userId!, groupId, value);
 
       // Is it a match ?
       final partner = userSession?.partner;
-      if (value.isLike && partner != null) {
+      if (value.isLike && partner != null && oldValue?.isLike != true) {
         final partnerVote = partner.votes[groupId];
         if (partnerVote?.value.isLike == true) {
           MatchDialog.open(App.navigatorContext, groupId);
