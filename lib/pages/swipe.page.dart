@@ -19,6 +19,7 @@ import 'search.page.dart';
 
 SwipeValue swipeValueFromDirection(AppinioSwiperDirection direction) => switch(direction) {
   AppinioSwiperDirection.left => SwipeValue.dislike,
+  AppinioSwiperDirection.top => SwipeValue.superLike,
   AppinioSwiperDirection.right => SwipeValue.like,
   _ => throw UnimplementedError('Unsupported swipe direction: $direction'),
 };
@@ -67,6 +68,15 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                         end: Alignment.centerRight,
                         colors: [
                           Colors.red,
+                          Colors.white,
+                        ],
+                        stops: [0, 0.6],
+                      ),
+                      AppinioSwiperDirection.top => const LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.center,
+                        colors: [
+                          Colors.yellow,
                           Colors.white,
                         ],
                         stops: [0, 0.6],
@@ -181,7 +191,7 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                                     controller: _swipeController,
                                     padding: AppResources.paddingPage,
                                     cardsCount: groups.length,
-                                    swipeOptions: const AppinioSwipeOptions.symmetric(horizontal: true),
+                                    swipeOptions: const AppinioSwipeOptions.only(left: true, top: true, right: true),
                                     backgroundCardsCount: 2,
                                     cardsSpacing: 0,    // Force cards to be behind each other
                                     onSwiping: (direction) => _swipeDirectionStream.add(direction, skipSame: true, skipIfClosed: true),
@@ -341,12 +351,18 @@ class _GroupCard extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: SwipeValue.values.map((value) {
+                    final isCurrentDirection = swipeDirection != null && value == swipeValueFromDirection(swipeDirection!);
                     return AnimatedOpacity(
                       duration: AppResources.durationAnimationMedium,
-                      opacity: swipeDirection != null && value == swipeValueFromDirection(swipeDirection!) ? 1.0 : 0.2,
-                      child: Icon(
-                        value.icon,
-                        color: value.color,
+                      opacity: isCurrentDirection ? 1.0 : 0.2,
+                      child: AnimatedScale(
+                        duration: AppResources.durationAnimationLong,
+                        curve: Curves.elasticOut,
+                        scale: isCurrentDirection ? 1.5 : 1.0,
+                        child: Icon(
+                          value.icon,
+                          color: value.color,
+                        ),
                       ),
                     );
                   }).toList(growable: false),

@@ -37,7 +37,7 @@ class UserData {
   /// Return all likes
   /// (votes with SwipeValue.like value)
   /// OPTI use basic caching ?
-  Iterable<String> get likes => votes.entries.where((entry) => entry.value.value == SwipeValue.like).map((entry) => entry.key);
+  Iterable<String> get likes => votes.entries.where((entry) => entry.value.value.isLike).map((entry) => entry.key);
 
   factory UserData.fromJson(JsonObject json) => _$UserDataFromJson(json);
   JsonObject toJson() => _$UserDataToJson(this);
@@ -56,10 +56,13 @@ class UserVote {
 
 enum SwipeValue {
   dislike(FontAwesomeIcons.solidThumbsDown, Colors.red),
+  superLike(FontAwesomeIcons.medal, Colors.yellow),
   like(FontAwesomeIcons.solidThumbsUp, Colors.green);
 
   const SwipeValue(this.icon, this.color);
 
   final IconData icon;
   final Color color;
+
+  bool get isLike => this == SwipeValue.like || this == SwipeValue.superLike;
 }

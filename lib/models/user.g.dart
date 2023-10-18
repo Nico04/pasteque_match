@@ -43,5 +43,6 @@ Map<String, dynamic> _$UserVoteToJson(UserVote instance) => <String, dynamic>{
 
 const _$SwipeValueEnumMap = {
   SwipeValue.dislike: 'dislike',
+  SwipeValue.superLike: 'superLike',
   SwipeValue.like: 'like',
 };

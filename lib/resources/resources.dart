@@ -28,6 +28,7 @@ class AppResources {
   static const borderRadiusMax = BorderRadius.all(Radius.circular(500));
 
   // Duration
+  static const durationAnimationLong = Duration(milliseconds: 500);
   static const durationAnimationMedium = Duration(milliseconds: 250);
   static const durationAnimationShort = Duration(milliseconds: 100);
 

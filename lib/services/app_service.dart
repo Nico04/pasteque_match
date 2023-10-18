@@ -93,9 +93,9 @@ class AppService {
 
       // Is it a match ?
       final partner = userSession?.partner;
-      if (value == SwipeValue.like && partner != null) {
+      if (value.isLike && partner != null) {
         final partnerVote = partner.votes[groupId];
-        if (partnerVote?.value == SwipeValue.like) {
+        if (partnerVote?.value.isLike == true) {
           MatchDialog.open(App.navigatorContext, groupId);
           return true;
         }

@@ -99,7 +99,7 @@ class _MatchesListView extends StatelessWidget {
                     sizeFraction: 0.3,
                     curve: Curves.easeOut,
                     animation: animation,
-                    child: VoteTile(match, group, SwipeValue.like, key: ValueKey(match), dismissible: false),   // Using Dismissible with AnimatedList causes issues
+                    child: VoteTile(match, group, user.votes[match]?.value, key: ValueKey(match), dismissible: false),   // Using Dismissible with AnimatedList causes issues
                   );
                 },
                 separatorBuilder: (_, __) => AppResources.spacerSmall,
