@@ -12,6 +12,7 @@ import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/utils/exceptions/invalid_operation_exception.dart';
 import 'package:pasteque_match/utils/exceptions/unauthorized_exception.dart';
 
+import 'notification_sender_service.dart';
 import 'notification_service.dart';
 import 'storage_service.dart';
 
@@ -26,6 +27,8 @@ class AppService {
 
   /// Notifications
   late final NotificationService notificationService;
+  FirebaseMessagingSenderService? _fcmSender;
+  FirebaseMessagingSenderService get fcmSender => _fcmSender ??= FirebaseMessagingSenderService();
 
   /// User
   UserSession? userSession;
@@ -139,7 +142,13 @@ class AppService {
       if (value.isLike && partner != null && oldValue?.isLike != true) {
         final partnerVote = partner.votes[groupId];
         if (partnerVote?.value.isLike == true) {
+          // Open dialog
           MatchDialog.open(App.navigatorContext, groupId);
+
+          // Send notification
+          if (partner.fcmToken != null) {
+            await fcmSender.send('Nouveau match !', 'Votre partenaire à aimé $groupId', partner.fcmToken!);
+          }
         }
       }
     } catch(e, s) {

@@ -29,6 +29,7 @@ dependencies:
   firebase_core: ^2.18.0
   firebase_crashlytics: ^3.4.0
   firebase_messaging: ^14.7.0
+  firebase_cloud_messaging_flutter: ^1.0.6
 
   # Data management
   cloud_firestore: ^4.10.0
@@ -55,6 +56,9 @@ dev_dependencies:
   # Scripting
   spreadsheet_decoder: ^2.2.0
   csv : ^5.0.1
+
+dependency_overrides:
+  collection: ^1.17.2    # TEMP remove when flutter_localizations is updated
 
 # The following section is specific to Flutter packages.
 flutter:
