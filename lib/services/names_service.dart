@@ -84,7 +84,7 @@ class NamesService {
             totalCount: row[headersMap['total']!],
             relativeCountByYear: row[headersMap['relativeCount']!],
             isHyphenated: row[headersMap['hyphenated']!],
-            saintDates: row[headersMap['saints']!].split(','),
+            saintDates: row[headersMap['saints']!],
           );
           currentGroup.names.add(name);
         } catch(e) {

@@ -19,14 +19,30 @@ class NameGroup {
 }
 
 class Name {
-  const Name({required this.name, required this.gender, required this.countByYear, required this.totalCount, required this.relativeCountByYear, required this.isHyphenated, this.saintDates});
-  Name.fromStrings({required this.name, required String gender, required String countByYear, required String totalCount, required String relativeCountByYear, required String isHyphenated, List<String>? saintDates}) :
+  const Name({
+    required this.name,
+    required this.gender,
+    required this.countByYear,
+    required this.totalCount,
+    required this.relativeCountByYear,
+    required this.isHyphenated,
+    this.saintDates,
+  });
+  Name.fromStrings({
+    required this.name,
+    required String gender,
+    required String countByYear,
+    required String totalCount,
+    required String relativeCountByYear,
+    required String isHyphenated,
+    String? saintDates,
+  }) :
     gender = NameGender.values.firstWhere((e) => e.name == gender),
     countByYear = (jsonDecode(countByYear) as Map<String, dynamic>).cast(),
     totalCount = int.parse(totalCount),
     relativeCountByYear = (jsonDecode(relativeCountByYear) as Map<String, dynamic>).cast(),
     isHyphenated = bool.parse(isHyphenated),
-    saintDates = saintDates?.map((e) => e.tryParseDate()).whereNotNull().toList(growable: false);
+    saintDates = parseSaintDates(saintDates);
 
   final String name;    // TODO rename to label ?
   final NameGender gender;
@@ -41,6 +57,8 @@ class Name {
   bool get isSaint => saintDates != null && saintDates!.isNotEmpty;
   NameRarity get rarity => NameRarity.common;   // TODO
   NameAge get age => NameAge.ancient;   // TODO
+
+  static List<DateTime>? parseSaintDates(String? rawDates) => rawDates?.split(',').map((e) => e.tryParseDate()).whereNotNull().toList(growable: false);
 }
 
 /// Map<Year, Quantity>.

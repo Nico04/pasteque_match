@@ -473,11 +473,17 @@ void addSaints(spreadsheet) {
       final dates = saints[name];
       if (dates == null) return;
 
+      // Sort
+      if (dates.length >= 2) {
+        dates.sort();
+      }
+
       // Add saints
       spreadsheet.updateCell(databaseSheetName, saintsColumnIndex, rowIndex, dates.map((e) => '${e.day}-${e.month}').join(','));
     },
   );
 }
+
 
 (File, SpreadsheetDecoder) _readSpreadsheetFile(String filepath) {
   final file = File(filepath);
