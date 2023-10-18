@@ -223,3 +223,16 @@ class NullableTimestampConverter implements JsonConverter<DateTime?, Timestamp?>
   @override
   Timestamp? toJson(DateTime? date) => date != null ? Timestamp.fromDate(date) : null;
 }
+
+class RangeValuesConverter implements JsonConverter<RangeValues, String> {
+  const RangeValuesConverter();
+
+  @override
+  RangeValues fromJson(String value) {
+    final parts = value.split('|');
+    return RangeValues(double.parse(parts[0]), double.parse(parts[1]));
+  }
+
+  @override
+  String toJson(RangeValues value) => '${value.start}|${value.end}';
+}

@@ -1,8 +1,12 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/services/app_service.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:pasteque_match/utils/_utils.dart';
 
 import 'name.dart';
+
+part 'filters.g.dart';
 
 class FilteredNameGroups {
   FilteredNameGroups([this.filters]) {
@@ -17,6 +21,7 @@ class FilteredNameGroups {
   Map<String, NameGroup> _buildFilteredList() => filters == null ? all : Map.fromEntries(all.entries.where((e) => filters!.match(e.value)));
 }
 
+@JsonSerializable(converters: [RangeValuesConverter()])
 class NameGroupFilters {
   const NameGroupFilters({
     this.firstLetter,
@@ -70,6 +75,9 @@ class NameGroupFilters {
     saint: saint == null ? this.saint : saint(),
     groupGender: groupGender == null ? this.groupGender : groupGender(),
   );
+
+  factory NameGroupFilters.fromJson(JsonObject json) => _$NameGroupFiltersFromJson(json);
+  JsonObject toJson() => _$NameGroupFiltersToJson(this);
 }
 
 enum GroupGenderFilter {

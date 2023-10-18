@@ -9,6 +9,7 @@ import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/app_service.dart';
+import 'package:pasteque_match/services/storage_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 
@@ -135,7 +136,7 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                                 final holder = ValueHolder(bloc.filteredNameGroups.value);
                                 await navigateTo<bool>(context, (context) => FilterPage(holder));   // Set type so it completely await navigation return.
                                 if (holder.hasChanged) {
-                                  bloc.filteredNameGroups.add(holder.value);
+                                  bloc.applyFilters(holder.value);
                                 }
                               },
                             ),
@@ -415,10 +416,18 @@ class _SwipeButtons extends StatelessWidget {
 
 class SwipePageBloc with Disposable {
   SwipePageBloc() {
-    filteredNameGroups = DataStream<FilteredNameGroups>(FilteredNameGroups());
+    filteredNameGroups = DataStream<FilteredNameGroups>(FilteredNameGroups(StorageService.readFilters()));
   }
 
   late final DataStream<FilteredNameGroups> filteredNameGroups;
+
+  void applyFilters(FilteredNameGroups filteredNameGroups) {
+    // Update UI
+    this.filteredNameGroups.add(filteredNameGroups);
+
+    // Save
+    StorageService.saveFilters(filteredNameGroups.filters);
+  }
 
   Future<List<NameGroup>> getRemainingNames(Map<String, NameGroup> filteredNames) async {
     // Init data

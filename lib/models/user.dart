@@ -40,7 +40,7 @@ class UserData {
   Iterable<String> get likes => votes.entries.where((entry) => entry.value.value == SwipeValue.like).map((entry) => entry.key);
 
   factory UserData.fromJson(JsonObject json) => _$UserDataFromJson(json);
-  Map<String, dynamic> toJson() => _$UserDataToJson(this);
+  JsonObject toJson() => _$UserDataToJson(this);
 }
 
 @JsonSerializable()
