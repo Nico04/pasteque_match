@@ -126,8 +126,7 @@ class AppService {
   Future<void> removePartner() => database.removePartner(userId!, userSession!.partner!.id);
 
   /// Apply user's vote.
-  /// Return true if it's a match.
-  Future<bool> setUserVoteSafe(String groupId, SwipeValue value) async {
+  Future<void> setUserVoteSafe(String groupId, SwipeValue value) async {
     debugPrint('[Swipe] ${value.name} "$groupId"');
     try {
       final oldValue = userSession?.user?.votes[groupId]?.value;
@@ -141,7 +140,6 @@ class AppService {
         final partnerVote = partner.votes[groupId];
         if (partnerVote?.value.isLike == true) {
           MatchDialog.open(App.navigatorContext, groupId);
-          return true;
         }
       }
     } catch(e, s) {
@@ -151,7 +149,6 @@ class AppService {
       // Update UI
       showError(App.navigatorContext, e);
     }
-    return false;
   }
 
   Future<void> clearUserVoteSafe(String groupId) async {
