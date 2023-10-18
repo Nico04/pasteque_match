@@ -1,15 +1,23 @@
-import 'package:fetcher/fetcher.dart';
-import 'package:flutter/material.dart' hide ValueGetter;
+import 'package:fetcher/fetcher.dart' hide ValueGetter;
+import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/models/filters.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 
-class FilterPage extends StatelessWidget {
-  const FilterPage(this.filterHandler, {super.key});
+class FilterPage extends StatefulWidget {
+  const FilterPage(this.holder, {super.key});
 
-  final FilteredNameGroupsHandler filterHandler;
+  final ValueHolder<FilteredNameGroups> holder;
+
+  @override
+  State<FilterPage> createState() => _FilterPageState();
+}
+
+class _FilterPageState extends State<FilterPage> with BlocProvider<FilterPage, FilterPageBloc> {
+  @override
+  initBloc() => FilterPageBloc(widget.holder);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +31,7 @@ class FilterPage extends StatelessWidget {
 
             // Content
             DataStreamBuilder<FilteredNameGroups>(
-              stream: filterHandler.dataStream,
+              stream: bloc.dataStream,
               builder: (context, filteredData) {
                 final filters = filteredData.filters ?? const NameGroupFilters();
                 return Column(
@@ -63,14 +71,14 @@ class FilterPage extends StatelessWidget {
                                 ],
                                 textInputAction: TextInputAction.done,
                                 textCapitalization: TextCapitalization.characters,
-                                onChanged: (value) => filterHandler.updateFilter(firstLetter: () => value.isEmpty ? null : value.toUpperCase()),
+                                onChanged: (value) => bloc.updateFilter(firstLetter: () => value.isEmpty ? null : value.toUpperCase()),
                               ),
                             ),
                             AppResources.spacerMedium,
                             IconButton(
                               icon: const Icon(FontAwesomeIcons.xmark),
                               onPressed: () {
-                                filterHandler.updateFilter(firstLetter: () => null);
+                                bloc.updateFilter(firstLetter: () => null);
                                 controller.clear();
                               },
                             ),
@@ -92,7 +100,7 @@ class FilterPage extends StatelessWidget {
                               _NameLengthSlider(
                                 key: ValueKey(filters.length),
                                 initialValue: filters.length,
-                                onChanged: (values) => filterHandler.updateFilter(length: () => values),
+                                onChanged: (values) => bloc.updateFilter(length: () => values),
                               ),
 
                               // Label
@@ -105,7 +113,7 @@ class FilterPage extends StatelessWidget {
                         ),
                         IconButton(
                           icon: const Icon(FontAwesomeIcons.xmark),
-                          onPressed: () => filterHandler.updateFilter(length: () => null),
+                          onPressed: () => bloc.updateFilter(length: () => null),
                         ),
                       ],
                     ),
@@ -118,7 +126,7 @@ class FilterPage extends StatelessWidget {
                       selected: filters.hyphenated,
                       iconBuilder: (value) => value.icon,
                       labelBuilder: (value) => value.label,
-                      onSelectionChanged: (value) => filterHandler.updateFilter(hyphenated: () => value),
+                      onSelectionChanged: (value) => bloc.updateFilter(hyphenated: () => value),
                     ),
 
                     // Saint
@@ -129,7 +137,7 @@ class FilterPage extends StatelessWidget {
                       selected: filters.saint,
                       iconBuilder: (value) => value.icon,
                       labelBuilder: (value) => value.label,
-                      onSelectionChanged: (value) => filterHandler.updateFilter(saint: () => value),
+                      onSelectionChanged: (value) => bloc.updateFilter(saint: () => value),
                     ),
 
                     // Gender
@@ -140,7 +148,7 @@ class FilterPage extends StatelessWidget {
                       selected: filters.groupGender,
                       iconBuilder: (value) => value.icon,
                       labelBuilder: (value) => value.label,
-                      onSelectionChanged: (value) => filterHandler.updateFilter(groupGender: () => value),
+                      onSelectionChanged: (value) => bloc.updateFilter(groupGender: () => value),
                     ),
 
                   ],
@@ -249,5 +257,47 @@ class _SegmentedButtonFilter<T extends Object> extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+
+class FilterPageBloc with Disposable {
+  FilterPageBloc(this.holder) {
+    dataStream = DataStream<FilteredNameGroups>(holder.value);
+  }
+
+  final ValueHolder<FilteredNameGroups> holder;
+
+  late final DataStream<FilteredNameGroups> dataStream;
+
+  void updateFilter({
+    ValueGetter<String?>? firstLetter,
+    ValueGetter<RangeValues?>? length,
+    ValueGetter<BooleanFilter?>? hyphenated,
+    ValueGetter<BooleanFilter?>? saint,
+    ValueGetter<GroupGenderFilter?>? groupGender,
+  }) {
+    // Build new filter object
+    NameGroupFilters? filters = (dataStream.value.filters ?? const NameGroupFilters()).copyWith(
+      firstLetter: firstLetter,
+      length: length,
+      hyphenated: hyphenated,
+      saint: saint,
+      groupGender: groupGender,
+    );
+    if (filters.isEmpty) filters = null;
+
+    // Update data
+    final filteredNameGroups = FilteredNameGroups(filters);
+    holder.value = filteredNameGroups;
+
+    // Update UI
+    dataStream.add(filteredNameGroups);
+  }
+
+  @override
+  void dispose() {
+    dataStream.close();
+    super.dispose();
   }
 }

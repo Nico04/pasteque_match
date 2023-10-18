@@ -1,41 +1,8 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:value_stream/value_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/services/app_service.dart';
-import 'package:pasteque_match/utils/_utils.dart';
 
 import 'name.dart';
-
-class FilteredNameGroupsHandler with Disposable {
-  final dataStream = DataStream<FilteredNameGroups>(FilteredNameGroups());
-
-  void updateFilter({
-    ValueGetter<String?>? firstLetter,
-    ValueGetter<RangeValues?>? length,
-    ValueGetter<BooleanFilter?>? hyphenated,
-    ValueGetter<BooleanFilter?>? saint,
-    ValueGetter<GroupGenderFilter?>? groupGender,
-  }) {
-    // Build new filter object
-    NameGroupFilters? filters = (dataStream.value.filters ?? const NameGroupFilters()).copyWith(
-      firstLetter: firstLetter,
-      length: length,
-      hyphenated: hyphenated,
-      saint: saint,
-      groupGender: groupGender,
-    );
-    if (filters.isEmpty) filters = null;
-
-    // Update data
-    dataStream.add(FilteredNameGroups(filters));
-  }
-
-  @override
-  void dispose() {
-    dataStream.close();
-    super.dispose();
-  }
-}
 
 class FilteredNameGroups {
   FilteredNameGroups([this.filters]) {
@@ -135,4 +102,17 @@ enum BooleanFilter {    // OPTI rename ?
     include => group.names.any(valueGetter),
     exclude => group.names.every((n) => !valueGetter(n)),
   };
+}
+
+class ValueHolder<T> {    // OPTI move to a more generic file
+  ValueHolder(this._value);
+
+  bool hasChanged = false;
+
+  T _value;
+  T get value => _value;
+  set value(T value) {
+    _value = value;
+    hasChanged = true;
+  }
 }

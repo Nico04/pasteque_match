@@ -89,7 +89,7 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
 
           // Content
           DataStreamBuilder<FilteredNameGroups>(
-            stream: bloc.filteredNameGroupsHandler.dataStream,
+            stream: bloc.filteredNameGroups,
             builder: (context, filteredData) {
               return FetchBuilder.basic<List<NameGroup>>(
                 key: ObjectKey(filteredData),
@@ -131,7 +131,13 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                                 label: Text('${filteredData.filters?.count}'),
                                 child: const Icon(FontAwesomeIcons.filter),
                               ),
-                              onPressed: () => navigateTo(context, (context) => FilterPage(bloc.filteredNameGroupsHandler)),
+                              onPressed: () async {
+                                final holder = ValueHolder(bloc.filteredNameGroups.value);
+                                await navigateTo<bool>(context, (context) => FilterPage(holder));   // Set type so it completely await navigation return.
+                                if (holder.hasChanged) {
+                                  bloc.filteredNameGroups.add(holder.value);
+                                }
+                              },
                             ),
                           ],
                         ),
@@ -408,7 +414,11 @@ class _SwipeButtons extends StatelessWidget {
 
 
 class SwipePageBloc with Disposable {
-  final filteredNameGroupsHandler = FilteredNameGroupsHandler();
+  SwipePageBloc() {
+    filteredNameGroups = DataStream<FilteredNameGroups>(FilteredNameGroups());
+  }
+
+  late final DataStream<FilteredNameGroups> filteredNameGroups;
 
   Future<List<NameGroup>> getRemainingNames(Map<String, NameGroup> filteredNames) async {
     // Init data
@@ -456,12 +466,13 @@ class SwipePageBloc with Disposable {
       }
     }
 
+    debugPrint('[SwipePageBloc] ${remainingNames.length} remaining names built');
     return remainingNames;
   }
 
   @override
   void dispose() {
-    filteredNameGroupsHandler.dispose();
+    filteredNameGroups.close();
     super.dispose();
   }
 }
