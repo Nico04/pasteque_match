@@ -33,4 +33,10 @@ class StorageService {
     }
   }
   //#endregion
+
+  //#region SortType
+  static const _voteSortTypeKey = 'voteSortType';
+  static Future<void> saveVoteSortType(int value) => _storage.setInt(_voteSortTypeKey, value);
+  static int? get voteSortType => _storage.getInt(_voteSortTypeKey);
+  //#endregion
 }

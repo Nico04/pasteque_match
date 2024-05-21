@@ -51,6 +51,12 @@ class AppService {
     // Return sorted list
     return matchedIds.toList(growable: false)..sort();
   }
+
+  /// Save properties sort type to local storage
+  Future<void> saveVoteSortType(VoteSortType value) => StorageService.saveVoteSortType(value.index);
+
+  /// Get properties sort type from local storage
+  VoteSortType get voteSortType => VoteSortType.values.elementAtOrNull(StorageService.voteSortType ?? -1) ?? VoteSortType.values.first;
   //#endregion
 
   //#region Notifications

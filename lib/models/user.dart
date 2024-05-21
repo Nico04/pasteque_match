@@ -69,3 +69,13 @@ enum SwipeValue {
 
   bool get isLike => this == SwipeValue.like || this == SwipeValue.superLike;
 }
+
+enum VoteSortType {
+  name('Alphabétique'),
+  date('Date de vote'),
+  value('Valeur de vote');
+
+  const VoteSortType(this.label);
+
+  final String label;
+}
