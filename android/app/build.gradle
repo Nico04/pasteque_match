@@ -32,7 +32,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion 33  // The plugin permission_handler_android requires Android SDK version 33.
+    compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {

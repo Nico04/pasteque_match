@@ -22,9 +22,9 @@ class _RegisterPageState extends State<RegisterPage> with BlocProvider<RegisterP
 
   @override
   Widget build(BuildContext context) {
-    return AsyncForm(
+    return AsyncForm<void>(
       onValidated: bloc.registerUser,
-      onSuccess: () => navigateTo(context, (_) => const MainPage(), clearHistory: true),
+      onSuccess: (_) => navigateTo(context, (_) => const MainPage(), clearHistory: true),
       builder: (context, validate) {
         return PmBasicPage(
           child: Column(
