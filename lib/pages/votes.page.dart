@@ -55,23 +55,22 @@ class _VotesPageState extends State<VotesPage>  with BlocProvider<VotesPage, Vot
               AppResources.spacerSmall,
               Expanded(
                 child: DataStreamBuilder<VoteSortType>(
-                  key: ObjectKey(votes),
                   stream: bloc.sortType,
                   builder: (context, sortType) {
-                    return ValueBuilder<List<MapEntry<String, UserVote>>>(
-                      key: ValueKey(sortType),
-                      valueGetter: () => bloc.sortProperties(votes.entries.toList(), sortType),
-                      builder: (context, sortedVoteEntries) {
-                        return ListView.builder(
-                          itemCount: votes.length,
-                          itemBuilder: (context, index) {
-                            final voteEntry = sortedVoteEntries[index];
-                            final groupId = voteEntry.key;
-                            final vote = voteEntry.value;
-                            final group = AppService.names[groupId];
-                            return VoteTile(groupId, group, vote.value, key: ValueKey(groupId));
-                          },
-                        );
+                    // Sort list
+                    // Using ValueBuilder with a key for rebuild is more optimized, but it makes the ListView loose his scroll state when a vote changes, which is not wanted.
+                    final sortedVoteEntries = bloc.sortProperties(votes.entries.toList(), sortType);
+
+                    // Build list
+                    return ListView.builder(
+                      key: ValueKey(sortType),    // Reset scroll position when sort type changes
+                      itemCount: votes.length,
+                      itemBuilder: (context, index) {
+                        final voteEntry = sortedVoteEntries[index];
+                        final groupId = voteEntry.key;
+                        final vote = voteEntry.value;
+                        final group = AppService.names[groupId];
+                        return VoteTile(groupId, group, vote.value, key: ValueKey(groupId));
                       },
                     );
                   },
