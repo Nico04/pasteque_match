@@ -164,7 +164,7 @@ Future<void> reportError(Object exception, StackTrace stack, {dynamic reason}) a
     await FirebaseCrashlytics.instance.recordError(exception, stack, reason: reason);
   } else {
     // Just log
-    debugPrint('Unreported error thrown: $exception');
+    debugPrint('Unreported error thrown: $exception\n$stack');
   }
 }
 
