@@ -72,8 +72,7 @@ enum SwipeValue {
 
 enum VoteSortType {
   name('Alphabétique'),
-  date('Date de vote'),
-  value('Valeur de vote');
+  date('Date de vote');
 
   const VoteSortType(this.label);
 

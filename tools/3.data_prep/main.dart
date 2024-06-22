@@ -23,7 +23,7 @@ void main(List<String> rawArgs) async {
   final inputFilePath = rawArgs[0];
 
   // Load file
-  print('Load file');
+  print('Load file : $inputFilePath');
   final (file, spreadsheet) = _readSpreadsheetFile(inputFilePath);
 
   // Compute total count
@@ -66,7 +66,7 @@ void main(List<String> rawArgs) async {
   print('Save file');
   if (_askConfirmation('Do you want to save the file ?')) {
     await file.writeAsBytes(spreadsheet.encode());
-    print('File saved');
+    print('File saved : ${file.path}');
   }
 
   // Exit program

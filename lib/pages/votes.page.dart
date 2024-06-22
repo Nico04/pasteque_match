@@ -43,40 +43,66 @@ class _VotesPageState extends State<VotesPage>  with BlocProvider<VotesPage, Vot
             return const Center(child: Text('Aucun votes'));
           }
 
-          return Column(
-            children: [
-              // Stats
-              Text(
-                'Vous avez voté pour ${votes.length} prénoms,\ndont ${user.likes.length} prénoms que vous aimez.',
-                style: context.textTheme.bodyMedium,
-              ),
+          return DataStreamBuilder<Set<SwipeValue>>(
+            stream: bloc.filters,
+            builder: (context, filters) {
+              return FilteredView<MapEntry<String, UserVote>, Set<SwipeValue>>(
+                list: votes.entries,
+                filterValue: filters,
+                ignoreWhen: bloc.ignoreFilterWhen,
+                filter: (item, filter) => filter.contains(item.value.value),
+                builder: (context, filteredItems) {
+                  return Column(
+                    children: [
+                      // Filters
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: SwipeValue.values.map<Widget>((value) {
+                          return FilterChip(
+                            label: Icon(value.icon, color: value.color, size: 20),
+                            selected: filters.contains(value),
+                            onSelected: (selected) => bloc.onFilterChanged(value, selected),
+                          );
+                        }).toList()..insertBetween(AppResources.spacerSmall),
+                      ),
 
-              // Content
-              AppResources.spacerSmall,
-              Expanded(
-                child: DataStreamBuilder<VoteSortType>(
-                  stream: bloc.sortType,
-                  builder: (context, sortType) {
-                    // Sort list
-                    // Using ValueBuilder with a key for rebuild is more optimized, but it makes the ListView loose his scroll state when a vote changes, which is not wanted.
-                    final sortedVoteEntries = bloc.sortProperties(votes.entries.toList(), sortType);
+                      // Filters caption
+                      AppResources.spacerSmall,
+                      Text(
+                        'Affichage de ${filteredItems.length} votes',
+                        style: context.textTheme.bodySmall,
+                      ),
 
-                    // Build list
-                    return ListView.builder(
-                      key: ValueKey(sortType),    // Reset scroll position when sort type changes
-                      itemCount: votes.length,
-                      itemBuilder: (context, index) {
-                        final voteEntry = sortedVoteEntries[index];
-                        final groupId = voteEntry.key;
-                        final vote = voteEntry.value;
-                        final group = AppService.names[groupId];
-                        return VoteTile(groupId, group, vote.value, key: ValueKey(groupId));
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
+                      // Content
+                      AppResources.spacerSmall,
+                      Expanded(
+                        child: DataStreamBuilder<VoteSortType>(
+                          stream: bloc.sortType,
+                          builder: (context, sortType) {
+                            // Sort list
+                            // Using ValueBuilder with a key for rebuild is more optimized, but it makes the ListView loose his scroll state when a vote changes, which is not wanted.
+                            final sortedVoteEntries = bloc.sortProperties(filteredItems.toList(), sortType);
+
+                            // Build list
+                            return ListView.builder(
+                              key: ValueKey(sortType),    // Reset scroll position when sort type changes
+                              itemCount: filteredItems.length,
+                              itemBuilder: (context, index) {
+                                final voteEntry = sortedVoteEntries[index];
+                                final groupId = voteEntry.key;
+                                final vote = voteEntry.value;
+                                final group = AppService.names[groupId];
+                                return VoteTile(groupId, group, vote.value, key: ValueKey(groupId));
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
           );
         },
       ),
@@ -127,16 +153,21 @@ class VotesPageBloc with Disposable {
     sortType.listen(AppService.instance.saveVoteSortType);
   }
 
+  final filters = DataStream(SwipeValue.values.toSet());
+
   final sortType = DataStream(AppService.instance.voteSortType);
+
+  bool ignoreFilterWhen(Set<SwipeValue> filterValue) => filterValue.isEmpty || filterValue.length == SwipeValue.values.length;
+  void onFilterChanged(SwipeValue value, bool selected) => filters.add(selected ? (filters.value..add(value)) : (filters.value..remove(value)));
 
   List<MapEntry<String, UserVote>> sortProperties(List<MapEntry<String, UserVote>> votes, VoteSortType sortType) => switch (sortType) {
     VoteSortType.name => votes..sort((a, b) => a.key.compareTo(b.key)),
     VoteSortType.date => votes..sort((a, b) => b.value.date.compareTo(a.value.date)),
-    VoteSortType.value => votes..sort((a, b) => b.value.value.index.compareTo(a.value.value.index)),
   };
 
   @override
   void dispose() {
+    filters.close();
     sortType.close();
     super.dispose();
   }
