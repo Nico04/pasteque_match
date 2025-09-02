@@ -10,7 +10,7 @@ ThemeData buildAppTheme() {
   return ThemeData(
     colorScheme: ColorScheme.fromSeed(seedColor: AppResources.colorBackground),
     useMaterial3: true,
-    cardTheme: const CardTheme(
+    cardTheme: const CardThemeData(
       clipBehavior: Clip.antiAlias,
       margin: EdgeInsets.zero,
     ),
