@@ -1,4 +1,4 @@
-import 'package:fetcher/fetcher.dart';
+import 'package:fetcher/fetcher_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';

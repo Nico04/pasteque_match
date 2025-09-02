@@ -1,6 +1,6 @@
+import 'package:fetcher/extra.dart';
 import 'package:flutter/material.dart';
 import 'package:pasteque_match/resources/_resources.dart';
-import 'package:pasteque_match/utils/_utils.dart';
 
 /// Confirmation dialog, with an optional form.
 class PmConfirmationDialog extends StatelessWidget {

@@ -1,5 +1,5 @@
+import 'package:fetcher/extra.dart';
 import 'package:flutter/material.dart';
-import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/lazy_indexed_stack.dart';
 
 class PmTabbedPage extends StatefulWidget {
@@ -27,7 +27,7 @@ class PmTabbedPageState extends State<PmTabbedPage> {
 
   void setIndex(int index) {
     if (index == _index) return;
-    context.clearFocus2(); // basic clearFocus() doesn't work here.
+    context.clearFocus();
     setState(() {
       _index = index;
     });

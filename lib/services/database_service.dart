@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fetcher/fetcher.dart';
+import 'package:fetcher/fetcher_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/utils/_utils.dart';

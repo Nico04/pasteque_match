@@ -1,4 +1,4 @@
-import 'package:fetcher/fetcher.dart';
+import 'package:fetcher/fetcher_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/resources/_resources.dart';
@@ -15,7 +15,7 @@ class RemovePartnerPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return PmBasicPage(
       title: 'Suppression du partenaire',
-      child: AsyncTaskBuilder<void>(
+      child: SubmitBuilder<void>(
         task: AppService.instance.removePartner,
         onSuccess: (_) async {
           showMessage(context, 'Partenaire supprimé');

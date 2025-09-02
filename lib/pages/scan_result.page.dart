@@ -1,4 +1,4 @@
-import 'package:fetcher/fetcher.dart';
+import 'package:fetcher/fetcher_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -62,7 +62,7 @@ class _UserResult extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FetchBuilder.basic<User?>(
+    return FetchBuilder<User?>(
       task: () => AppService.database.getUser(userId),
       builder: (context, user) {
         if (user == null) {
@@ -95,7 +95,7 @@ class _PartnerResult extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FetchBuilder.basic<User?>(
+    return FetchBuilder<User?>(
       task: () => AppService.database.getUser(partnerId),
       builder: (context, partner) {
         if (partner == null) {
@@ -148,7 +148,7 @@ class _UserFoundResultContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AsyncTaskBuilder<void>(
+    return SubmitBuilder<void>(
       task: task,
       onSuccess: onSuccess,
       builder: (context, runTask) {

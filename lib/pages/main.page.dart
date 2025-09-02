@@ -1,7 +1,7 @@
+import 'package:fetcher/fetcher_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/services/app_service.dart';
-import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/themed/pages/pm_tabbed_page.dart';
 
 import 'swipe.page.dart';

@@ -1,4 +1,4 @@
-import 'package:fetcher/fetcher.dart' hide ValueGetter;
+import 'package:fetcher/fetcher_bloc.dart';
 import 'package:flutter/material.dart';
 
 /// Simple widget that build value from [valueGetter] at init,

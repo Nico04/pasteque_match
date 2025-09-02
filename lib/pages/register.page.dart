@@ -1,4 +1,4 @@
-import 'package:fetcher/fetcher.dart';
+import 'package:fetcher/fetcher_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/resources/_resources.dart';
@@ -22,7 +22,7 @@ class _RegisterPageState extends State<RegisterPage> with BlocProvider<RegisterP
 
   @override
   Widget build(BuildContext context) {
-    return AsyncForm<void>(
+    return SubmitFormBuilder<void>(
       onValidated: bloc.registerUser,
       onSuccess: (_) => navigateTo(context, (_) => const MainPage(), clearHistory: true),
       builder: (context, validate) {

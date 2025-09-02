@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
-import 'package:appinio_swiper/appinio_swiper.dart';
-import 'package:fetcher/fetcher.dart';
+import 'package:fetcher/fetcher_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/models/filters.dart';
 import 'package:pasteque_match/models/name.dart';
@@ -102,7 +102,7 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
           DataStreamBuilder<FilteredNameGroups>(
             stream: bloc.filteredNameGroups,
             builder: (context, filteredData) {
-              return FetchBuilder.basic<List<NameGroup>>(
+              return FetchBuilder<List<NameGroup>>(
                 key: ObjectKey(filteredData),
                 task: () => bloc.getRemainingNames(filteredData.filtered),
                 builder: (context, groups) {

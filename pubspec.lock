@@ -301,10 +301,10 @@ packages:
     dependency: "direct main"
     description:
       name: fetcher
-      sha256: ccaba377ddfdb8c7986a06f42dc9854b207eac7325fd3f94c230187bd2db13ba
+      sha256: b30a2900fd59e8005dd9e22407c83b79b452e4089221e117cd1a400b2a9f75e2
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "4.3.1"
   ffi:
     dependency: transitive
     description:
@@ -918,10 +918,18 @@ packages:
     dependency: transitive
     description:
       name: value_stream
-      sha256: aad843f2dab2fa167a26c1b99c4d077340241c9f2c2f41c2e643a3c60daf4f04
+      sha256: f84db2047725cb6b5787a4d52d06459114ef15d287ef77201e70da656356e0c0
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.0"
+    version: "1.1.0"
+  value_stream_flutter:
+    dependency: transitive
+    description:
+      name: value_stream_flutter
+      sha256: "8bfa7e9bcc53ab33df294046be24fe286bf9932fab28e9fddf3c78ff11561ce8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   vector_math:
     dependency: transitive
     description:
