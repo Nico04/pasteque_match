@@ -177,17 +177,15 @@ bool shouldReportException(Object? exception) =>
 
 /// Throw a [ConnectivityException] if there is not internet connection
 Future<void> throwIfNoInternet() async {
-  if (!(await isConnectedToInternet())) {
+  if (await isOffline()) {
     debugPrint('API (✕) NO INTERNET');
     throw const ConnectivityException(ConnectivityExceptionType.noInternet);
   }
 }
 
-/// Return whether device has access to internet
-Future<bool> isConnectedToInternet() async {
-  final connectivityResult = await (Connectivity().checkConnectivity());
-  return connectivityResult != ConnectivityResult.none;
-}
+Future<bool> isOffline() async => (await Connectivity().checkConnectivity()).contains(ConnectivityResult.none);
+
+Future<bool> isOnline() async => !(await isOffline());
 
 /// Return true if string is null or empty
 bool isStringNullOrEmpty(String? s) => s == null || s.isEmpty;
