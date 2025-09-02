@@ -26,13 +26,13 @@ dependencies:
 
   # Network
   connectivity_plus: ^6.1.5
-  firebase_core: ^2.31.0
-  firebase_crashlytics: ^3.5.5
-  firebase_messaging: ^14.9.2
+  firebase_core: ^4.1.0
+  firebase_crashlytics: ^5.0.1
+  firebase_messaging: ^16.0.1
   firebase_cloud_messaging_flutter: ^1.0.6
 
   # Data management
-  cloud_firestore: ^4.17.3
+  cloud_firestore: ^6.0.1
   shared_preferences: ^2.5.3
   fast_csv: ^0.2.11
 
