@@ -23,6 +23,7 @@ dependencies:
   fl_chart: ^0.68.0
   animated_list_plus: ^0.5.2
   confetti: ^0.8.0
+  pretty_qr_code: ^3.5.0
 
   # Network
   connectivity_plus: ^6.1.5
