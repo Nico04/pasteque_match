@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class FillRemainsScrollView extends StatelessWidget {
   const FillRemainsScrollView({
-    Key? key,
+    super.key,
     this.controller,
     this.physics,
     this.child,
-  }) : super(key: key);
+  });
 
   final ScrollController? controller;
   final ScrollPhysics? physics;

@@ -91,7 +91,7 @@ extension ExtendedIterable<T> on Iterable<T> {
   /// Copied from Flutter.collection package
   /// https://api.flutter.dev/flutter/package-collection_collection/IterableExtension/firstWhereOrNull.html
   T? firstWhereOrNull(bool Function(T element) test) {
-    for (var element in this) {
+    for (final element in this) {
       if (test(element)) return element;
     }
     return null;
@@ -138,18 +138,22 @@ extension ExtendedList<T> on List<T> {
   void insertBetween(T item, {bool includeEnds = false}) {
     if (includeEnds) {
       if (isNotEmpty) {
-        for (var i = length; i >= 0; i--) insert(i, item);
+        for (var i = length; i >= 0; i--) {
+          insert(i, item);
+        }
       }
     } else {
       if (length > 1) {
-        for (var i = length - 1; i > 0; i--) insert(i, item);
+        for (var i = length - 1; i > 0; i--) {
+          insert(i, item);
+        }
       }
     }
   }
 
   /// Removes the first occurrence of each element in [elements] from this list, if present.
   void removeAll(Iterable<T> elements) {
-    for (var element in elements) {
+    for (final element in elements) {
       remove(element);
     }
   }
@@ -158,7 +162,7 @@ extension ExtendedList<T> on List<T> {
 extension ExtendedMap<K, V> on Map<K, V> {
   /// Removes all [keys] and its associated values, if present, from the map.
   void removeAll(Iterable<K> keys) {
-    for (var key in keys) {
+    for (final key in keys) {
       remove(key);
     }
   }

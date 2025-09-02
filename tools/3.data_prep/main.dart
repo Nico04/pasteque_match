@@ -368,7 +368,7 @@ void computePopularity(SpreadsheetDecoder spreadsheet) {
         final yearInt = int.parse(year);
         double weight = (yearInt - t0 + oldestAge) / oldestAge;  // Weight is 1 for t0, and 0 for t0-oldestAge (linear)
         weight = weight.clamp(0, 1);    // Clamp to 0-1 range
-        double weightedCount = relativeCount * weight;
+        final double weightedCount = relativeCount * weight;
         weightedSum += weightedCount;
       });
       weightedSums[rowIndex] = weightedSum;
@@ -409,7 +409,7 @@ void computePopularity(SpreadsheetDecoder spreadsheet) {
 
 void countNamesPerGroup(SpreadsheetDecoder spreadsheet) {
   print('Count names per group');
-  List<(String, int)> namesPerGroup = [];
+  final List<(String, int)> namesPerGroup = [];
   _computeEachGroup(
     spreadsheet,
     (groupHeaderRowIndex, namesRows) {

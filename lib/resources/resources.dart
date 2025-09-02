@@ -33,8 +33,8 @@ class AppResources {
   static const durationAnimationShort = Duration(milliseconds: 100);
 
   // Input formatter
-  static maxLengthInputFormatter([int? maxLength = 50]) => LengthLimitingTextInputFormatter(maxLength);   // Must be a new instance for each page
-  static get onlyLettersInputFormatter => FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')); // Must be a new instance for each page
+  static LengthLimitingTextInputFormatter maxLengthInputFormatter([int? maxLength = 50]) => LengthLimitingTextInputFormatter(maxLength);   // Must be a new instance for each page
+  static FilteringTextInputFormatter get onlyLettersInputFormatter => FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')); // Must be a new instance for each page
 
   // Validator
   static String? validatorNotEmpty(String? value) => value?.isNotEmpty != true ? textFormMandatory : null;

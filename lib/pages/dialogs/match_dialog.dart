@@ -4,13 +4,13 @@ import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 
 class MatchDialog extends StatefulWidget {
+  const MatchDialog(this.matchingName, {super.key});
+
   static void open(BuildContext context, String matchingName) => showDialog(
     context: context,
     useSafeArea: false,
     builder: (_) => MatchDialog(matchingName),
   );
-
-  const MatchDialog(this.matchingName, {super.key});
 
   final String matchingName;
 

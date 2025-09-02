@@ -93,7 +93,7 @@ class ProfilePage extends StatelessWidget {
 }
 
 class _UserDataCard extends StatelessWidget {
-  const _UserDataCard(this.user, {super.key});
+  const _UserDataCard(this.user);
 
   final User user;
 
@@ -150,7 +150,7 @@ class _UserDataCard extends StatelessWidget {
 }
 
 class _UserStatsCard extends StatelessWidget {
-  const _UserStatsCard(this.user, {super.key});
+  const _UserStatsCard(this.user);
 
   final User user;
 

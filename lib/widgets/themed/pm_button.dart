@@ -11,7 +11,7 @@ class PmButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = color == null ? null : ButtonStyle(foregroundColor: MaterialStateProperty.all(color));
+    final style = color == null ? null : ButtonStyle(foregroundColor: WidgetStateProperty.all(color));
     if (isSecondary) {
       return TextButton(
         style: style,

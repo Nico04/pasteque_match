@@ -26,13 +26,13 @@ void main(List<String> rawArgs) async {
   final nameEntries = <_NameEntryKey, NameQuantityStatisticsValue>{};
   for (final row in rawNamesCsvRows) {
     final gender = () {
-      int genderRaw = row[0];
+      final int genderRaw = row[0];
       if (genderRaw == 1) return NameGender.male;
       if (genderRaw == 2) return NameGender.female;
       throw UnsupportedError('Unsupported case');
     } ();
 
-    String name = row[1];
+    final String name = row[1];
 
     final year = () {
       final yearRaw = row[2];
@@ -41,7 +41,7 @@ void main(List<String> rawArgs) async {
       throw UnsupportedError('Unsupported case');
     } ();
 
-    int count = row[3];
+    final int count = row[3];
 
     final group = nameEntries.putIfAbsent(_NameEntryKey(name, gender), () => {});
     group[year.toString()] = count;

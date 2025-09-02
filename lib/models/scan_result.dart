@@ -1,11 +1,11 @@
 import 'package:pasteque_match/utils/_utils.dart';
 
 class ScanResult {
+  const ScanResult(this.rawValue);
+
   static const _qrCodeHeader = 'PM##';
 
   static String buildCode(String userId) => _qrCodeHeader + userId;
-
-  const ScanResult(this.rawValue);
 
   final String rawValue;
 

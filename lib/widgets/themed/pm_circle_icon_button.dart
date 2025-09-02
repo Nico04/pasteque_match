@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 class PmCircleIconButton extends StatelessWidget {
-  static const defaultSize = 50.0;
-
   const PmCircleIconButton({
     super.key,
     required this.icon,
@@ -14,6 +12,8 @@ class PmCircleIconButton extends StatelessWidget {
     this.size = defaultSize,
     this.onPressed,
   });
+
+  static const defaultSize = 50.0;
 
   final IconData icon;
   final double? iconSize;

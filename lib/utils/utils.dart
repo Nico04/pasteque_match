@@ -68,9 +68,9 @@ Future<T?> navigateTo<T>(BuildContext context, WidgetBuilder builder, {
   // Await
   returnAfterPageTransition ??= isTypeUndefined<T>();
   if (returnAfterPageTransition) {
-    return await navigationFuture.timeout(route.transitionDuration * 2, onTimeout: () => null);
+    return navigationFuture.timeout(route.transitionDuration * 2, onTimeout: () => null);
   } else {
-    return await navigationFuture;
+    return navigationFuture;
   }
 }
 

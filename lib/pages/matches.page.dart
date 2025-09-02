@@ -58,7 +58,7 @@ class MatchesPage extends StatelessWidget {
 }
 
 class _MatchesListView extends StatelessWidget {
-  const _MatchesListView(this.user, {super.key});
+  const _MatchesListView(this.user);
 
   final User user;
 

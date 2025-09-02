@@ -4,10 +4,10 @@ import 'package:pasteque_match/widgets/lazy_indexed_stack.dart';
 
 class PmTabbedPage extends StatefulWidget {
   const PmTabbedPage({
-    Key? key,
+    super.key,
     this.initialIndex = 0,
     required this.pages,
-  }) : super(key: key);
+  });
 
   final int initialIndex;
   final List<PmTabbedPageItem> pages;

@@ -30,6 +30,7 @@ class NameGroupFilters {
     this.saint,
     this.groupGender,
   });
+  factory NameGroupFilters.fromJson(JsonObject json) => _$NameGroupFiltersFromJson(json);
 
   final String? firstLetter;
 
@@ -76,7 +77,6 @@ class NameGroupFilters {
     groupGender: groupGender == null ? this.groupGender : groupGender(),
   );
 
-  factory NameGroupFilters.fromJson(JsonObject json) => _$NameGroupFiltersFromJson(json);
   JsonObject toJson() => _$NameGroupFiltersToJson(this);
 }
 

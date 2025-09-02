@@ -10,15 +10,15 @@ typedef UserVotes = Map<String, UserVote>;
 class User extends UserData {
   const User({required this.id, required super.name, super.fcmToken, super.partnerId, super.votes});
   User.fromBase({required this.id, required UserData userData}): super(name: userData.name, fcmToken: userData.fcmToken, partnerId: userData.partnerId, votes: userData.votes);
+  factory User.fromJson(String id, JsonObject json) => User.fromBase(id: id, userData: _$UserDataFromJson(json));
 
   final String id;
-
-  factory User.fromJson(String id, JsonObject json) => User.fromBase(id: id, userData: _$UserDataFromJson(json));
 }
 
 @JsonSerializable()
 class UserData {
   const UserData({required this.name, this.fcmToken, this.partnerId, this.votes = const{}});
+  factory UserData.fromJson(JsonObject json) => _$UserDataFromJson(json);
 
   /// User name
   final String name;
@@ -41,19 +41,17 @@ class UserData {
   /// (votes with SwipeValue.like value)
   /// OPTI use basic caching ?
   Iterable<String> get likes => votes.entries.where((entry) => entry.value.value.isLike).map((entry) => entry.key);
-
-  factory UserData.fromJson(JsonObject json) => _$UserDataFromJson(json);
   JsonObject toJson() => _$UserDataToJson(this);
 }
 
 @JsonSerializable()
 class UserVote {
   const UserVote(this.value, this.date);
+  factory UserVote.fromJson(JsonObject json) => _$UserVoteFromJson(json);
 
   final SwipeValue value;
   final DateTime date;
 
-  factory UserVote.fromJson(JsonObject json) => _$UserVoteFromJson(json);
   JsonObject toJson() => _$UserVoteToJson(this);
 }
 

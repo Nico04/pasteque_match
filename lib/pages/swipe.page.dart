@@ -259,9 +259,9 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
 }
 
 class _GroupCard extends StatelessWidget {
-  static const _maxOtherNames = 4;
-
   const _GroupCard(this.group, {super.key, this.swipeDirection, this.partnerLikesName});
+
+  static const _maxOtherNames = 4;
 
   final NameGroup group;
   final AppinioSwiperDirection? swipeDirection;
@@ -377,7 +377,7 @@ class _GroupCard extends StatelessWidget {
 }
 
 class _NameGenderRow extends StatelessWidget {
-  const _NameGenderRow({super.key, required this.name, this.style, required this.gender, this.iconSize});
+  const _NameGenderRow({required this.name, this.style, required this.gender, this.iconSize});
 
   final String name;
   final TextStyle? style;
@@ -401,7 +401,7 @@ class _NameGenderRow extends StatelessWidget {
 }
 
 class _SwipeButtons extends StatelessWidget {
-  const _SwipeButtons({super.key, required this.onDislikePressed, required this.onLikePressed});
+  const _SwipeButtons({required this.onDislikePressed, required this.onLikePressed});
 
   final VoidCallback onDislikePressed;
   final VoidCallback onLikePressed;

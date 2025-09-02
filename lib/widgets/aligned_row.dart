@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// A row that enforce his child to be aligned.
 /// Parent widget must enforce size (will throw if unbound size is given) (limitation of MultiChildLayoutDelegate).
 class AlignedRow extends StatelessWidget {
-  const AlignedRow({Key? key, this.leading, this.center, this.trailing}) : super(key: key);
+  const AlignedRow({super.key, this.leading, this.center, this.trailing});
 
   final Widget? leading;
   final Widget? center;

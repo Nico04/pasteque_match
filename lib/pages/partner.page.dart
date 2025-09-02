@@ -36,7 +36,7 @@ class PartnerPage extends StatelessWidget {
 }
 
 class _PartnerCard extends StatelessWidget {
-  const _PartnerCard(this.userId, this.partner, {super.key});
+  const _PartnerCard(this.userId, this.partner);
 
   final String userId;
   final User? partner;

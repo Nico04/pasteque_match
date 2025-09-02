@@ -51,7 +51,7 @@ class RestoreAccountPage extends StatelessWidget {
 }
 
 class _UserIdSection extends StatefulWidget {
-  const _UserIdSection({super.key});
+  const _UserIdSection();
 
   @override
   State<_UserIdSection> createState() => _UserIdSectionState();
@@ -92,7 +92,7 @@ class _UserIdSectionState extends State<_UserIdSection> {
 }
 
 class _Section extends StatelessWidget {
-  const _Section({super.key, required this.title, required this.caption, this.content, required this.buttonData});
+  const _Section({required this.title, required this.caption, this.content, required this.buttonData});
 
   final String title;
   final String caption;

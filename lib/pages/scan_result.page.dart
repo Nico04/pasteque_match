@@ -56,7 +56,7 @@ class ResultPage extends StatelessWidget {
 }
 
 class _UserResult extends StatelessWidget {
-  const _UserResult(this.userId, {super.key});
+  const _UserResult(this.userId);
 
   final String userId;
 
@@ -89,7 +89,7 @@ class _UserResult extends StatelessWidget {
 }
 
 class _PartnerResult extends StatelessWidget {
-  const _PartnerResult(this.partnerId, {super.key});
+  const _PartnerResult(this.partnerId);
 
   final String partnerId;
 
@@ -130,7 +130,6 @@ class _PartnerResult extends StatelessWidget {
 
 class _UserFoundResultContent extends StatelessWidget {
   const _UserFoundResultContent({
-    super.key,
     required this.task,
     required this.onSuccess,
     required this.caption,
@@ -182,7 +181,7 @@ class _UserFoundResultContent extends StatelessWidget {
 }
 
 class _ErrorMessage extends StatelessWidget {
-  const _ErrorMessage({required this.icon, required this.message, super.key});
+  const _ErrorMessage({required this.icon, required this.message});
 
   final IconData icon;
   final String message;

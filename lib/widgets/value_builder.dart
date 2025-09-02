@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 /// Simple widget that build value from [valueGetter] at init,
 /// then provide it to [builder], keeping built value in state between rebuilds.
 class ValueBuilder<T> extends StatefulWidget {
-  const ValueBuilder({Key? key, required this.valueGetter, required this.builder}) : super(key: key);
+  const ValueBuilder({super.key, required this.valueGetter, required this.builder});
 
   final ValueGetter<T> valueGetter;
   final DataWidgetBuilder<T> builder;

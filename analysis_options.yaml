@@ -9,21 +9,22 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
-linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at
-  # https://dart-lang.github.io/linter/lints/index.html.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
-  rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+formatter:
+  page_width: 180
 
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+linter:
+  rules:
+    prefer_single_quotes: true
+    overridden_fields: false   # We use it on purpose on code
+    depend_on_referenced_packages: false  # It's easier to maintain that way, and risk is low.
+    sort_constructors_first: true
+    sort_unnamed_constructors_first: true
+    dangling_library_doc_comments: false  # Not appropriate
+    use_key_in_widget_constructors: false  # Not really necessary, we can always add key param when needed
+    unawaited_futures: true
+    unnecessary_await_in_return: true
+    unnecessary_breaks: true
+    avoid_void_async: true
+    prefer_final_locals: true
+    prefer_final_in_for_each: true
+    prefer_const_constructors: true

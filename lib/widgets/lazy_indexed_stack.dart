@@ -3,10 +3,10 @@ import 'package:pasteque_match/utils/extensions_base.dart';
 
 class LazyIndexedStack extends StatefulWidget {
   const LazyIndexedStack({
-    Key? key,
+    super.key,
     required this.index,
     required this.children,
-  }) : super(key: key);
+  });
 
   /// The index of the child to show.
   final int index;

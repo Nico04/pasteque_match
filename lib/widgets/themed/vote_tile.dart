@@ -25,7 +25,7 @@ class VoteTile extends StatelessWidget {
       child: Card(
         elevation: 0,
         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        color: Theme.of(context).colorScheme.surfaceVariant,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         child: SizedBox(
           height: 75,   // Needed to avoid Hero animation jumps
           child: InkWell(
@@ -62,7 +62,7 @@ class VoteTile extends StatelessWidget {
                                 name.name,
                                 style: context.textTheme.bodySmall,
                               );
-                            }).toList(growable: false),
+                            }),
                         ],
                       ),
                     ),

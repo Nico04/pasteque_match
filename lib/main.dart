@@ -63,7 +63,7 @@ void main() async {
 }
 
 class App extends StatelessWidget {
-  const App({Key? key}) : super(key: key);
+  const App({super.key});
 
   // Default locale
   static const defaultLocale = Locale('fr');
