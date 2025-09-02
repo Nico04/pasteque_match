@@ -49,19 +49,16 @@ class PmTabbedPageState extends State<PmTabbedPage> {
           index: _index,
           children: widget.pages.map((e) => e.page).toList(growable: false),
         ),
-        bottomNavigationBar: SizedBox(
-          height: 70,
-          child: BottomNavigationBar(
-            currentIndex: _index,
-            onTap: setIndex,
-            items: widget.pages.map((e) {
-              return BottomNavigationBarItem(
-                icon: Icon(e.unselectedIcon),
-                activeIcon: Icon(e.selectedIcon),
-                label: e.label,
-              );
-            }).toList(growable: false),
-          ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _index,
+          onTap: setIndex,
+          items: widget.pages.map((e) {
+            return BottomNavigationBarItem(
+              icon: Icon(e.unselectedIcon),
+              activeIcon: Icon(e.selectedIcon),
+              label: e.label,
+            );
+          }).toList(growable: false),
         ),
       ),
     );

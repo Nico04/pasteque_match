@@ -32,7 +32,7 @@ android {
     defaultConfig {
         applicationId = "fr.icysun.pm"
         minSdk = 23
-        targetSdk = 33
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         multiDexEnabled = true
