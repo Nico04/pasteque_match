@@ -175,7 +175,7 @@ class NamePage extends StatelessWidget {
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       child: Text(
         value.round().toString(),
         style: const TextStyle(
