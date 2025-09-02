@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 1.2.1+8
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ^3.8.0
 
 dependencies:
   flutter:
@@ -16,7 +16,7 @@ dependencies:
   fetcher: ^4.3.1
 
   # Widgets / UI
-  flash: ^3.1.0
+  flash: ^3.1.1
   font_awesome_flutter: ^10.9.1
   appinio_swiper: 2.0.3
   fl_chart: 1.0.0   # v1.1.0 has compilation issue: https://github.com/imaNNeo/fl_chart/issues/1986
@@ -45,11 +45,11 @@ dependencies:
 
 dev_dependencies:
   # Code style
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
 
   # Code Generation
-  build_runner: ^2.4.11
-  json_serializable: ^6.8.0
+  build_runner: ^2.7.0
+  json_serializable: ^6.11.0
 
   # Scripting
   spreadsheet_decoder: ^2.2.0
