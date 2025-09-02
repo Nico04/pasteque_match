@@ -301,10 +301,10 @@ packages:
     dependency: "direct main"
     description:
       name: fast_csv
-      sha256: "2f8c92bd47adfeac03b2097ff545f593e5500ac5cfb29c1aa252c215bb46b73e"
+      sha256: "2165aa6b76daa0de168a712a157a78e60fd786257228935dd9d2809fe2ef7d8a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.44"
+    version: "0.2.11"
   fetcher:
     dependency: "direct main"
     description:
