@@ -37,8 +37,7 @@ dependencies:
   fast_csv: ^0.2.11
 
   # Platform tools
-  permission_handler: ^12.0.1
-  #ai_barcode: ^3.2.7
+  mobile_scanner: ^7.0.1
 
   # Internationalization
   intl: any

@@ -30,7 +30,7 @@ class RestoreAccountPage extends StatelessWidget {
               caption: 'Vous avez encore un⸱e partenaire lié à votre compte ?\nScannez le QrCode de restauration accessible depuis le menu de votre partenaire.',
               buttonData: ButtonData(
                 label: 'Scanner un QrCode de restauration',
-                onPressed: () => ScanPage.goToScanOrPermissionPage(context, ScanResultPageType.userRestore),
+                onPressed: () => navigateTo(context, (_) => const ScanPage(ScanResultPageType.userRestore)),
               ),
             ),
 
