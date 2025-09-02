@@ -39,7 +39,6 @@ dependencies:
   # Platform tools
   permission_handler: ^12.0.1
   #ai_barcode: ^3.2.7
-  clipboard: ^0.1.3
 
   # Internationalization
   intl: any

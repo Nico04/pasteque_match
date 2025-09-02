@@ -1,6 +1,6 @@
-import 'package:clipboard/clipboard.dart';
 import 'package:fetcher/fetcher.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
@@ -117,7 +117,7 @@ class _UserDataCard extends StatelessWidget {
               child: PmButton(
                 label: 'Copiez votre ID',
                 isSecondary: true,
-                onPressed: () => FlutterClipboard.copy(user.id).then(( _ ) => showMessage(context, 'ID copié')),
+                onPressed: () => Clipboard.setData(ClipboardData(text: user.id)).then(( _ ) => showMessage(context, 'ID copié')),
               ),
             ),
 
