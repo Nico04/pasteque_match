@@ -29,6 +29,9 @@ class MatchesPage extends StatelessWidget {
       withPadding: false,
       child: EventFetchBuilder<User>(
         stream: AppService.instance.userSession!.userStream,
+        config: const FetcherConfig(
+          fadeDuration: Duration.zero,    // Disable fade to prevent child tree to lose state on user change (like vote delete)
+        ),
         builder: (context, user) {
           if (!user.hasPartner) {
             return Padding(
