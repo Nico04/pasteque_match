@@ -228,16 +228,11 @@ class _SegmentedButtonFilter<T extends Object> extends StatelessWidget {
           child: Column(
             children: [
               // Buttons
-              SegmentedButton<T>(
-                selected: {if (selected != null) selected!},
-                segments: options.map((value) => ButtonSegment(
-                  value: value,
-                  icon: Icon(iconBuilder(value)),
-                )).toList(growable: false),
-                multiSelectionEnabled: false,
-                showSelectedIcon: false,
-                emptySelectionAllowed: true,
-                onSelectionChanged: (value) => onSelectionChanged(value.firstOrNull),
+              PmSegmentedButton<T>(
+                options: options,
+                selected: selected,
+                iconBuilder: iconBuilder,
+                onSelectionChanged: onSelectionChanged,
               ),
 
               // Label

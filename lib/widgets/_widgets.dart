@@ -9,3 +9,4 @@ export 'themed/vote_tile.dart';
 export 'themed/gender_icon.dart';
 export 'themed/letter_background.dart';
 export 'themed/pm_circle_icon_button.dart';
+export 'themed/pm_segmented_button.dart';

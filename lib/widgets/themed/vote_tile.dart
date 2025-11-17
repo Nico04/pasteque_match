@@ -8,6 +8,7 @@ import 'package:pasteque_match/services/app_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 
 import 'letter_background.dart';
+import 'pm_segmented_button.dart';
 
 class VoteTile extends StatelessWidget {
   const VoteTile(this.groupId, this.group, this.vote, {super.key, this.dismissible = true, this.clickable = true});
@@ -72,22 +73,18 @@ class VoteTile extends StatelessWidget {
                 // Buttons
                 Padding(
                   padding: AppResources.paddingContent,
-                  child: SegmentedButton<SwipeValue>(
-                    selected: {if (vote != null) vote!},
-                    segments: SwipeValue.values.map((value) => ButtonSegment(
-                      value: value,
-                      icon: Icon(value.icon, color: value.color),
-                    )).toList(growable: false),
-                    multiSelectionEnabled: false,
-                    showSelectedIcon: false,
-                    emptySelectionAllowed: true,    // Needed because initial vote value might be null
+                  child: PmSegmentedButton<SwipeValue>(
+                    options: SwipeValue.values,
+                    selected: vote,
+                    iconBuilder: (value) => value.icon,
+                    colorBuilder: (value) => value.color,
                     onSelectionChanged: (value) {
-                      if (value.isEmpty) {
+                      if (value == null) {
                         if (!dismissible) {
                           AppService.instance.clearUserVoteSafe(groupId);
                         }
                       } else {
-                        AppService.instance.setUserVoteSafe(groupId, value.single);
+                        AppService.instance.setUserVoteSafe(groupId, value);
                       }
                     },
                   ),
