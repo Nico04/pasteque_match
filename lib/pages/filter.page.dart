@@ -52,7 +52,8 @@ class _FilterPageState extends State<FilterPage> with BlocProvider<FilterPage, F
                     // First letter
                     AppResources.spacerLarge,
                     ValueBuilder(
-                      valueGetter: () => TextEditingController(text: filters.firstLetter),
+                      value: null,    // Dummy value : never rebuild
+                      valueBuilder: (_) => TextEditingController(text: filters.firstLetter),
                       builder: (context, controller) {
                         return Row(
                           children: [

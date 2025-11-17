@@ -53,12 +53,20 @@ class MatchesPage extends StatelessWidget {
 
           return EventFetchBuilder<User?>(
             stream: AppService.instance.userSession!.partnerStream,
-            builder: (context, partner) {// Build matches list at build time. Using ValueBuilder makes widget loose scroll state when data changes.
-              // TODO use new ValueBuilder with state proper handling and test
-              final matches = AppService.instance.getMatches(user.likes, partner?.likes ?? []);
-
-              // Build widget
-              return _MatchesListView(user, matches);
+            config: const FetcherConfig(
+              fadeDuration: Duration.zero,    // Disable fade to prevent child tree to lose state on partner change
+            ),
+            builder: (context, partner) {
+              return ValueBuilder(
+                value: (user.likes, partner?.likes),
+                valueBuilder: (data) {
+                  final (userLikes, partnerLikes) = data;
+                  return AppService.instance.getMatches(userLikes, partnerLikes ?? []);
+                },
+                builder: (context, matches) {
+                  return _MatchesListView(user, matches);
+                },
+              );
             },
           );
         },
