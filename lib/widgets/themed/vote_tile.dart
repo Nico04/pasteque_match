@@ -11,13 +11,15 @@ import 'letter_background.dart';
 import 'pm_segmented_button.dart';
 
 class VoteTile extends StatelessWidget {
-  const VoteTile(this.groupId, this.group, this.vote, {super.key, this.dismissible = true, this.clickable = true});
+  const VoteTile(this.groupId, this.group, this.vote, {super.key, this.editable = true, this.dismissible = false, this.clickable = true, this.trailing});
 
   final String groupId;
   final NameGroup? group;
   final SwipeValue? vote;
+  final bool editable;
   final bool dismissible;
   final bool clickable;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -71,24 +73,29 @@ class VoteTile extends StatelessWidget {
                 ),
 
                 // Buttons
-                Padding(
-                  padding: AppResources.paddingContent,
-                  child: PmSegmentedButton<SwipeValue>(
-                    options: SwipeValue.values,
-                    selected: vote,
-                    iconBuilder: (value) => value.icon,
-                    colorBuilder: (value) => value.color,
-                    onSelectionChanged: (value) {
-                      if (value == null) {
-                        if (!dismissible) {
-                          AppService.instance.clearUserVoteSafe(groupId);
+                if (editable)
+                  Padding(
+                    padding: AppResources.paddingContent,
+                    child: PmSegmentedButton<SwipeValue>(
+                      options: SwipeValue.values,
+                      selected: vote,
+                      iconBuilder: (value) => value.icon,
+                      colorBuilder: (value) => value.color,
+                      onSelectionChanged: (value) {
+                        if (value == null) {
+                          if (!dismissible) {
+                            AppService.instance.clearUserVoteSafe(groupId);
+                          }
+                        } else {
+                          AppService.instance.setUserVoteSafe(groupId, value);
                         }
-                      } else {
-                        AppService.instance.setUserVoteSafe(groupId, value);
-                      }
-                    },
+                      },
+                    ),
                   ),
-                ),
+
+                // Handle
+                if (trailing != null)
+                  trailing!,
               ],
             ),
           ),

@@ -116,42 +116,65 @@ class _MatchesListViewState extends State<_MatchesListView> with BlocProvider<_M
                 // Header
                 Padding(
                   padding: AppResources.paddingContentHorizontal,
-                  child: Row(
-                    children: [
-                      // Stats
-                      Expanded(
-                        child: Text(
-                          'Affichage de ${filteredMatchesList.length} matches\nsur ${widget.matches.length}',   // TODO plural
-                          style: context.textTheme.bodyMedium,
-                        ),
-                      ),
-
-                      // Filters
-                      AppResources.spacerMedium,
-                      PmSegmentedButton(
-                        options: GroupGenderFilter.values,
-                        selected: filters,
-                        iconBuilder: (value) => value.icon,
-                        onSelectionChanged: bloc.updateFilter,
-                      ),
-                    ],
+                  child: PmSegmentedButton(
+                    options: GroupGenderFilter.values,
+                    selected: filters,
+                    iconBuilder: (value) => value.icon,
+                    onSelectionChanged: bloc.updateFilter,
                   ),
+                ),
+
+                // Stats
+                AppResources.spacerSmall,
+                Text(
+                  'Affichage de ${filteredMatchesList.length} matches sur ${widget.matches.length}',   // TODO plural
+                  style: context.textTheme.bodySmall,
                 ),
 
                 // Content
                 AppResources.spacerSmall,
                 Expanded(
-                  child: ImplicitlyAnimatedList<String>(
+                  child: ImplicitlyAnimatedReorderableList<String>(
+                    padding: AppResources.paddingPageVertical.copyWith(top: 0),
                     items: filteredMatchesList,
                     areItemsTheSame: (a, b) => a == b,
-                    padding: AppResources.paddingPageVertical.copyWith(top: 0),
+                    onReorderFinished: (item, from, to, newItems) {
+                      // Remember to update the underlying data when the list has been
+                      // reordered.
+                      /*setState(() {
+                        items
+                          ..clear()
+                          ..addAll(newItems);
+                      });*/
+                      // TODO
+                    },
                     itemBuilder: (context, animation, match, index) {
                       final group = AppService.names[match];
-                      return SizeFadeTransition(
-                        sizeFraction: 0.3,
-                        curve: Curves.easeOut,
-                        animation: animation,
-                        child: VoteTile(match, group, widget.user.votes[match]?.value, key: ValueKey(match), dismissible: false),   // Using Dismissible with AnimatedList causes issues
+                      return Reorderable(
+                        key: ValueKey(match),
+                        child: SizeFadeTransition(
+                          sizeFraction: 0.3,
+                          curve: Curves.easeOut,
+                          animation: animation,
+                          child: VoteTile(match, group, widget.user.votes[match]?.value,
+                            editable: false,
+                            trailing: const Handle(
+                              delay: Duration(milliseconds: 100),
+                              child: Padding(
+                                padding: AppResources.paddingContent,
+                                child: Column(    // Allow handle to take full height
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      FontAwesomeIcons.gripVertical,
+                                      color: Colors.black54,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       );
                     },
                   ),

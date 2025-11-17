@@ -69,7 +69,7 @@ class _VotesPageState extends State<VotesPage> with BlocProvider<VotesPage, Vote
                       // Filters caption
                       AppResources.spacerSmall,
                       Text(
-                        'Affichage de ${filteredItems.length} votes',
+                        'Affichage de ${filteredItems.length} votes sur ${votes.length}',   // TODO plural
                         style: context.textTheme.bodySmall,
                       ),
 
@@ -92,7 +92,7 @@ class _VotesPageState extends State<VotesPage> with BlocProvider<VotesPage, Vote
                                 final groupId = voteEntry.key;
                                 final vote = voteEntry.value;
                                 final group = AppService.names[groupId];
-                                return VoteTile(groupId, group, vote.value, key: ValueKey(groupId));
+                                return VoteTile(groupId, group, vote.value, key: ValueKey(groupId), dismissible: true);
                               },
                             );
                           },
