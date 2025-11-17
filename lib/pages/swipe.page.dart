@@ -164,7 +164,27 @@ class _SwipePageState extends State<SwipePage> with BlocProvider<SwipePage, Swip
                       // Swipe cards
                       Expanded(
                         child: () {
-                          if (groups.isEmpty) return const Center(child: Text('Aucun groupe non-voté ne correspond aux filtres actuels'));
+                          if (groups.isEmpty) {
+                            return const Center(
+                              child: Padding(
+                                padding: AppResources.paddingPage,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      FontAwesomeIcons.faceSadTear,
+                                      size: 50,
+                                    ),
+                                    AppResources.spacerMedium,
+                                    Text(
+                                      'Aucun groupe non-voté ne correspond aux filtres actuels',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
 
                           return Stack(
                             alignment: Alignment.center,
