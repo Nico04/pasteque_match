@@ -139,7 +139,7 @@ class _ReportButtonState extends State<ReportButton> {
         confirmText: 'Signaler',
         onConfirmation: () async {
           await AppService.database.reportGroupError(widget.groupId, comment!);
-          showMessage(context, 'Merci, le problème est signalé !');
+          showMessage('Merci, le problème est signalé !');
         },
       ),
     );

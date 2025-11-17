@@ -117,7 +117,7 @@ class _UserDataCard extends StatelessWidget {
               child: PmButton(
                 label: 'Copiez votre ID',
                 isSecondary: true,
-                onPressed: () => Clipboard.setData(ClipboardData(text: user.id)).then(( _ ) => showMessage(context, 'ID copié')),
+                onPressed: () => Clipboard.setData(ClipboardData(text: user.id)).then(( _ ) => showMessage('ID copié')),
               ),
             ),
 

@@ -118,22 +118,22 @@ Future<void> askConfirmation({
 }
 
 /// Display an error to the user
-Future<void> showError(BuildContext context, Object error) async {
+void showError(BuildContext context, Object error) {
   // Cancellation
   if (error is OperationCanceledException) {
     if (!error.silent) {
-      showMessage(context, 'Opération annulée', isError: true);
+      showMessage('Opération annulée', isError: true);
     }
   }
 
   // Permission
   else if (error is PermissionDeniedException) {
-    showMessage(context, 'Permission requise', isError: true);
+    showMessage('Permission requise', isError: true);
   }
 
   // Bad connectivity
   else if (error is ConnectivityException) {
-    showMessage(context, 'Vérifiez votre connexion internet', isError: true);
+    showMessage('Vérifiez votre connexion internet', isError: true);
   }
 
   // Unauthorized
@@ -143,25 +143,25 @@ Future<void> showError(BuildContext context, Object error) async {
 
   // Unauthorized
   else if (error is FirebaseException) {
-    showMessage(context, 'Erreur de communication avec la base de donnée', isError: true, details: error.message);
+    showMessage('Erreur de communication avec la base de donnée', isError: true, details: error.message);
   }
 
   // Displayable exception
   else if (error is DisplayableException) {
-    showMessage(context, error.toString(), isError: true);
+    showMessage(error.toString(), isError: true);
   }
 
   // Other
   else {
-    showMessage(context, 'Une erreur est survenue', isError: true, details: !kReleaseMode ? error.toString() : null);
+    showMessage('Une erreur est survenue', isError: true, details: !kReleaseMode ? error.toString() : null);
   }
 }
 
 /// Report error to Crashlytics
-Future<void> reportError(Object exception, StackTrace stack, {dynamic reason}) async {
+void reportError(Object exception, StackTrace stack, {dynamic reason}) {
   if (shouldReportException(exception)) {
     // Report to Crashlytics
-    await FirebaseCrashlytics.instance.recordError(exception, stack, reason: reason);
+    FirebaseCrashlytics.instance.recordError(exception, stack, reason: reason);
   } else {
     // Just log
     debugPrint('Unreported error thrown: $exception\n$stack');

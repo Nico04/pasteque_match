@@ -75,7 +75,7 @@ class _UserResult extends StatelessWidget {
         return _UserFoundResultContent(
           task: () => AppService.instance.restoreUser(userId),
           onSuccess: (_) {
-            showMessage(context, 'Votre compte a bien été restauré.');
+            showMessage('Votre compte a bien été restauré.');
             return navigateTo(context, (_) => const MainPage(), clearHistory: true);
           },
           caption: 'Utilisateur trouvé !',
@@ -115,7 +115,7 @@ class _PartnerResult extends StatelessWidget {
         return _UserFoundResultContent(
           task: () => AppService.instance.choosePartner(partnerId),
           onSuccess: (_) async {
-            showMessage(context, 'Partenaire choisi !');
+            showMessage('Partenaire choisi !');
             context.popToRoot();
           },
           caption: 'Partenaire trouvé !',

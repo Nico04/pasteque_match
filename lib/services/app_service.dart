@@ -89,7 +89,7 @@ class AppService {
     // Display notification
     final message = [title, body].toLines();
     if (message.isNotEmpty) {   // May be empty if the notification is silent (data-only notification)
-      showMessage(App.navigatorContext, message);
+      showMessage(message);
     }
   }
   //#endregion
@@ -181,7 +181,7 @@ class AppService {
   }
 
   void deleteUser() {
-    database.deleteUser(userId!, userSession?.partner?.id).then((_) => showMessage(App.navigatorContext, 'Votre compte a été supprimé'));
+    database.deleteUser(userId!, userSession?.partner?.id).then((_) => showMessage('Votre compte a été supprimé'));
     logOut();
   }
   //#endregion
@@ -189,7 +189,7 @@ class AppService {
   //#region Other
   void handleError(Object exception, StackTrace stack, {dynamic reason}) {
     // Report error
-    unawaited(reportError(exception, stack, reason: reason));
+    reportError(exception, stack, reason: reason);
 
     // Handle Unauthorized Exception
     if (exception is UnauthorizedException) {
@@ -205,7 +205,7 @@ class AppService {
     unawaited(StorageService.deleteAll());
 
     // Warn user
-    if (warnUser) showMessage(App.navigatorContext, 'Vous avez été déconnecté', isError: true);
+    if (warnUser) showMessage('Vous avez été déconnecté', isError: true);
 
     // Go back to connexion page
     navigateTo(App.navigatorContext, (_) => const RegisterPage(), clearHistory: true).then((_) {

@@ -1,23 +1,17 @@
 import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
+import 'package:pasteque_match/main.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 
-// Store last controller to be able to dismiss it
-FlashController? _messageController;
-
 /// Display a message to the user, like a SnackBar
-Future<void> showMessage(BuildContext context, String message, {bool isError = false, String? details, int? durationInSeconds, Color? backgroundColor}) async {
-  // Try to get higher level context, so the Flash message's position is relative to the phone screen (and not a child widget)
-  final scaffoldContext = Scaffold.maybeOf(context)?.context;
-  if (scaffoldContext != null) context = scaffoldContext;
-
+void showMessage(String message, {bool isError = false, String? details, int? durationInSeconds, Color? backgroundColor}) {
   // Dismiss previous message
   _messageController?.dismiss();
 
   // Display new message
   backgroundColor ??= (isError ? Colors.orange : Colors.white);
-  await showFlash(
-    context: context,
+  showFlash(
+    context: App.navigatorContext,
     duration: Duration(seconds: durationInSeconds ?? (details == null ? 4 : 8)),
     builder: (context, controller) {
       _messageController = controller;
@@ -56,7 +50,12 @@ Future<void> showMessage(BuildContext context, String message, {bool isError = f
         ),
       );
     },
-  );
+  ).then(_clearController, onError: _clearController);;
+}
 
+// Store last controller to be able to dismiss it
+FlashController? _messageController;
+
+void _clearController([dynamic _]) {
   _messageController = null;
 }

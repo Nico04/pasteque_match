@@ -18,7 +18,7 @@ class RemovePartnerPage extends StatelessWidget {
       child: SubmitBuilder<void>(
         task: AppService.instance.removePartner,
         onSuccess: (_) async {
-          showMessage(context, 'Partenaire supprimé');
+          showMessage('Partenaire supprimé');
           context.popToRoot();
         },
         builder: (context, runTask) {
