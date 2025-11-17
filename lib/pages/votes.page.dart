@@ -13,7 +13,7 @@ class VotesPage extends StatefulWidget {
   State<VotesPage> createState() => _VotesPageState();
 }
 
-class _VotesPageState extends State<VotesPage>  with BlocProvider<VotesPage, VotesPageBloc> {
+class _VotesPageState extends State<VotesPage> with BlocProvider<VotesPage, VotesPageBloc> {
   @override
   initBloc() => VotesPageBloc();
 
