@@ -6,10 +6,11 @@ import 'package:pasteque_match/utils/_utils.dart';
 part 'user.g.dart';
 
 typedef UserVotes = Map<String, UserVote>;
+typedef NameOrderIndexes = Map<String, double>;
 
 class User extends UserData {
   const User({required this.id, required super.name, super.fcmToken, super.partnerId, super.votes});
-  User.fromBase({required this.id, required UserData userData}): super(name: userData.name, fcmToken: userData.fcmToken, partnerId: userData.partnerId, votes: userData.votes);
+  User.fromBase({required this.id, required UserData userData}): super(name: userData.name, fcmToken: userData.fcmToken, partnerId: userData.partnerId, votes: userData.votes, nameOrderIndexes: userData.nameOrderIndexes);
   factory User.fromJson(String id, JsonObject json) => User.fromBase(id: id, userData: _$UserDataFromJson(json));
 
   final String id;
@@ -17,7 +18,7 @@ class User extends UserData {
 
 @JsonSerializable()
 class UserData {
-  const UserData({required this.name, this.fcmToken, this.partnerId, this.votes = const{}});
+  const UserData({required this.name, this.fcmToken, this.partnerId, this.votes = const{}, this.nameOrderIndexes = const {}});
   factory UserData.fromJson(JsonObject json) => _$UserDataFromJson(json);
 
   /// User name
@@ -32,10 +33,14 @@ class UserData {
   /// Whether user has a partner or not
   bool get hasPartner => partnerId != null;
 
-  /// Map of votes
-  /// <Name.id, SwipeValue>
-  /// Using a map assure vote uniqueness
+  /// Map of votes `<Name.id, UserVote>`
+  /// Using a map ensure vote uniqueness
   final UserVotes votes;
+
+  /// Map of order indexes of names `<Name.id, order index>`
+  /// When user change the order of names manually, related indexes are stored here
+  @JsonKey(name: 'orders')
+  final NameOrderIndexes nameOrderIndexes;
 
   /// Return all likes
   /// (votes with SwipeValue.like value)

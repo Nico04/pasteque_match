@@ -44,12 +44,22 @@ class AppService {
     notificationService = NotificationService(onNotificationReceived);
   }
 
+  /// Get matches between user likes and partner likes
+  /// Return sorted list of matched ids
   List<String> getMatches(Iterable<String> userLikes, Iterable<String> partnerLikes) {
     // Build matches
     final matchedIds = userLikes.where(partnerLikes.contains);
 
     // Return sorted list
-    return matchedIds.toList(growable: false)..sort();
+    final nameOrderIndexes = userSession!.user!.nameOrderIndexes;
+    return matchedIds.toList(growable: false)..sort((a, b) {
+      // Sort by user order indexes first
+      final comparison = (nameOrderIndexes[a] ?? double.infinity).compareTo(nameOrderIndexes[b] ?? double.infinity);
+      if (comparison != 0) return comparison;
+
+      // Then by name
+      return a.compareTo(b);
+    });
   }
 
   /// Save properties sort type to local storage
@@ -178,6 +188,56 @@ class AppService {
       // Update UI
       showError(App.navigatorContext, e);
     }
+  }
+
+  Future<void> setNameOrderIndexes(List<String> names, int newIndex) async {
+    // Get order indexes to change
+    final ordersToChange = _getNameOrderIndexesToChange(names, newIndex);
+    if (ordersToChange.isEmpty) return;
+
+    // Update in database
+    return database.setUserNameOrderIndexes(userId!, ordersToChange);
+  }
+
+  /// After a name group has been moved in the list,
+  /// where [names] is the new list of names,
+  /// and [newIndex] is the new index of the moved name,
+  /// return the map of name order indexes to change in storage.
+  NameOrderIndexes _getNameOrderIndexesToChange(List<String> names, int newIndex) {
+    if (names.length <= 1) return {};
+    final NameOrderIndexes orderIndexesToChange = {};
+
+    // Helper to get order index of a group, either from user data or from being changed indexes
+    double? getOrderIndex(String? groupId) => userSession!.user!.nameOrderIndexes[groupId] ?? orderIndexesToChange[groupId];
+
+    // Get neighbors order indexes
+    final previousGroup = names.elementAtOrNull(newIndex - 1);
+    final nextGroup = names.elementAtOrNull(newIndex + 1);
+
+    final previousGroupOrder = newIndex == 0 ? 0.0 : getOrderIndex(previousGroup);
+    final nextGroupOrder = getOrderIndex(nextGroup);
+
+    // If previous or next order index is null, fill it up
+    if (previousGroupOrder == null || nextGroupOrder == null) {
+      for (int i = 0; i <= newIndex; i++) {
+        final groupId = names[i];
+        final orderIndex = getOrderIndex(groupId);
+
+        // Find first non-null order index in list
+        if (orderIndex == null || i == newIndex) {
+          // Get previous group's order index
+          final previousGroupOrder = i == 0 ? 0.0 : getOrderIndex(names[i - 1])!;
+          orderIndexesToChange[groupId] = previousGroupOrder.ceil() + 1.0;
+        }
+      }
+      return orderIndexesToChange;
+    }
+
+    // Otherwise, compute new order index between neighbors
+    final newOrderIndex = (previousGroupOrder + nextGroupOrder) / 2.0;
+    final movedGroupId = names[newIndex];
+    orderIndexesToChange[movedGroupId] = newOrderIndex;
+    return orderIndexesToChange;
   }
 
   void deleteUser() {

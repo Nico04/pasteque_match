@@ -15,6 +15,11 @@ UserData _$UserDataFromJson(Map<String, dynamic> json) => UserData(
         (k, e) => MapEntry(k, UserVote.fromJson(e as Map<String, dynamic>)),
       ) ??
       const {},
+  nameOrderIndexes:
+      (json['orders'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, (e as num).toDouble()),
+      ) ??
+      const {},
 );
 
 Map<String, dynamic> _$UserDataToJson(UserData instance) => <String, dynamic>{
@@ -22,6 +27,7 @@ Map<String, dynamic> _$UserDataToJson(UserData instance) => <String, dynamic>{
   'fcmToken': ?instance.fcmToken,
   'partnerId': ?instance.partnerId,
   'votes': instance.votes,
+  'orders': instance.nameOrderIndexes,
 };
 
 UserVote _$UserVoteFromJson(Map<String, dynamic> json) => UserVote(

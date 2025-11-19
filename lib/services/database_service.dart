@@ -93,6 +93,16 @@ class DatabaseService {
     debugPrint('[DatabaseService] Vote for $groupId removed');
   }
 
+  /// Set name order indices for multiple [groupId]s for user [userId]
+  Future<void> setUserNameOrderIndexes(String userId, NameOrderIndexes orders) async {
+    if (orders.isEmpty) return;
+    await _users.doc(userId).update({
+      for (final MapEntry(key:groupId, value:order) in orders.entries)
+        'orders.$groupId': order,
+    });
+    debugPrint('[DatabaseService] Name order indexes for [${orders.keys.join(', ')}] changed');
+  }
+
   /// Report an error on a group
   Future<void> reportGroupError(String groupId, String comment) async {
     await _reports.doc(groupId).set({   // set() command create document if it does not exists (where update() doesn't).

@@ -138,16 +138,7 @@ class _MatchesListViewState extends State<_MatchesListView> with BlocProvider<_M
                     padding: AppResources.paddingPageVertical.copyWith(top: 0),
                     items: filteredMatchesList,
                     areItemsTheSame: (a, b) => a == b,
-                    onReorderFinished: (item, from, to, newItems) {
-                      // Remember to update the underlying data when the list has been
-                      // reordered.
-                      /*setState(() {
-                        items
-                          ..clear()
-                          ..addAll(newItems);
-                      });*/
-                      // TODO
-                    },
+                    onReorderFinished: bloc.onReorderFinished,
                     itemBuilder: (context, animation, match, index) {
                       final group = AppService.names[match];
                       return Reorderable(
@@ -158,8 +149,8 @@ class _MatchesListViewState extends State<_MatchesListView> with BlocProvider<_M
                           animation: animation,
                           child: VoteTile(match, group, widget.user.votes[match]?.value,
                             editable: false,
-                            trailing: const Handle(
-                              delay: Duration(milliseconds: 100),
+                            trailing: const Handle(   // TODO this cause pop Hero animation overflow issue
+                              delay: Duration.zero,
                               child: Padding(
                                 padding: AppResources.paddingContent,
                                 child: Column(    // Allow handle to take full height
@@ -201,10 +192,12 @@ class _MatchesListViewBloc with Disposable {
 
   void updateFilter(GroupGenderFilter? value) => filters.add(value);
 
+  void onReorderFinished(String item, int from, int to, List<String> newItems) =>
+      AppService.instance.setNameOrderIndexes(newItems, to);
+
   @override
   void dispose() {
     filters.close();
     super.dispose();
   }
-
 }
