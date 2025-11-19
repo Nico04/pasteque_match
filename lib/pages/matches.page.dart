@@ -7,6 +7,7 @@ import 'package:pasteque_match/models/filters.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
 import 'package:pasteque_match/services/app_service.dart';
+import 'package:pasteque_match/services/storage_service.dart';
 import 'package:pasteque_match/utils/_utils.dart';
 import 'package:pasteque_match/widgets/_widgets.dart';
 
@@ -180,7 +181,7 @@ class _MatchesListViewState extends State<_MatchesListView> with BlocProvider<_M
 }
 
 class _MatchesListViewBloc with Disposable {
-  final filters = DataStream<GroupGenderFilter?>(null);
+  final filters = DataStream<GroupGenderFilter?>(StorageService.readMatchesFilters());
 
   bool ignoreFilterWhen(GroupGenderFilter? filterValue) => filterValue == null;
   bool applyFilter(String name, GroupGenderFilter? filter) {
@@ -190,7 +191,10 @@ class _MatchesListViewBloc with Disposable {
     return filter.match(group);
   }
 
-  void updateFilter(GroupGenderFilter? value) => filters.add(value);
+  void updateFilter(GroupGenderFilter? value) {
+    filters.add(value);
+    StorageService.saveMatchesFilters(value);
+  }
 
   void onReorderFinished(String item, int from, int to, List<String> newItems) =>
       AppService.instance.setNameOrderIndexes(newItems, to);

@@ -32,6 +32,19 @@ class StorageService {
       return null;
     }
   }
+
+  static const _matchesFiltersKey = 'matchesFilters';
+  static Future<void> saveMatchesFilters(GroupGenderFilter? value) {
+    if (value == null) {
+      return _storage.remove(_matchesFiltersKey);
+    } else {
+      return _storage.setString(_matchesFiltersKey, value.name);
+    }
+  }
+  static GroupGenderFilter? readMatchesFilters() {
+    final rawValue = _storage.getString(_matchesFiltersKey);
+    return GroupGenderFilter.values.asNameMap()[rawValue];
+  }
   //#endregion
 
   //#region SortType
