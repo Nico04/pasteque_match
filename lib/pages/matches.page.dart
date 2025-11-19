@@ -149,7 +149,7 @@ class _MatchesListViewState extends State<_MatchesListView> with BlocProvider<_M
                           animation: animation,
                           child: VoteTile(match, group, widget.user.votes[match]?.value,
                             editable: false,
-                            trailing: const Handle(   // TODO this cause pop Hero animation overflow issue
+                            trailing: const Handle(
                               delay: Duration.zero,
                               child: Padding(
                                 padding: AppResources.paddingContent,

@@ -23,81 +23,78 @@ class VoteTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final child = Hero(
-      tag: groupId,
-      child: Card(
-        elevation: 0,
-        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        child: SizedBox(
-          height: 75,   // Needed to avoid Hero animation jumps
-          child: InkWell(
-            onTap: group == null || !clickable ? null : () => navigateTo(context, (context) => NameGroupPage(group!)),
-            child: Row(
-              children: [
-                Expanded(
-                  child: LetterBackground(
-                    letter: groupId,
-                    child: Padding(
-                      padding: AppResources.paddingContent,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,    // Needed to avoid Hero animation jumps
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(groupId),
-                          if (group == null)
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.error_outline,
-                                  color: Colors.red,
-                                  size: 16,
-                                ),
-                                Text(
-                                  ' Groupe introuvable',
-                                  style: context.textTheme.bodySmall,
-                                ),
-                              ],
-                            )
-                          else
-                            ...group!.names.skip(1).take(2).map((name) {
-                              return Text(
-                                name.name,
+    final child = Card(
+      elevation: 0,
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      child: SizedBox(
+        height: 75,   // Needed to avoid Hero animation jumps
+        child: InkWell(
+          onTap: group == null || !clickable ? null : () => navigateTo(context, (context) => NameGroupPage(group!)),
+          child: Row(
+            children: [
+              Expanded(
+                child: LetterBackground(
+                  letter: groupId,
+                  child: Padding(
+                    padding: AppResources.paddingContent,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,    // Needed to avoid Hero animation jumps
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(groupId),
+                        if (group == null)
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                                size: 16,
+                              ),
+                              Text(
+                                ' Groupe introuvable',
                                 style: context.textTheme.bodySmall,
-                              );
-                            }),
-                        ],
-                      ),
+                              ),
+                            ],
+                          )
+                        else
+                          ...group!.names.skip(1).take(2).map((name) {
+                            return Text(
+                              name.name,
+                              style: context.textTheme.bodySmall,
+                            );
+                          }),
+                      ],
                     ),
                   ),
                 ),
+              ),
 
-                // Buttons
-                if (editable)
-                  Padding(
-                    padding: AppResources.paddingContent,
-                    child: PmSegmentedButton<SwipeValue>(
-                      options: SwipeValue.values,
-                      selected: vote,
-                      iconBuilder: (value) => value.icon,
-                      colorBuilder: (value) => value.color,
-                      onSelectionChanged: (value) {
-                        if (value == null) {
-                          if (!dismissible) {
-                            AppService.instance.clearUserVoteSafe(groupId);
-                          }
-                        } else {
-                          AppService.instance.setUserVoteSafe(groupId, value);
+              // Buttons
+              if (editable)
+                Padding(
+                  padding: AppResources.paddingContent,
+                  child: PmSegmentedButton<SwipeValue>(
+                    options: SwipeValue.values,
+                    selected: vote,
+                    iconBuilder: (value) => value.icon,
+                    colorBuilder: (value) => value.color,
+                    onSelectionChanged: (value) {
+                      if (value == null) {
+                        if (!dismissible) {
+                          AppService.instance.clearUserVoteSafe(groupId);
                         }
-                      },
-                    ),
+                      } else {
+                        AppService.instance.setUserVoteSafe(groupId, value);
+                      }
+                    },
                   ),
+                ),
 
-                // Handle
-                if (trailing != null)
-                  trailing!,
-              ],
-            ),
+              // Trailing
+              if (trailing != null)
+                trailing!,
+            ],
           ),
         ),
       ),
