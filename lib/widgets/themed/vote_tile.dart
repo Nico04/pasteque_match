@@ -11,7 +11,7 @@ import 'letter_background.dart';
 import 'pm_segmented_button.dart';
 
 class VoteTile extends StatelessWidget {
-  const VoteTile(this.groupId, this.group, this.vote, {super.key, this.editable = true, this.dismissible = false, this.clickable = true, this.trailing});
+  const VoteTile(this.groupId, this.group, this.vote, {super.key, this.editable = true, this.dismissible = false, this.clickable = true, this.leading, this.trailing});
 
   final String groupId;
   final NameGroup? group;
@@ -19,6 +19,7 @@ class VoteTile extends StatelessWidget {
   final bool editable;
   final bool dismissible;
   final bool clickable;
+  final Widget? leading;
   final Widget? trailing;
 
   @override
@@ -33,6 +34,12 @@ class VoteTile extends StatelessWidget {
           onTap: group == null || !clickable ? null : () => navigateTo(context, (context) => NameGroupPage(group!)),
           child: Row(
             children: [
+
+              // Trailing
+              if (leading != null)
+                leading!,
+
+              // Content
               Expanded(
                 child: LetterBackground(
                   letter: groupId,

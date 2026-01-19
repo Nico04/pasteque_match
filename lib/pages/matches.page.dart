@@ -150,6 +150,15 @@ class _MatchesListViewState extends State<_MatchesListView> with BlocProvider<_M
                           animation: animation,
                           child: VoteTile(match, group, widget.user.votes[match]?.value,
                             editable: false,
+                            leading: Padding(
+                              padding: AppResources.paddingContent,
+                              child: Text(
+                                '#${index + 1}',
+                                style: context.textTheme.titleMedium?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            ),
                             trailing: const Handle(
                               delay: Duration.zero,
                               child: Padding(

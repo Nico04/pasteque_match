@@ -1,7 +1,7 @@
 name: pasteque_match
 description: Mobile app to help parents find a name for their baby
 publish_to: 'none'
-version: 1.3.0+10
+version: 1.4.0+11
 
 environment:
   sdk: ^3.8.0
@@ -40,7 +40,7 @@ dependencies:
   mobile_scanner: ^7.1.3
 
   # Internationalization
-  intl: any
+  intl: any  # Version pinned by Flutter SDK
   diacritic: ^0.1.6
 
 dev_dependencies:
