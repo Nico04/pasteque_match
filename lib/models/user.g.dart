@@ -20,6 +20,9 @@ UserData _$UserDataFromJson(Map<String, dynamic> json) => UserData(
         (k, e) => MapEntry(k, (e as num).toDouble()),
       ) ??
       const {},
+  hiddenNames:
+      (json['hidden'] as List<dynamic>?)?.map((e) => e as String).toSet() ??
+      const {},
 );
 
 Map<String, dynamic> _$UserDataToJson(UserData instance) => <String, dynamic>{
@@ -28,6 +31,7 @@ Map<String, dynamic> _$UserDataToJson(UserData instance) => <String, dynamic>{
   'partnerId': ?instance.partnerId,
   'votes': instance.votes,
   'orders': instance.nameOrderIndexes,
+  'hidden': instance.hiddenNames.toList(),
 };
 
 UserVote _$UserVoteFromJson(Map<String, dynamic> json) => UserVote(

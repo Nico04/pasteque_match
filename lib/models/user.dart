@@ -18,7 +18,7 @@ class User extends UserData {
 
 @JsonSerializable()
 class UserData {
-  const UserData({required this.name, this.fcmToken, this.partnerId, this.votes = const{}, this.nameOrderIndexes = const {}});
+  const UserData({required this.name, this.fcmToken, this.partnerId, this.votes = const{}, this.nameOrderIndexes = const {}, this.hiddenNames = const {}});
   factory UserData.fromJson(JsonObject json) => _$UserDataFromJson(json);
 
   /// User name
@@ -41,6 +41,10 @@ class UserData {
   /// When user change the order of names manually, related indexes are stored here
   @JsonKey(name: 'orders')
   final NameOrderIndexes nameOrderIndexes;
+
+  /// Set of hidden name IDs
+  @JsonKey(name: 'hidden')
+  final Set<String> hiddenNames;
 
   /// Return all likes
   /// (votes with SwipeValue.like value)

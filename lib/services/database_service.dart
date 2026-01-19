@@ -103,6 +103,22 @@ class DatabaseService {
     debugPrint('[DatabaseService] Name order indexes for [${orders.keys.join(', ')}] changed');
   }
 
+  /// Set a [groupId] as hidden or not for user [userId]
+  Future<void> setUserHiddenName(String userId, String groupId, bool hidden) async {
+    final field = 'hidden';
+    if (hidden) {
+      await _users.doc(userId).update({
+        field: FieldValue.arrayUnion([groupId]),
+      });
+      debugPrint('[DatabaseService] Name $groupId set as hidden for user $userId');
+    } else {
+      await _users.doc(userId).update({
+        field: FieldValue.arrayRemove([groupId]),
+      });
+      debugPrint('[DatabaseService] Name $groupId set as visible for user $userId');
+    }
+  }
+
   /// Report an error on a group
   Future<void> reportGroupError(String groupId, String comment) async {
     await _reports.doc(groupId).set({   // set() command create document if it does not exists (where update() doesn't).

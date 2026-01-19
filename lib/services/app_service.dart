@@ -240,6 +240,18 @@ class AppService {
     return orderIndexesToChange;
   }
 
+  Future<void> setUserHiddenNameSafe(String groupId, bool bool) async {
+    try {
+      await database.setUserHiddenName(userId!, groupId, bool);
+    } catch(e, s) {
+      // Report error first
+      reportError(e, s);
+
+      // Update UI
+      showError(App.navigatorContext, e);
+    }
+  }
+
   void deleteUser() {
     database.deleteUser(userId!, userSession?.partner?.id).then((_) => showMessage('Votre compte a été supprimé'));
     logOut();

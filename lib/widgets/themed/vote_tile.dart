@@ -11,13 +11,25 @@ import 'letter_background.dart';
 import 'pm_segmented_button.dart';
 
 class VoteTile extends StatelessWidget {
-  const VoteTile(this.groupId, this.group, this.vote, {super.key, this.editable = true, this.dismissible = false, this.clickable = true, this.leading, this.trailing});
+  const VoteTile(
+    this.groupId,
+    this.group,
+    this.vote, {
+    super.key,
+    this.editable = true,
+    this.dismissible = false,
+    this.hidable = false,
+    this.clickable = true,
+    this.leading,
+    this.trailing,
+  }) : assert(!dismissible || !hidable, 'VoteTile cannot be both dismissible and hidable (currently)');
 
   final String groupId;
   final NameGroup? group;
   final SwipeValue? vote;
   final bool editable;
   final bool dismissible;
+  final bool hidable;
   final bool clickable;
   final Widget? leading;
   final Widget? trailing;
@@ -118,6 +130,19 @@ class VoteTile extends StatelessWidget {
           child: const Icon(FontAwesomeIcons.trashCan, color: Colors.white),
         ),
         onDismissed: (_) => AppService.instance.clearUserVoteSafe(groupId),
+        child: child,
+      );
+    } else if (hidable) {
+      return Dismissible(
+        key: ValueKey(groupId),
+        direction: DismissDirection.startToEnd,
+        background: Container(
+          color: Colors.grey,
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.only(left: 20),
+          child: const Icon(FontAwesomeIcons.eyeSlash, color: Colors.white),
+        ),
+        onDismissed: (_) => AppService.instance.setUserHiddenNameSafe(groupId, true),
         child: child,
       );
     } else {
