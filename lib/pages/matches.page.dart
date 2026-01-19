@@ -102,7 +102,7 @@ class _MatchesListViewState extends State<_MatchesListView> with BlocProvider<_M
           list: widget.matches,
           filterValue: filters,
           ignoreWhen: bloc.ignoreFilterWhen,
-          filter: bloc.applyFilter,
+          filter: (name, filter) => bloc.applyFilter(name, filter, widget.user),
           builder: (context, filteredMatches) {
             final filteredMatchesList = filteredMatches.toList(growable: false);
             if (filteredMatchesList.isEmpty) {
@@ -222,10 +222,10 @@ class _MatchesListViewBloc with Disposable {
   final filters = DataStream<_MatchesPageFilters>(_MatchesPageFilters(gender: StorageService.readMatchesFilters()));
 
   bool ignoreFilterWhen(_MatchesPageFilters filterValue) => filterValue.isEmpty;
-  bool applyFilter(String name, _MatchesPageFilters filter) {
+  bool applyFilter(String name, _MatchesPageFilters filter, UserData user) {
     final group = AppService.names[name];
     if (group == null) return false;
-    return filter.gender?.match(group) != false; // TODO && (filter.showHidden || !AppService.instance.isNameHidden(name));
+    return filter.gender?.match(group) != false && (filter.showHidden || !user.isNameHidden(name));
   }
 
   void updateGenderFilter(GroupGenderFilter? value) {
@@ -254,7 +254,7 @@ class _MatchesPageFilters {
   final GroupGenderFilter? gender;
   final bool showHidden;
 
-  bool get isEmpty => gender == null && !showHidden;
+  bool get isEmpty => gender == null && showHidden;
 
   _MatchesPageFilters copyWithGender(GroupGenderFilter? gender) => _MatchesPageFilters(
     gender: gender,
