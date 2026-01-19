@@ -10,7 +10,7 @@ typedef NameOrderIndexes = Map<String, double>;
 
 class User extends UserData {
   const User({required this.id, required super.name, super.fcmToken, super.partnerId, super.votes});
-  User.fromBase({required this.id, required UserData userData}): super(name: userData.name, fcmToken: userData.fcmToken, partnerId: userData.partnerId, votes: userData.votes, nameOrderIndexes: userData.nameOrderIndexes);
+  User.fromBase({required this.id, required UserData userData}): super(name: userData.name, fcmToken: userData.fcmToken, partnerId: userData.partnerId, votes: userData.votes, hiddenNames: userData.hiddenNames, nameOrderIndexes: userData.nameOrderIndexes);
   factory User.fromJson(String id, JsonObject json) => User.fromBase(id: id, userData: _$UserDataFromJson(json));
 
   final String id;
@@ -45,6 +45,8 @@ class UserData {
   /// Set of hidden name IDs
   @JsonKey(name: 'hidden')
   final Set<String> hiddenNames;
+
+  bool isNameHidden(String nameId) => hiddenNames.contains(nameId);
 
   /// Return all likes
   /// (votes with SwipeValue.like value)

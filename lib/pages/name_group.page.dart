@@ -1,5 +1,6 @@
-import 'package:fetcher/fetcher.dart';
+import 'package:fetcher/fetcher_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pasteque_match/models/name.dart';
 import 'package:pasteque_match/models/user.dart';
 import 'package:pasteque_match/resources/_resources.dart';
@@ -18,6 +19,24 @@ class NameGroupPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return PmBasicPage(
       title: group.id,
+      actions: [
+        EventStreamBuilder(
+          stream: AppService.instance.userSession!.userStream,
+          builder: (context, asyncSnapshot) {
+            if (!asyncSnapshot.hasData) {
+              return const SizedBox();
+            }
+            final isHidden = asyncSnapshot.data!.isNameHidden(group.id);
+            return IconButton(
+              icon: isHidden
+                  ? const Icon(FontAwesomeIcons.eyeSlash)
+                  : const Icon(FontAwesomeIcons.eye),
+              tooltip: '${isHidden ? 'Afficher' : 'Masquer'} ce groupe sur la page Matches',
+              onPressed: () => AppService.instance.setUserHiddenNameSafe(group.id, !isHidden),
+            );
+          },
+        ),
+      ],
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
