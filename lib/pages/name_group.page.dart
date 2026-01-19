@@ -29,8 +29,8 @@ class NameGroupPage extends StatelessWidget {
             final isHidden = asyncSnapshot.data!.isNameHidden(group.id);
             return IconButton(
               icon: isHidden
-                  ? const Icon(FontAwesomeIcons.eyeSlash)
-                  : const Icon(FontAwesomeIcons.eye),
+                  ? const Icon(FontAwesomeIcons.eye)
+                  : const Icon(FontAwesomeIcons.eyeSlash),
               tooltip: '${isHidden ? 'Afficher' : 'Masquer'} ce groupe sur la page Matches',
               onPressed: () => AppService.instance.setUserHiddenNameSafe(group.id, !isHidden),
             );

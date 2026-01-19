@@ -17,6 +17,7 @@ class FilteredView<T, F> extends StatefulWidget {
   final Iterable<T> list;
 
   /// Filter function
+  /// The function should return true if the item matches the filter (item will be included in output list).
   final FilterDelegate<T, F> filter;
 
   /// If provided, filtering will be ignored when [ignoreWhen] return true.

@@ -95,10 +95,10 @@ class _MatchesListViewState extends State<_MatchesListView> with BlocProvider<_M
 
   @override
   Widget build(BuildContext context) {
-    return DataStreamBuilder<GroupGenderFilter?>(
+    return DataStreamBuilder(
       stream: bloc.filters,
       builder: (context, filters) {
-        return FilteredView<String, GroupGenderFilter?>(
+        return FilteredView<String, _MatchesPageFilters>(
           list: widget.matches,
           filterValue: filters,
           ignoreWhen: bloc.ignoreFilterWhen,
@@ -114,14 +114,42 @@ class _MatchesListViewState extends State<_MatchesListView> with BlocProvider<_M
             }
             return Column(
               children: [
-                // Header
+                // Filters
                 Padding(
                   padding: AppResources.paddingContentHorizontal,
-                  child: PmSegmentedButton(
-                    options: GroupGenderFilter.values,
-                    selected: filters,
-                    iconBuilder: (value) => value.icon,
-                    onSelectionChanged: bloc.updateFilter,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Gender
+                            PmSegmentedButton(
+                              options: GroupGenderFilter.values,
+                              selected: filters.gender,
+                              iconBuilder: (value) => value.icon,
+                              onSelectionChanged: bloc.updateGenderFilter,
+                            ),
+
+                            // Visibility toggle
+                            Positioned(
+                              right: 0,
+                              child: IconButton(
+                                icon: Icon(
+                                  filters.showHidden
+                                      ? FontAwesomeIcons.eyeSlash
+                                      : FontAwesomeIcons.eye,
+                                ),
+                                tooltip: filters.showHidden
+                                    ? 'Masquer mes matches cachés'
+                                    : 'Afficher mes matches cachés',
+                                onPressed: () => bloc.updateShowHiddenFilter(!filters.showHidden),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 
@@ -191,20 +219,21 @@ class _MatchesListViewState extends State<_MatchesListView> with BlocProvider<_M
 }
 
 class _MatchesListViewBloc with Disposable {
-  final filters = DataStream<GroupGenderFilter?>(StorageService.readMatchesFilters());
+  final filters = DataStream<_MatchesPageFilters>(_MatchesPageFilters(gender: StorageService.readMatchesFilters()));
 
-  bool ignoreFilterWhen(GroupGenderFilter? filterValue) => filterValue == null;
-  bool applyFilter(String name, GroupGenderFilter? filter) {
-    if (filter == null) return true;
+  bool ignoreFilterWhen(_MatchesPageFilters filterValue) => filterValue.isEmpty;
+  bool applyFilter(String name, _MatchesPageFilters filter) {
     final group = AppService.names[name];
     if (group == null) return false;
-    return filter.match(group);
+    return filter.gender?.match(group) != false; // TODO && (filter.showHidden || !AppService.instance.isNameHidden(name));
   }
 
-  void updateFilter(GroupGenderFilter? value) {
-    filters.add(value);
+  void updateGenderFilter(GroupGenderFilter? value) {
+    filters.add(filters.value.copyWithGender(value));
     StorageService.saveMatchesFilters(value);
   }
+
+  void updateShowHiddenFilter(bool value) => filters.add(filters.value.copyWithShowHidden(value));
 
   void onReorderFinished(String item, int from, int to, List<String> newItems) =>
       AppService.instance.setNameOrderIndexes(newItems, to);
@@ -214,4 +243,26 @@ class _MatchesListViewBloc with Disposable {
     filters.close();
     super.dispose();
   }
+}
+
+class _MatchesPageFilters {
+  const _MatchesPageFilters({
+    this.gender,
+    this.showHidden = false,
+  });
+
+  final GroupGenderFilter? gender;
+  final bool showHidden;
+
+  bool get isEmpty => gender == null && !showHidden;
+
+  _MatchesPageFilters copyWithGender(GroupGenderFilter? gender) => _MatchesPageFilters(
+    gender: gender,
+    showHidden: showHidden,
+  );
+
+  _MatchesPageFilters copyWithShowHidden(bool showHidden) => _MatchesPageFilters(
+    gender: gender,
+    showHidden: showHidden,
+  );
 }
