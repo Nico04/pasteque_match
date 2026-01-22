@@ -170,39 +170,58 @@ class _MatchesListViewState extends State<_MatchesListView> with BlocProvider<_M
                     onReorderFinished: bloc.onReorderFinished,
                     itemBuilder: (context, animation, match, index) {
                       final group = AppService.names[match];
+                      final isHidden = widget.user.isNameHidden(match);
+
                       return Reorderable(
                         key: ValueKey(match),
                         child: SizeFadeTransition(
                           sizeFraction: 0.3,
                           curve: Curves.easeOut,
                           animation: animation,
-                          child: VoteTile(match, group, widget.user.votes[match]?.value,
-                            editable: false,
-                            hidable: true,
-                            leading: Padding(
-                              padding: AppResources.paddingContent,
-                              child: Text(
-                                '#${index + 1}',
-                                style: context.textTheme.titleMedium?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                            ),
-                            trailing: const Handle(
-                              delay: Duration.zero,
-                              child: Padding(
-                                padding: AppResources.paddingContent,
-                                child: Column(    // Allow handle to take full height
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      FontAwesomeIcons.gripVertical,
-                                      color: Colors.black54,
+                          child: Stack(
+                            children: [
+                              VoteTile(match, group, widget.user.votes[match]?.value,
+                                editable: false,
+                                hidable: false, // TEMP setting to true throws error on hiding, fix is not easy.
+                                leading: Padding(
+                                  padding: AppResources.paddingContent,
+                                  child: Text(
+                                    '#${index + 1}',
+                                    style: context.textTheme.titleMedium?.copyWith(
+                                      color: isHidden
+                                          ? Theme.of(context).colorScheme.outline
+                                          : Theme.of(context).colorScheme.primary,
                                     ),
-                                  ],
+                                  ),
+                                ),
+                                trailing: const Handle(
+                                  delay: Duration.zero,
+                                  child: Padding(
+                                    padding: AppResources.paddingContent,
+                                    child: Column(    // Allow handle to take full height
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          FontAwesomeIcons.gripVertical,
+                                          color: Colors.black54,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+
+                              if (isHidden)
+                                Positioned(
+                                  top: 2,
+                                  left: 5,
+                                  child: Icon(
+                                    FontAwesomeIcons.eyeSlash,
+                                    color: Theme.of(context).colorScheme.outline,
+                                    size: 15,
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
                       );
