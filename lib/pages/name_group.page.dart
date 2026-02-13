@@ -31,7 +31,7 @@ class NameGroupPage extends StatelessWidget {
               icon: isHidden
                   ? const Icon(FontAwesomeIcons.eye)
                   : const Icon(FontAwesomeIcons.eyeSlash),
-              tooltip: '${isHidden ? 'Afficher' : 'Masquer'} ce groupe sur la page Matches',
+              tooltip: '${isHidden ? 'Afficher' : 'Masquer'}\nLe match sera masqué si ce groupe est masqué par vous ou votre partenaire',
               onPressed: () => AppService.instance.setUserHiddenNameSafe(group.id, !isHidden),
             );
           },

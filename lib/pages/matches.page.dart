@@ -68,7 +68,7 @@ class MatchesPage extends StatelessWidget {
                   return AppService.instance.getMatches(userLikes, partnerLikes ?? []);
                 },
                 builder: (context, matches) {
-                  return _MatchesListView(user, matches);
+                  return _MatchesListView(user, partner, matches);
                 },
               );
             },
@@ -80,9 +80,10 @@ class MatchesPage extends StatelessWidget {
 }
 
 class _MatchesListView extends StatefulWidget {
-  const _MatchesListView(this.user, this.matches);
+  const _MatchesListView(this.user, this.partner, this.matches);
 
   final User user;
+  final User? partner;
   final List<String> matches;
 
   @override
@@ -102,7 +103,7 @@ class _MatchesListViewState extends State<_MatchesListView> with BlocProvider<_M
           list: widget.matches,
           filterValue: filters,
           ignoreWhen: bloc.ignoreFilterWhen,
-          filter: (name, filter) => bloc.applyFilter(name, filter, widget.user),
+          filter: (name, filter) => bloc.applyFilter(name, filter, widget.user, widget.partner),
           builder: (context, filteredMatches) {
             final filteredMatchesList = filteredMatches.toList(growable: false);
             if (filteredMatchesList.isEmpty) {
@@ -170,7 +171,9 @@ class _MatchesListViewState extends State<_MatchesListView> with BlocProvider<_M
                     onReorderFinished: bloc.onReorderFinished,
                     itemBuilder: (context, animation, match, index) {
                       final group = AppService.names[match];
-                      final isHidden = widget.user.isNameHidden(match);
+                      final isHiddenByUser = widget.user.isNameHidden(match);
+                      final isHiddenByPartner = widget.partner?.isNameHidden(match) ?? false;
+                      final isHidden = isHiddenByUser || isHiddenByPartner;
 
                       return Reorderable(
                         key: ValueKey(match),
@@ -217,7 +220,9 @@ class _MatchesListViewState extends State<_MatchesListView> with BlocProvider<_M
                                   left: 5,
                                   child: Icon(
                                     FontAwesomeIcons.eyeSlash,
-                                    color: Theme.of(context).colorScheme.outline,
+                                    color: isHiddenByUser
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context).colorScheme.outline,
                                     size: 15,
                                   ),
                                 ),
@@ -241,10 +246,11 @@ class _MatchesListViewBloc with Disposable {
   final filters = DataStream<_MatchesPageFilters>(_MatchesPageFilters(gender: StorageService.readMatchesFilters()));
 
   bool ignoreFilterWhen(_MatchesPageFilters filterValue) => filterValue.isEmpty;
-  bool applyFilter(String name, _MatchesPageFilters filter, UserData user) {
+  bool applyFilter(String name, _MatchesPageFilters filter, UserData user, UserData? partner) {
     final group = AppService.names[name];
     if (group == null) return false;
-    return filter.gender?.match(group) != false && (filter.showHidden || !user.isNameHidden(name));
+    return filter.gender?.match(group) != false &&
+        (filter.showHidden || (!user.isNameHidden(name) && (partner == null || !partner.isNameHidden(name))));
   }
 
   void updateGenderFilter(GroupGenderFilter? value) {
